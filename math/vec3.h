@@ -1,5 +1,5 @@
 #pragma once
-namespace fys3150 {
+namespace CompPhys {
     class vec3
     {
     public:
@@ -14,6 +14,8 @@ namespace fys3150 {
         vec3 operator-(double scalar);
         vec3 operator*(double scalar);
         vec3 operator/(double scalar);
+        void add(vec3 &rhs);
+        void addAndMultiply(vec3 &rhs, double scalar);
         vec3 cross(vec3 &rhs);
         double dot(vec3 &rhs);
         double length();

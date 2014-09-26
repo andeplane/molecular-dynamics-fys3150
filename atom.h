@@ -1,6 +1,6 @@
 #pragma once
 #include <math/vec3.h>
-using fys3150::vec3;
+using CompPhys::vec3;
 
 class Atom
 {

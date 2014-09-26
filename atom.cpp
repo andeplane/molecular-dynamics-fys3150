@@ -1,4 +1,4 @@
-#include "atom.h"
+#include <atom.h>
 
 Atom::Atom()
 {

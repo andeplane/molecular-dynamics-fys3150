@@ -4,12 +4,12 @@
 class VelocityVerlet : public Integrator
 {
 private:
-    void firstKick(System *system, double timestep);
-    void halfKick(System *system, double timestep);
-    void move(System *system, double timestep);
+    void firstKick(System *system, double dt);
+    void halfKick(System *system, double dt);
+    void move(System *system, double dt);
     bool m_firstStep;
 public:
     VelocityVerlet();
 
-    virtual void integrate(System *system, double timestep);
+    virtual void integrate(System *system, double dt);
 };

@@ -1,6 +1,6 @@
 #include <math/vec3.h>
 #include <cmath>
-namespace fys3150 {
+namespace CompPhys {
     vec3::vec3() :
         x(0),
         y(0),
@@ -67,6 +67,18 @@ namespace fys3150 {
         return vec3(x / scalar,
                     y / scalar,
                     z / scalar);
+    }
+
+    void vec3::addAndMultiply(vec3 &rhs, double scalar) {
+        x += rhs.x*scalar;
+        y += rhs.y*scalar;
+        z += rhs.z*scalar;
+    }
+
+    void vec3::add(vec3 &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
     }
 
     double vec3::dot(vec3 &rhs) {
