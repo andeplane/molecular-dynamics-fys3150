@@ -1,4 +1,4 @@
- /*
+/*
  This is based on the ran1-generator from lib.cpp (see http://www.uio.no/studier/emner/matnat/fys/FYS3150/h14/index.html )
      ** The function
      **           ran1()
