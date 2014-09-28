@@ -1,10 +1,14 @@
 #pragma once
+#include <fstream>
 class System;
+using std::ofstream;
 
 class IO
 {
 public:
     IO();
-    void saveStateToFile(System *system, char *filename);
-
+    ofstream file;
+    void saveState(System *system);
+    void open(char *filename);
+    void close();
 };
