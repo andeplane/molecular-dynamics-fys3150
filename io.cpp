@@ -1,7 +1,7 @@
 #include <io.h>
 #include <system.h>
 #include <atom.h>
-
+#include <unitconverter.h>
 using std::endl;
 
 IO::IO()
@@ -21,8 +21,8 @@ void IO::close() {
 void IO::saveState(System *system)
 {
     file << system->atoms().size() << endl;
-    file << "The required line I have no idea why needs to be here." << endl;
+    file << "The is an optional comment line that can be empty." << endl;
     for(Atom *atom : system->atoms()) {
-        file << "Ar " << atom->position.x << " " << atom->position.y << " " << atom->position.z << endl;
+        file << "Ar " << UnitConverter::lengthToAngstroms(atom->position.x) << " " << UnitConverter::lengthToAngstroms(atom->position.y) << " " << UnitConverter::lengthToAngstroms(atom->position.z) << endl;
     }
 }
