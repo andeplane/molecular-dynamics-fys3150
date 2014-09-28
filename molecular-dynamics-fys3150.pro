@@ -14,7 +14,9 @@ SOURCES += main.cpp \
     io.cpp \
     potentials/potential.cpp \
     potentials/lennardjones.cpp \
-    statisticssampler.cpp
+    statisticssampler.cpp \
+    integrators/eulercromer.cpp \
+    unitconverter.cpp
 
 HEADERS += \
     atom.h \
@@ -26,5 +28,7 @@ HEADERS += \
     io.h \
     potentials/potential.h \
     potentials/lennardjones.h \
-    statisticssampler.h
+    statisticssampler.h \
+    integrators/eulercromer.h \
+    unitconverter.h
 
