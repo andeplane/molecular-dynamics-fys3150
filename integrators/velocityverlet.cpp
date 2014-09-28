@@ -30,7 +30,7 @@ void VelocityVerlet::integrate(System *system, double dt)
     halfKick(system, dt);
     move(system, dt);
 
-    // Step 1: Fix periodic boundary conditions
+    // Step 1: Apply periodic boundary conditions
 
     // Step 2: Calculate all forces
 
