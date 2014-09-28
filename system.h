@@ -20,8 +20,10 @@ private:
 public:
     System();
     void resetForcesOnAllAtoms();
-    void createFCCLattice(int numberOfUnitCells, double latticeConstant);
+    void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant);
     void applyPeriodicBoundaryConditions();
+    void removeMomentum();
+    void calculateForces();
     void step(double dt);
 
     // Setters and getters

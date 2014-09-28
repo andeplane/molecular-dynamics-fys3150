@@ -15,13 +15,21 @@ void System::applyPeriodicBoundaryConditions() {
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
 }
 
+void System::removeMomentum() {
+    // Initially, when the atoms are given random velocities, there is a non-zero net momentum. We don't want any drift in the system, so we need to remove it.
+}
+
 void System::resetForcesOnAllAtoms() {
 
 }
 
-void System::createFCCLattice(int numberOfUnitCells, double latticeConstant)
-{
+void System::createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant) {
 
+}
+
+void System::calculateForces() {
+    resetForcesOnAllAtoms();
+    m_potential->calculateForces(this);
 }
 
 void System::step(double dt) {
