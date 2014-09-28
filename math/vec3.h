@@ -1,7 +1,11 @@
 #pragma once
+#include <iostream>
+
 namespace CompPhys {
     class vec3
     {
+    private:
+        friend std::ostream& operator<<(std::ostream&stream, vec3 &vec);
     public:
         vec3(); // Create a zero vector
         vec3(double x, double y, double z);

@@ -116,4 +116,8 @@ namespace CompPhys {
         y = 0;
         z = 0;
     }
+
+    std::ostream& operator<<(std::ostream &stream, vec3 &vec) {
+        return stream << "[" << vec.x << ", " << vec.y << ", " << vec.z << "]";
+    }
 }
