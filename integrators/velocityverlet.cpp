@@ -32,9 +32,7 @@ void VelocityVerlet::integrate(System *system, double dt)
 
     // Step 1: Fix periodic boundary conditions
 
-    // Step 2: Reset forces on all atoms
-
-    // Step 3: Calculate all forces
+    // Step 2: Calculate all forces
 
     halfKick(system, dt);
 }
