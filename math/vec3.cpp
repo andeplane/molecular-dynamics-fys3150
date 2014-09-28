@@ -119,9 +119,9 @@ void vec3::setToZero()
 }
 
 void vec3::randomUniform(double min, double max) {
-    x = min + Random::nextDouble()*2*(max - min);
-    y = min + Random::nextDouble()*2*(max - min);
-    z = min + Random::nextDouble()*2*(max - min);
+    x = min + Random::nextDouble()*(max - min);
+    y = min + Random::nextDouble()*(max - min);
+    z = min + Random::nextDouble()*(max - min);
 }
 
 void vec3::randomGaussian(double mean, double standardDeviation) {

@@ -29,7 +29,7 @@ public:
     // Setters and getters
     vector<Atom *> &atoms() { return m_atoms; }
     vec3 systemSize() { return m_systemSize; }
-    void setSystemSize(vec3 &systemSize) { m_systemSize = systemSize; }
+    void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
     double currentTime() { return m_currentTime; }
