@@ -21,11 +21,11 @@ int main()
     cout << "One unit of mass is " << UnitConverter::massToSI(1.0) << " kg" << endl;
 
     System *system = new System();
-    system->createFCCLattice(5, 5.26);
-    system->setPotential(new LennardJones(1.0, 1.0));
+    system->setSystemSize(UnitConverter::lengthFromAngstroms(vec3(10, 10, 10)));
+    system->createFCCLattice(5, UnitConverter::lengthFromAngstroms(5.26));
+    system->setPotential(new LennardJones(1.0, 1.0)); // You must insert correct parameters here
     system->setIntegrator(new EulerCromer());
     system->removeMomentum();
-    system->setSystemSize(UnitConverter::lengthFromAngstroms(vec3(10, 10, 10)));
 
     for(int n=0; n<100; n++) {
         // Add one example atom. You'll have to create many such atoms in the createFCCLattice function above.
