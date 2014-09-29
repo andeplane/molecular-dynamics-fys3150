@@ -5,10 +5,14 @@ using std::ofstream;
 
 class IO
 {
+private:
+    ofstream file;
 public:
     IO();
-    ofstream file;
+    ~IO();
+
     void saveState(System *system);
     void open(char *filename);
     void close();
+
 };

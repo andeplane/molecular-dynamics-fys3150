@@ -8,6 +8,11 @@ Atom::Atom(double mass) :
     
 }
 
+Atom::~Atom()
+{
+
+}
+
 void Atom::resetForce()
 {
     force.setToZero();

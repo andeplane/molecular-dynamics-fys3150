@@ -19,6 +19,7 @@ private:
 
 public:
     System();
+    ~System();
     void resetForcesOnAllAtoms();
     void createFCCLattice(int numberOfUnitCellsEachDimension, double latticeConstant);
     void applyPeriodicBoundaryConditions();

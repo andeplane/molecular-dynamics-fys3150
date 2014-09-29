@@ -12,6 +12,7 @@ public:
     vec3 force;
 
     Atom(double mass);
+    ~Atom();
     void resetForce();
     void resetVelocityMaxwellian(double temperature);
 

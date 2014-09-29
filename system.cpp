@@ -11,6 +11,13 @@ System::System() :
 
 }
 
+System::~System()
+{
+    delete m_potential;
+    delete m_integrator;
+    m_atoms.clear();
+}
+
 void System::applyPeriodicBoundaryConditions() {
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
 }
