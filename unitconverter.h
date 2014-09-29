@@ -6,7 +6,7 @@
 using std::vector;
 using CompPhys::vec3;
 
-enum class Units {SIUnits = 0, AtomicUnits};
+enum class Units {SIUnits = 0, AtomicUnits, MDUnits};
 
 class UnitConverter
 {
@@ -47,6 +47,9 @@ public:
     static vec3 lengthToSI(vec3 position);
     static vec3 lengthFromSI(vec3 position);
 
+    static vec3 velocityToSI(vec3 position);
+    static vec3 velocityFromSI(vec3 position);
+
     static vec3 lengthToAngstroms(vec3 position);
     static vec3 lengthFromAngstroms(vec3 position);
 
@@ -65,9 +68,6 @@ public:
     static double velocityToSI(double v);
     static double velocityFromSI(double v);
 
-    static double viscosityToSI(double v);
-    static double viscosityFromSI(double v);
-
     static double diffusionToSI(double d);
     static double diffusionFromSI(double d);
 
@@ -77,13 +77,6 @@ public:
     static double degreesToRadians(double v);
     static double radiansToDegrees(double v);
 
-    static double chargeToSI(double m);
-    static double chargeFromSI(double m);
-
-    static double hbarToSI(double hbar);
-    static double hbarFromSI(double hbar);
-
-    static double electricConstantToSI(double electricConstant);
-    static double electricConstantFromSI(double electricConstant);
     static void initializeAtomicUnits();
+    static void initializeMDUnits();
 };

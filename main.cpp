@@ -13,12 +13,14 @@ using namespace std;
 
 int main()
 {
-    double dt = 100;
+    double dt = UnitConverter::timeFromSI(1e-15); // You should try different values for dt as well.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
     cout << "One unit of velocity is " << UnitConverter::velocityToSI(1.0) << " meters/second" << endl;
     cout << "One unit of time is " << UnitConverter::timeToSI(1.0) << " seconds" << endl;
     cout << "One unit of mass is " << UnitConverter::massToSI(1.0) << " kg" << endl;
+    cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K" << endl;
+    cout << "One unit of pressure is " << UnitConverter::pressureToSI(1.0) << " Pa" << endl;
 
     System system;
     system.setSystemSize(UnitConverter::lengthFromAngstroms(vec3(10, 10, 10)));

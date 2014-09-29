@@ -26,6 +26,37 @@ std::string UnitConverter::currentUnits = "No units chosen.";
 
 bool UnitConverter::initialized = false;
 
+void UnitConverter::initializeMDUnits() {
+    UnitConverter::initialized = true;
+    UnitConverter::currentUnits = "MD units";
+    // Molecular Dynamics units
+
+    // Fundamental units
+    double m0 = 1.66053892e-27;         // SI [kg]
+    double L0 = 1e-10;                  // SI [m]
+    double kb = 1.3806488e-23;          // SI [J/K]
+    double E0eV = 1.0318e-2;            // eV
+    double E0 = 1.60217657e-19*E0eV;    // SI [J]
+
+    UnitConverter::m0 = m0;
+    UnitConverter::kb = kb;
+
+    // Derived units
+    UnitConverter::a0 = L0;
+    UnitConverter::E0 = E0;
+    UnitConverter::t0 = L0*sqrt(m0/E0);
+    UnitConverter::v0 = L0/t0;
+    UnitConverter::F0 = E0/a0;
+    UnitConverter::T0 = E0/kb;
+    UnitConverter::P0 = E0/(a0*a0*a0);
+    UnitConverter::visc0 = P0*t0;
+    UnitConverter::diff0 = a0*a0/t0;
+    UnitConverter::E0ev = E0eV;
+    UnitConverter::hbar0 = INFINITY; // Not really used, give INF as a warning-ish?
+    UnitConverter::q0 = INFINITY;
+    UnitConverter::electricConstant0 = INFINITY;
+}
+
 void UnitConverter::initializeAtomicUnits() {
     UnitConverter::initialized = true;
     UnitConverter::currentUnits = "Atomic units";
@@ -60,11 +91,12 @@ void UnitConverter::initializeAtomicUnits() {
 }
 
 void UnitConverter::makeSureInitialized() {
-    if(!UnitConverter::initialized) UnitConverter::initialize(Units::AtomicUnits);
+    if(!UnitConverter::initialized) UnitConverter::initialize(Units::MDUnits);
 }
 
 void UnitConverter::initialize(Units type) {
     if(type == Units::AtomicUnits) UnitConverter::initializeAtomicUnits();
+    else if(type == Units::MDUnits) UnitConverter::initializeMDUnits();
 }
 
 double UnitConverter::pressureToSI(double P) {UnitConverter::makeSureInitialized(); return UnitConverter::P0*P; }
@@ -75,15 +107,6 @@ double UnitConverter::temperatureFromSI(double T) {UnitConverter::makeSureInitia
 
 double UnitConverter::massToSI(double m) {UnitConverter::makeSureInitialized(); return UnitConverter::m0*m; }
 double UnitConverter::massFromSI(double m) {UnitConverter::makeSureInitialized(); return m/UnitConverter::m0; }
-
-double UnitConverter::chargeToSI(double q) {UnitConverter::makeSureInitialized(); return q*UnitConverter::q0; }
-double UnitConverter::chargeFromSI(double q) {UnitConverter::makeSureInitialized(); return q/UnitConverter::q0; }
-
-double UnitConverter::hbarToSI(double hbar) {UnitConverter::makeSureInitialized(); return hbar*UnitConverter::hbar0; }
-double UnitConverter::hbarFromSI(double hbar) {UnitConverter::makeSureInitialized(); return hbar/UnitConverter::hbar0; }
-
-double UnitConverter::electricConstantToSI(double electricConstant) {UnitConverter::makeSureInitialized(); return electricConstant*UnitConverter::electricConstant0; }
-double UnitConverter::electricConstantFromSI(double electricConstant) {UnitConverter::makeSureInitialized(); return electricConstant/UnitConverter::electricConstant0; }
 
 double UnitConverter::lengthToSI(double L) {UnitConverter::makeSureInitialized(); return UnitConverter::a0*L; }
 double UnitConverter::lengthFromSI(double L) {UnitConverter::makeSureInitialized(); return L/UnitConverter::a0; }
@@ -111,6 +134,16 @@ vec3 UnitConverter::lengthFromAngstroms(vec3 position)
     return {UnitConverter::lengthFromAngstroms(position.x), UnitConverter::lengthFromAngstroms(position.y), UnitConverter::lengthFromAngstroms(position.z)};
 }
 
+CompPhys::vec3 UnitConverter::velocityToSI(CompPhys::vec3 velocity)
+{
+    return {UnitConverter::velocityToSI(velocity.x), UnitConverter::velocityToSI(velocity.y), UnitConverter::velocityToSI(velocity.z)};
+}
+
+CompPhys::vec3 UnitConverter::velocityFromSI(CompPhys::vec3 velocity)
+{
+    return {UnitConverter::velocityFromSI(velocity.x), UnitConverter::velocityFromSI(velocity.y), UnitConverter::velocityFromSI(velocity.z)};
+}
+
 double UnitConverter::forceToSI(double F) {UnitConverter::makeSureInitialized(); return UnitConverter::F0*F; }
 double UnitConverter::forceFromSI(double F) {UnitConverter::makeSureInitialized(); return F/UnitConverter::F0; }
 
@@ -128,9 +161,6 @@ double UnitConverter::timeFromSI(double t) {UnitConverter::makeSureInitialized()
 
 double UnitConverter::velocityToSI(double v) {UnitConverter::makeSureInitialized(); return v*UnitConverter::v0; }
 double UnitConverter::velocityFromSI(double v) {UnitConverter::makeSureInitialized(); return v/UnitConverter::v0; }
-
-double UnitConverter::viscosityToSI(double v) {UnitConverter::makeSureInitialized(); return v*UnitConverter::visc0; }
-double UnitConverter::viscosityFromSI(double v) {UnitConverter::makeSureInitialized(); return v/UnitConverter::visc0; }
 
 double UnitConverter::diffusionToSI(double d) {UnitConverter::makeSureInitialized(); return d*UnitConverter::diff0; }
 double UnitConverter::diffusionFromSI(double d) {UnitConverter::makeSureInitialized(); return d/UnitConverter::diff0; }
