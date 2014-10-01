@@ -2,6 +2,7 @@
 #include <system.h>
 #include <atom.h>
 #include <unitconverter.h>
+#include <cstdlib>
 using std::endl; using std::cout;
 
 IO::IO()
