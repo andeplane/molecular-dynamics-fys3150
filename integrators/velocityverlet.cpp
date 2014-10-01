@@ -6,6 +6,11 @@ VelocityVerlet::VelocityVerlet() :
 
 }
 
+VelocityVerlet::~VelocityVerlet()
+{
+
+}
+
 void VelocityVerlet::firstKick(System *system, double dt)
 {
 

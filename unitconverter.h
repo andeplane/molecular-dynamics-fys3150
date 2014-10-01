@@ -6,7 +6,7 @@
 using std::vector;
 using CompPhys::vec3;
 
-enum class Units {SIUnits = 0, AtomicUnits, MDUnits};
+enum Units {SIUnits = 0, AtomicUnits, MDUnits};
 
 class UnitConverter
 {

@@ -8,5 +8,6 @@ private:
     double m_epsilon;
 public:
     LennardJones(double sigma, double epsilon);
+    ~LennardJones() {}
     virtual void calculateForces(System *system);
 };
