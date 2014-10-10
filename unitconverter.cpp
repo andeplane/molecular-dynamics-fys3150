@@ -116,32 +116,32 @@ double UnitConverter::lengthFromAngstroms(double L) {UnitConverter::makeSureInit
 
 vec3 UnitConverter::lengthToSI(vec3 position)
 {
-    return vec3(UnitConverter::lengthToSI(position.x), UnitConverter::lengthToSI(position.y), UnitConverter::lengthToSI(position.z));
+    return vec3(UnitConverter::lengthToSI(position.x()), UnitConverter::lengthToSI(position.y()), UnitConverter::lengthToSI(position.z()));
 }
 
 vec3 UnitConverter::lengthFromSI(vec3 position)
 {
-    return vec3(UnitConverter::lengthFromSI(position.x), UnitConverter::lengthFromSI(position.y), UnitConverter::lengthFromSI(position.z));
+    return vec3(UnitConverter::lengthFromSI(position.x()), UnitConverter::lengthFromSI(position.y()), UnitConverter::lengthFromSI(position.z()));
 }
 
 vec3 UnitConverter::lengthToAngstroms(vec3 position)
 {
-    return vec3(UnitConverter::lengthToAngstroms(position.x), UnitConverter::lengthToAngstroms(position.y), UnitConverter::lengthToAngstroms(position.z));
+    return vec3(UnitConverter::lengthToAngstroms(position.x()), UnitConverter::lengthToAngstroms(position.y()), UnitConverter::lengthToAngstroms(position.z()));
 }
 
 vec3 UnitConverter::lengthFromAngstroms(vec3 position)
 {
-    return vec3(UnitConverter::lengthFromAngstroms(position.x), UnitConverter::lengthFromAngstroms(position.y), UnitConverter::lengthFromAngstroms(position.z));
+    return vec3(UnitConverter::lengthFromAngstroms(position.x()), UnitConverter::lengthFromAngstroms(position.y()), UnitConverter::lengthFromAngstroms(position.z()));
 }
 
 CompPhys::vec3 UnitConverter::velocityToSI(CompPhys::vec3 velocity)
 {
-    return vec3(UnitConverter::velocityToSI(velocity.x), UnitConverter::velocityToSI(velocity.y), UnitConverter::velocityToSI(velocity.z));
+    return vec3(UnitConverter::velocityToSI(velocity.x()), UnitConverter::velocityToSI(velocity.y()), UnitConverter::velocityToSI(velocity.z()));
 }
 
 CompPhys::vec3 UnitConverter::velocityFromSI(CompPhys::vec3 velocity)
 {
-    return vec3(UnitConverter::velocityFromSI(velocity.x), UnitConverter::velocityFromSI(velocity.y), UnitConverter::velocityFromSI(velocity.z));
+    return vec3(UnitConverter::velocityFromSI(velocity.x()), UnitConverter::velocityFromSI(velocity.y()), UnitConverter::velocityFromSI(velocity.z()));
 }
 
 double UnitConverter::forceToSI(double F) {UnitConverter::makeSureInitialized(); return UnitConverter::F0*F; }

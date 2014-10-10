@@ -33,7 +33,7 @@ int main()
         // Add one example atom. You'll have to create many such atoms in the createFCCLattice function above.
         Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26)); // Argon mass, see http://en.wikipedia.org/wiki/Argon
         atom->resetVelocityMaxwellian(UnitConverter::temperatureFromSI(300));
-        atom->position.randomUniform(0, system.systemSize().x);
+        atom->position.randomUniform(0, system.systemSize().x());
         system.atoms().push_back(atom); // Add it to the list of atoms
     }
 
