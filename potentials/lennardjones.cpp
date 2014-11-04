@@ -16,8 +16,8 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 // #define CELLLISTS
 #define NEIGHBORLISTS
 
-inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, const vec3 &systemSize) {
-    vec3 deltaRVector = atom1->position - atom2->position;
+inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, vec3 &deltaRVector, const vec3 &systemSize) {
+    deltaRVector.subtract(atom1->position, atom2->position);
 
     // Minimum image convention
     for(int a=0; a<3; a++) {
@@ -98,9 +98,10 @@ void LennardJones::calculateForces(System *system)
     for(unsigned int i=0; i<system->atoms().size(); i++) {
         Atom *atom1 = system->atoms()[i];
         vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
+        vec3 deltaRVector;
         for(unsigned int j=0; j<neighbors.size(); j++) {
             Atom *atom2 = neighbors[j];
-            calculateForcesBetweenAtoms(atom1, atom2, systemSize);
+            calculateForcesBetweenAtoms(atom1, atom2, deltaRVector, systemSize);
         }
     }
 }

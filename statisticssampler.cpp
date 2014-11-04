@@ -1,5 +1,6 @@
-#include <statisticssampler.h>
-#include <potentials/potential.h>
+#include "statisticssampler.h"
+#include "potentials/potential.h"
+#include "cpelapsedtimer.h"
 
 StatisticsSampler::StatisticsSampler() :
     m_kineticEnergy(0),
@@ -18,10 +19,12 @@ StatisticsSampler::~StatisticsSampler()
 void StatisticsSampler::sample(System *system)
 {
     // Here you should measure different kinds of statistical properties and save it to a file.
+    CPElapsedTimer::sampling().start();
     sampleKineticEnergy(system);
     samplePotentialEnergy(system);
     sampleTemperature(system);
     sampleDensity(system);
+    CPElapsedTimer::sampling().stop();
 }
 
 float StatisticsSampler::sampleKineticEnergy(System *system)

@@ -25,7 +25,7 @@ public:
     vec3 &operator*=(float scalar);
     vec3 operator/(float scalar);
     vec3 &operator/=(float scalar);
-    vec3 operator-();
+    inline vec3 operator-() { return vec3(-m_vec[0], -m_vec[1], -m_vec[2]); }
     void add(vec3 &rhs) {
         m_vec[0] += rhs.x();
         m_vec[1] += rhs.y();
@@ -39,7 +39,6 @@ public:
     vec3 cross(vec3 &rhs);
     float dot(vec3 &rhs);
     float length();
-    float lengthSquared();
     void normalize();
     void setToZero();
     void randomGaussian(float mean, float standardDeviation);
@@ -50,6 +49,8 @@ public:
     inline float z() const { return m_vec[2]; }
     inline float &operator[](int index) { return m_vec[index]; }
     inline float operator[](int index) const { return m_vec[index]; }
+    inline float lengthSquared() { return m_vec[0]*m_vec[0] + m_vec[1]*m_vec[1] + m_vec[2]*m_vec[2]; }
+    inline void subtract(const vec3 &v1, const vec3 &v2) { m_vec[0] = v1[0] - v2[0]; m_vec[1] = v1[1] - v2[1]; m_vec[2] = v1[2] - v2[2]; }
 private:
     friend std::ostream& operator<<(std::ostream&stream, vec3 vec);
 };

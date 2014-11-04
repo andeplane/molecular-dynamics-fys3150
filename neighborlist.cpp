@@ -3,6 +3,8 @@
 #include "math/vec3.h"
 #include "atom.h"
 #include "system.h"
+#include "cpelapsedtimer.h"
+
 #include <iostream>
 using namespace std;
 
@@ -14,7 +16,7 @@ NeighborList::NeighborList() :
 }
 
 void NeighborList::clear() {
-    for(int i=0; i<m_neighbors.size(); i++) {
+    for(unsigned int i=0; i<m_neighbors.size(); i++) {
         m_neighbors[i].clear();
     }
 }
@@ -33,6 +35,8 @@ void NeighborList::update()
     vec3 systemSize = m_system->systemSize();
 
     m_cellList.update();
+
+    CPElapsedTimer::updateNeighborList().start();
     clear();
 
     for(int cx=0; cx<m_cellList.numberOfCellsX(); cx++) {
@@ -47,9 +51,9 @@ void NeighborList::update()
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
             vector<Atom*> &cell2 = m_cellList.cells().at(cellIndex2);
 
-            for(int i=0; i<cell1.size(); i++) {
+            for(unsigned int i=0; i<cell1.size(); i++) {
                 Atom *atom1 = cell1[i];
-                for(int j=0; j<cell2.size(); j++) {
+                for(unsigned int j=0; j<cell2.size(); j++) {
                     Atom *atom2 = cell2[j];
                     if(atom1->index() <= atom2->index()) continue;
 
@@ -68,11 +72,5 @@ void NeighborList::update()
         }}}
     }}}
 
-//    int count = 0;
-//    for(int i=0; i<m_neighbors.size(); i++) {
-//        count += m_neighbors[i].size();
-//    }
-
-//    count /= m_neighbors.size();
-//    cout << "We had an average of " << count << " neighbors per atom." << endl;
+    CPElapsedTimer::updateNeighborList().stop();
 }

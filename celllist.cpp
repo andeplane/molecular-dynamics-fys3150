@@ -2,6 +2,8 @@
 #include "atom.h"
 #include "system.h"
 #include <iostream>
+#include "cpelapsedtimer.h"
+
 using namespace std;
 
 int CellList::index(int cx, int cy, int cz)
@@ -50,17 +52,19 @@ void CellList::setup(System *system, float rCut)
 
 void CellList::clear()
 {
-    for(int i=0; i<m_cells.size(); i++) {
+    for(unsigned int i=0; i<m_cells.size(); i++) {
         m_cells[i].clear();
     }
 }
 
 void CellList::update()
 {
+    CPElapsedTimer::updateCellList().start();
     clear();
-    for(int i=0; i<m_system->atoms().size(); i++) {
+    for(unsigned int i=0; i<m_system->atoms().size(); i++) {
         Atom *atom = m_system->atoms()[i];
         int cellIndex = index(atom->position);
         m_cells.at(cellIndex).push_back(atom);
     }
+    CPElapsedTimer::updateCellList().stop();
 }

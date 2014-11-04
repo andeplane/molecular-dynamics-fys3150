@@ -3,6 +3,8 @@
 #include "potentials/potential.h"
 #include "statisticssampler.h"
 #include "unitconverter.h"
+#include "cpelapsedtimer.h"
+
 using namespace std;
 
 System::System() :
@@ -25,9 +27,11 @@ System::~System()
 void System::initialize(float cutoffRadius) {
     m_cellList.setup(this, cutoffRadius);
     m_neighborList.setup(this, cutoffRadius*1.2);
+    m_initialized = true;
 }
 
 void System::applyPeriodicBoundaryConditions() {
+    CPElapsedTimer::periodicBoundaryConditions().start();
     for(int i=0; i<m_atoms.size(); i++) {
         Atom *atom = m_atoms[i];
         for(int a=0; a<3; a++) {
@@ -35,6 +39,7 @@ void System::applyPeriodicBoundaryConditions() {
             if(atom->position[a] >= m_systemSize[a]) atom->position[a] -= m_systemSize[a];
         }
     }
+    CPElapsedTimer::periodicBoundaryConditions().stop();
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
 }
 
@@ -84,10 +89,16 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 
 void System::calculateForces() {
     resetForcesOnAllAtoms();
+    CPElapsedTimer::calculateForces().start();
     m_potential->calculateForces(this);
+    CPElapsedTimer::calculateForces().stop();
 }
 
 void System::step(float dt) {
+    if(!m_initialized) {
+        cout << "System not initialized, aborting. Remember to call initialize()." << endl;
+        exit(1);
+    }
     m_integrator->integrate(this, dt);
     m_steps++;
     m_currentTime += dt;

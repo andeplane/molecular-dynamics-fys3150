@@ -119,11 +119,6 @@ vec3 &vec3::operator/=(float scalar) {
     return *this;
 }
 
-vec3 vec3::operator-()
-{
-    return vec3(-m_vec[0], -m_vec[1], -m_vec[2]);
-}
-
 float vec3::dot(vec3 &rhs) {
     return (m_vec[0] * rhs.x() +
             m_vec[1] * rhs.y() +
@@ -138,10 +133,6 @@ vec3 vec3::cross(vec3 &rhs) {
 
 float vec3::length() {
     return sqrt(lengthSquared());
-}
-
-float vec3::lengthSquared() {
-    return m_vec[0]*m_vec[0] + m_vec[1]*m_vec[1] + m_vec[2]*m_vec[2];
 }
 
 void vec3::normalize() {

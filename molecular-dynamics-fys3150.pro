@@ -1,8 +1,9 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG -= qt
+#CONFIG -= qt
 INCLUDEPATH +=
+QT += quick widgets
 #CONFIG += c++11
 
 SOURCES += main.cpp \
@@ -19,7 +20,8 @@ SOURCES += main.cpp \
     integrators/eulercromer.cpp \
     unitconverter.cpp \
     celllist.cpp \
-    neighborlist.cpp
+    neighborlist.cpp \
+    cpelapsedtimer.cpp
 
 HEADERS += \
     atom.h \
@@ -35,5 +37,6 @@ HEADERS += \
     integrators/eulercromer.h \
     unitconverter.h \
     celllist.h \
-    neighborlist.h
+    neighborlist.h \
+    cpelapsedtimer.h
 
