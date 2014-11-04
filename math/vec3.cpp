@@ -177,6 +177,6 @@ void vec3::randomGaussian(float mean, float standardDeviation) {
     m_vec[2] = Random::nextGaussian(mean, standardDeviation);
 }
 
-std::ostream& operator<<(std::ostream &stream, vec3 &vec) {
+std::ostream& operator<<(std::ostream &stream, vec3 vec) {
     return stream << "[" << vec.x() << ", " << vec.y() << ", " << vec.z() << "]";
 }

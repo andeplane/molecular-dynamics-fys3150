@@ -53,6 +53,11 @@ float StatisticsSampler::sampleDensity(System *system)
     return m_density;
 }
 
+float StatisticsSampler::totalEnergy()
+{
+    return m_potentialEnergy + m_kineticEnergy;
+}
+
 vec3 StatisticsSampler::sampleMomentum(System *system)
 {
     m_momentum.setToZero();

@@ -18,5 +18,6 @@ public:
     float samplePotentialEnergy(System *system);
     float sampleTemperature(System *system);
     float sampleDensity(System *system);
+    float totalEnergy();
     vec3 sampleMomentum(System *system);
 };

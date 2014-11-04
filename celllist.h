@@ -23,7 +23,7 @@ public:
     int numberOfCellsY() { return m_numberOfCellsY; }
     int numberOfCellsZ() { return m_numberOfCellsZ; }
     int index(int cx, int cy, int cz);
-    int index(int cx, int cy, int cz, bool);
+    int indexPeriodic(int cx, int cy, int cz);
     int index(const vec3 &position);
     vector<Atom*> &operator[](int index) { return m_cells[index]; }
     vector<vector<Atom*> > &cells();

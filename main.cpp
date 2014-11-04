@@ -57,7 +57,7 @@ int main()
 
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
     System system;
-    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(150));
+    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(600));
     system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);
@@ -70,9 +70,10 @@ int main()
 
     for(int timestep=0; timestep<1000; timestep++) {
         system.step(dt);
-        statisticsSampler->sample(&system);
         if( !(timestep % 100)) {
-            cout << "Step " << timestep << endl;
+            // statisticsSampler->sample(&system);
+
+            cout << "Step " << timestep << " Epot = " << statisticsSampler->samplePotentialEnergy(&system) << "   Ekin = " << statisticsSampler->sampleKineticEnergy(&system) << "   Etot = " << statisticsSampler->totalEnergy() <<  endl;
         }
         // movie->saveState(&system);
     }

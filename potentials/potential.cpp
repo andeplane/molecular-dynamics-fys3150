@@ -6,12 +6,17 @@ Potential::Potential() :
 
 }
 
-double Potential::potentialEnergy()
+float Potential::potentialEnergy()
 {
     return m_potentialEnergy;
 }
 
-void Potential::setPotentialEnergy(double potentialEnergy)
+void Potential::setPotentialEnergy(float potentialEnergy)
 {
     m_potentialEnergy = potentialEnergy;
+}
+
+void Potential::addPotentialEnergy(float potentialEnergy)
+{
+    m_potentialEnergy = +potentialEnergy;
 }

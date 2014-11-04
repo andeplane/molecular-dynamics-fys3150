@@ -9,7 +9,7 @@ int CellList::index(int cx, int cy, int cz)
     return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz;
 }
 
-int CellList::index(int cx, int cy, int cz, bool)
+int CellList::indexPeriodic(int cx, int cy, int cz)
 {
     return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ);
 }

@@ -51,5 +51,5 @@ public:
     inline float &operator[](int index) { return m_vec[index]; }
     inline float operator[](int index) const { return m_vec[index]; }
 private:
-    friend std::ostream& operator<<(std::ostream&stream, vec3 &vec);
+    friend std::ostream& operator<<(std::ostream&stream, vec3 vec);
 };

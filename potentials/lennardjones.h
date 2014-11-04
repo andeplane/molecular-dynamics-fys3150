@@ -7,6 +7,7 @@ private:
     float m_sigma;
     float m_epsilon;
     float m_rCutSquared;
+    int   m_timeSinceLastNeighborListUpdate;
 public:
     LennardJones(float sigma, float epsilon, float cutoffRadius);
     ~LennardJones() {}

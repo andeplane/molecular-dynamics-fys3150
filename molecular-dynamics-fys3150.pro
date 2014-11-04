@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     statisticssampler.cpp \
     integrators/eulercromer.cpp \
     unitconverter.cpp \
-    celllist.cpp
+    celllist.cpp \
+    neighborlist.cpp
 
 HEADERS += \
     atom.h \
@@ -33,5 +34,6 @@ HEADERS += \
     statisticssampler.h \
     integrators/eulercromer.h \
     unitconverter.h \
-    celllist.h
+    celllist.h \
+    neighborlist.h
 

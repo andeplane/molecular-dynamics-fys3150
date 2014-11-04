@@ -3,6 +3,7 @@
 #include "atom.h"
 #include "math/vec3.h"
 #include "celllist.h"
+#include "neighborlist.h"
 
 class Potential; class Integrator;
 using std::vector;
@@ -15,6 +16,7 @@ private:
     Potential *m_potential;
     Integrator *m_integrator;
     CellList m_cellList;
+    NeighborList m_neighborList;
     float m_currentTime;
     int m_steps;
     bool m_initialized;
@@ -42,5 +44,6 @@ public:
     void setSteps(int steps) { m_steps = steps; }
     float volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
     CellList &cellList() { return m_cellList; }
+    NeighborList &neighborList() { return m_neighborList; }
     void initialize(float cutoffRadius);
 };
