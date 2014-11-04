@@ -1,11 +1,12 @@
 #pragma once
 #include <math/vec3.h>
-using CompPhys::vec3;
 
 class Atom
 {
 private:
+    static int totalNumberOfAtoms;
     float m_mass;
+    int   m_index;
 public:
     vec3 position;
     vec3 velocity;
@@ -16,6 +17,6 @@ public:
     void resetForce();
     void resetVelocityMaxwellian(float temperature);
 
-    inline float mass() { return m_mass; }
-    inline void setMass(float mass) { m_mass = mass; }
+    float mass() { return m_mass; }
+    inline int index() { return m_index; }
 };

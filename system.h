@@ -6,7 +6,6 @@
 
 class Potential; class Integrator;
 using std::vector;
-using CompPhys::vec3;
 
 class System
 {
@@ -15,7 +14,7 @@ private:
     vector<Atom*> m_atoms;
     Potential *m_potential;
     Integrator *m_integrator;
-    CellList *m_cellList;
+    CellList m_cellList;
     float m_currentTime;
     int m_steps;
     bool m_initialized;
@@ -42,6 +41,6 @@ public:
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     float volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
-    CellList *cellList() { return m_cellList; }
-    void initialize();
+    CellList &cellList() { return m_cellList; }
+    void initialize(float cutoffRadius);
 };

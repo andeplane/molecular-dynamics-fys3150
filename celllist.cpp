@@ -1,6 +1,32 @@
 #include "celllist.h"
-#include "system.h"
 #include "atom.h"
+#include "system.h"
+#include <iostream>
+using namespace std;
+
+int CellList::index(int cx, int cy, int cz)
+{
+    return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz;
+}
+
+int CellList::index(int cx, int cy, int cz, bool)
+{
+    return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ);
+}
+
+int CellList::index(const vec3 &position)
+{
+    int cx = position[0]/m_system->systemSize()[0]*m_numberOfCellsX;
+    int cy = position[1]/m_system->systemSize()[1]*m_numberOfCellsY;
+    int cz = position[2]/m_system->systemSize()[2]*m_numberOfCellsZ;
+
+    return index(cx, cy, cz);
+}
+
+vector<vector<Atom *> > &CellList::cells()
+{
+    return m_cells;
+}
 
 CellList::CellList() :
     m_system(0),
@@ -13,9 +39,12 @@ CellList::CellList() :
 
 void CellList::setup(System *system, float rCut)
 {
+    m_system = system;
+
     m_numberOfCellsX = system->systemSize().x() / rCut;
     m_numberOfCellsY = system->systemSize().y() / rCut;
     m_numberOfCellsZ = system->systemSize().z() / rCut;
+
     m_cells.resize(m_numberOfCellsX*m_numberOfCellsY*m_numberOfCellsZ);
 }
 
@@ -31,6 +60,7 @@ void CellList::update()
     clear();
     for(int i=0; i<m_system->atoms().size(); i++) {
         Atom *atom = m_system->atoms()[i];
-        m_cells[index(atom->position)].push_back(atom);
+        int cellIndex = index(atom->position);
+        m_cells.at(cellIndex).push_back(atom);
     }
 }

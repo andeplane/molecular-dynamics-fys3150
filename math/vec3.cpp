@@ -1,7 +1,6 @@
 #include <cmath>
 #include <math/vec3.h>
 #include <math/random.h>
-namespace CompPhys {
 vec3::vec3()
 {
     setToZero();
@@ -22,10 +21,11 @@ vec3 vec3::operator+(vec3 rhs) {
                  m_vec[2] + rhs.z());
 }
 
-vec3 vec3::operator+=(vec3 rhs) {
-    return vec3( m_vec[0] + rhs.x(),
-                 m_vec[1] + rhs.y(),
-                 m_vec[2] + rhs.z());
+vec3 &vec3::operator+=(vec3 rhs) {
+    m_vec[0] += rhs.x();
+    m_vec[1] += rhs.y();
+    m_vec[2] += rhs.z();
+    return *this;
 }
 
 vec3 vec3::operator-(vec3 rhs) {
@@ -34,10 +34,11 @@ vec3 vec3::operator-(vec3 rhs) {
                  m_vec[2] - rhs.z());
 }
 
-vec3 vec3::operator-=(vec3 rhs) {
-    return vec3( m_vec[0] - rhs.x(),
-                 m_vec[1] - rhs.y(),
-                 m_vec[2] - rhs.z());
+vec3 &vec3::operator-=(vec3 rhs) {
+    m_vec[0] -= rhs.x();
+    m_vec[1] -= rhs.y();
+    m_vec[2] -= rhs.z();
+    return *this;
 }
 
 vec3 vec3::operator*(vec3 rhs) {
@@ -46,10 +47,11 @@ vec3 vec3::operator*(vec3 rhs) {
                  m_vec[2] * rhs.z());
 }
 
-vec3 vec3::operator*=(vec3 rhs) {
-    return vec3( m_vec[0] * rhs.x(),
-                 m_vec[1] * rhs.y(),
-                 m_vec[2] * rhs.z());
+vec3 &vec3::operator*=(vec3 rhs) {
+    m_vec[0] *= rhs.x();
+    m_vec[1] *= rhs.y();
+    m_vec[2] *= rhs.z();
+    return *this;
 }
 
 vec3 vec3::operator/(vec3 rhs) {
@@ -58,10 +60,11 @@ vec3 vec3::operator/(vec3 rhs) {
                  m_vec[2] / rhs.z());
 }
 
-vec3 vec3::operator/=(vec3 rhs) {
-    return vec3( m_vec[0] / rhs.x(),
-                 m_vec[1] / rhs.y(),
-                 m_vec[2] / rhs.z());
+vec3 &vec3::operator/=(vec3 rhs) {
+    m_vec[0] /= rhs.x();
+    m_vec[1] /= rhs.y();
+    m_vec[2] /= rhs.z();
+    return *this;
 }
 
 vec3 vec3::operator+(float scalar) {
@@ -70,10 +73,11 @@ vec3 vec3::operator+(float scalar) {
                 m_vec[2] + scalar);
 }
 
-vec3 vec3::operator+=(float scalar) {
-    return vec3(m_vec[0] + scalar,
-                m_vec[1] + scalar,
-                m_vec[2] + scalar);
+vec3 &vec3::operator+=(float scalar) {
+    m_vec[0] += scalar;
+    m_vec[1] += scalar;
+    m_vec[2] += scalar;
+    return *this;
 }
 
 vec3 vec3::operator-(float scalar) {
@@ -82,10 +86,11 @@ vec3 vec3::operator-(float scalar) {
                 m_vec[2] - scalar);
 }
 
-vec3 vec3::operator-=(float scalar) {
-    return vec3(m_vec[0] - scalar,
-                m_vec[1] - scalar,
-                m_vec[2] - scalar);
+vec3 &vec3::operator-=(float scalar) {
+    m_vec[0] -= scalar;
+    m_vec[1] -= scalar;
+    m_vec[2] -= scalar;
+    return *this;
 }
 
 vec3 vec3::operator*(float scalar) {
@@ -94,10 +99,11 @@ vec3 vec3::operator*(float scalar) {
                 m_vec[2] * scalar);
 }
 
-vec3 vec3::operator*=(float scalar) {
-    return vec3(m_vec[0] * scalar,
-                m_vec[1] * scalar,
-                m_vec[2] * scalar);
+vec3 &vec3::operator*=(float scalar) {
+    m_vec[0] *= scalar;
+    m_vec[1] *= scalar;
+    m_vec[2] *= scalar;
+    return *this;
 }
 
 vec3 vec3::operator/(float scalar) {
@@ -106,10 +112,11 @@ vec3 vec3::operator/(float scalar) {
             m_vec[2] / scalar);
 }
 
-vec3 vec3::operator/=(float scalar) {
-    return vec3(m_vec[0] / scalar,
-                m_vec[1] / scalar,
-            m_vec[2] / scalar);
+vec3 &vec3::operator/=(float scalar) {
+    m_vec[0] /= scalar;
+    m_vec[1] /= scalar;
+    m_vec[2] /= scalar;
+    return *this;
 }
 
 vec3 vec3::operator-()
@@ -172,5 +179,4 @@ void vec3::randomGaussian(float mean, float standardDeviation) {
 
 std::ostream& operator<<(std::ostream &stream, vec3 &vec) {
     return stream << "[" << vec.x() << ", " << vec.y() << ", " << vec.z() << "]";
-}
 }

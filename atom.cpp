@@ -1,11 +1,16 @@
 #include <cmath>
 #include <atom.h>
 #include <math/random.h>
+#include <iostream>
+using namespace std;
+
+int Atom::totalNumberOfAtoms = 0;
 
 Atom::Atom(float mass) :
-    m_mass(mass)
+    m_mass(mass),
+    m_index(Atom::totalNumberOfAtoms++)
 {
-    
+
 }
 
 Atom::~Atom()

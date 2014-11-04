@@ -4,7 +4,6 @@
 #include <math/vec3.h>
 
 using namespace std;
-using CompPhys::vec3;
 
 float UnitConverter::m0 = 0;
 float UnitConverter::q0 = 0;
@@ -134,12 +133,12 @@ vec3 UnitConverter::lengthFromAngstroms(vec3 position)
     return vec3(UnitConverter::lengthFromAngstroms(position.x()), UnitConverter::lengthFromAngstroms(position.y()), UnitConverter::lengthFromAngstroms(position.z()));
 }
 
-CompPhys::vec3 UnitConverter::velocityToSI(CompPhys::vec3 velocity)
+vec3 UnitConverter::velocityToSI(vec3 velocity)
 {
     return vec3(UnitConverter::velocityToSI(velocity.x()), UnitConverter::velocityToSI(velocity.y()), UnitConverter::velocityToSI(velocity.z()));
 }
 
-CompPhys::vec3 UnitConverter::velocityFromSI(CompPhys::vec3 velocity)
+vec3 UnitConverter::velocityFromSI(vec3 velocity)
 {
     return vec3(UnitConverter::velocityFromSI(velocity.x()), UnitConverter::velocityFromSI(velocity.y()), UnitConverter::velocityFromSI(velocity.z()));
 }

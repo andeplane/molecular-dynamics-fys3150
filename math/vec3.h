@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-namespace CompPhys {
+
 class vec3
 {
 private:
@@ -10,21 +10,21 @@ public:
     vec3(float x, float y, float z);
     bool operator==(vec3 rhs);
     vec3 operator+(vec3 rhs);
-    vec3 operator+=(vec3 rhs);
+    vec3 &operator+=(vec3 rhs);
     vec3 operator-(vec3 rhs);
-    vec3 operator-=(vec3 rhs);
+    vec3 &operator-=(vec3 rhs);
     vec3 operator*(vec3 rhs);
-    vec3 operator*=(vec3 rhs);
+    vec3 &operator*=(vec3 rhs);
     vec3 operator/(vec3 rhs);
-    vec3 operator/=(vec3 rhs);
+    vec3 &operator/=(vec3 rhs);
     vec3 operator+(float scalar);
-    vec3 operator+=(float scalar);
+    vec3 &operator+=(float scalar);
     vec3 operator-(float scalar);
-    vec3 operator-=(float scalar);
+    vec3 &operator-=(float scalar);
     vec3 operator*(float scalar);
-    vec3 operator*=(float scalar);
+    vec3 &operator*=(float scalar);
     vec3 operator/(float scalar);
-    vec3 operator/=(float scalar);
+    vec3 &operator/=(float scalar);
     vec3 operator-();
     void add(vec3 &rhs) {
         m_vec[0] += rhs.x();
@@ -53,4 +53,3 @@ public:
 private:
     friend std::ostream& operator<<(std::ostream&stream, vec3 &vec);
 };
-}

@@ -3,16 +3,16 @@
 #include "potentials/potential.h"
 #include "statisticssampler.h"
 #include "unitconverter.h"
+using namespace std;
 
 System::System() :
     m_potential(0),
     m_integrator(0),
-    m_cellList(0),
     m_currentTime(0),
     m_steps(0),
     m_initialized(false)
 {
-    m_cellList = new CellList();
+
 }
 
 System::~System()
@@ -23,7 +23,7 @@ System::~System()
 }
 
 void System::initialize(float cutoffRadius) {
-    m_cellList->setup(this, cutoffRadius);
+    m_cellList.setup(this, cutoffRadius);
 }
 
 void System::applyPeriodicBoundaryConditions() {
@@ -41,12 +41,12 @@ void System::removeMomentum() {
     // Initially, when the atoms are given random velocities, there is a non-zero net momentum. We don't want any drift in the system, so we need to remove it.
     StatisticsSampler sampler;
     vec3 momentum = sampler.sampleMomentum(this);
-    momentum = momentum / m_atoms.size();
+
+    momentum /= m_atoms.size();
     for(int i=0; i<m_atoms.size(); i++) {
         Atom *atom = m_atoms[i];
-        atom->velocity -= momentum;
+        atom->velocity -= momentum/atom->mass();
     }
-
 }
 
 void System::resetForcesOnAllAtoms() {
@@ -75,8 +75,10 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
             }
         }
     }
+
     float sideLength = numberOfUnitCellsEachDimension*latticeConstant;
     setSystemSize(vec3(sideLength, sideLength, sideLength));
+    cout << "Added " << m_atoms.size() << " atoms in an FCC lattice." << endl;
 }
 
 void System::calculateForces() {
