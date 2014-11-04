@@ -7,6 +7,7 @@
 using namespace std;
 LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
     m_sigma(sigma),
+    m_sigma6(pow(sigma, 6.0)),
     m_epsilon(epsilon),
     m_rCutSquared(cutoffRadius*cutoffRadius),
     m_timeSinceLastNeighborListUpdate(0)
@@ -109,26 +110,24 @@ void LennardJones::calculateForces(System *system)
         for(unsigned int j=0; j<neighbors.size(); j++) {
             Atom *atom2 = neighbors[j];
 
-            vec3 deltaRVector;
-            deltaRVector.subtract(atom1->position, atom2->position);
+            m_deltaRVector.subtract(atom1->position, atom2->position);
 
             // Minimum image convention
             for(int a=0; a<3; a++) {
-                if(deltaRVector[a] > 0.5*systemSize[a]) deltaRVector[a] -= systemSize[a];
-                else if(deltaRVector[a] < -0.5*systemSize[a]) deltaRVector[a] += systemSize[a];
+                if(m_deltaRVector[a] > 0.5*systemSize[a]) m_deltaRVector[a] -= systemSize[a];
+                else if(m_deltaRVector[a] < -0.5*systemSize[a]) m_deltaRVector[a] += systemSize[a];
             }
 
-            float dr2 = deltaRVector.lengthSquared();
+            float dr2 = m_deltaRVector.lengthSquared();
             // if(dr2 > m_rCutSquared) return;
 
             float oneOverDr2 = 1.0/dr2;
             float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
 
-            float sigmaSixth = pow(m_sigma, 6.0);
-            float force = -24*m_epsilon*sigmaSixth*oneOverDr6*(2*sigmaSixth*oneOverDr6 - 1)*oneOverDr2 * (dr2 < m_rCutSquared);
+            float force = -24*m_epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2 * (dr2 < m_rCutSquared);
 
-            atom1->force.addAndMultiply(deltaRVector, -force);
-            atom2->force.addAndMultiply(deltaRVector, force);
+            atom1->force.addAndMultiply(m_deltaRVector, -force);
+            atom2->force.addAndMultiply(m_deltaRVector, force);
 
 //            float oneOverDrCut2 = 1.0/m_rCutSquared;
 //            float oneOverDrCut6 = oneOverDrCut2*oneOverDrCut2*oneOverDrCut2;

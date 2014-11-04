@@ -57,14 +57,14 @@ void NeighborList::update()
                     Atom *atom2 = cell2[j];
                     if(atom1->index() <= atom2->index()) continue;
 
-                    vec3 deltaRVector = atom1->position - atom2->position;
+                    m_deltaRVector.subtract(atom1->position, atom2->position);
 
                     for(int a=0; a<3; a++) {
-                        if(deltaRVector[a] > 0.5*systemSize[a]) deltaRVector[a] -= systemSize[a];
-                        else if(deltaRVector[a] < -0.5*systemSize[a]) deltaRVector[a] += systemSize[a];
+                        if(m_deltaRVector[a] > 0.5*systemSize[a]) m_deltaRVector[a] -= systemSize[a];
+                        else if(m_deltaRVector[a] < -0.5*systemSize[a]) m_deltaRVector[a] += systemSize[a];
                     }
 
-                    float dr2 = deltaRVector.lengthSquared();
+                    float dr2 = m_deltaRVector.lengthSquared();
                     if(dr2 > m_rShellSquared) continue;
                     m_neighbors[atom1->index()].push_back(atom2);
                 }

@@ -12,6 +12,7 @@ private:
     CellList  m_cellList;
     System   *m_system;
     float     m_rShellSquared;
+    vec3      m_deltaRVector;
 
     void clear();
 public:
