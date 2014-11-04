@@ -1,5 +1,6 @@
 #include <integrators/velocityverlet.h>
 #include <system.h>
+#include <atom.h>
 
 VelocityVerlet::VelocityVerlet() :
     m_firstStep(true) // This will set the variable m_firstStep to false when the object is created
@@ -12,28 +13,29 @@ VelocityVerlet::~VelocityVerlet()
 
 }
 
-void VelocityVerlet::firstKick(System *system, double dt)
+void VelocityVerlet::halfKick(System *system, float dt)
 {
-    m_firstStep = false;
-    system->calculateForces();
-    halfKick(system, dt);
+    for(int i=0; i<system->atoms().size(); i++) {
+        Atom *atom = system->atoms()[i];
+        atom->velocity.addAndMultiply(atom->force, 0.5*dt/atom->mass());
+    }
 }
 
-void VelocityVerlet::halfKick(System *system, double dt)
+void VelocityVerlet::move(System *system, float dt)
 {
-
+    for(int i=0; i<system->atoms().size(); i++) {
+        Atom *atom = system->atoms()[i];
+        atom->position.addAndMultiply(atom->velocity, dt);
+    }
 }
 
-void VelocityVerlet::move(System *system, double dt)
-{
-
-}
-
-void VelocityVerlet::integrate(System *system, double dt)
+void VelocityVerlet::integrate(System *system, float dt)
 {
     if(m_firstStep) {
-        firstKick(system, dt);
-    } else halfKick(system, dt);
+        system->calculateForces();
+        m_firstStep = false;
+    }
+    halfKick(system, dt);
     move(system, dt);
     system->applyPeriodicBoundaryConditions();
     system->calculateForces();

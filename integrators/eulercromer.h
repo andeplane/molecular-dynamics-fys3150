@@ -7,5 +7,5 @@ class EulerCromer : public Integrator
 public:
     EulerCromer() {}
     ~EulerCromer() {}
-    virtual void integrate(System* system, double timestep);
+    virtual void integrate(System* system, float timestep);
 };
