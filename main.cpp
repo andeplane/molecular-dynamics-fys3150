@@ -23,7 +23,6 @@ int main()
     cout << "One unit of pressure is " << UnitConverter::pressureToSI(1.0) << " Pa" << endl;
 
     System system;
-    system.setSystemSize(UnitConverter::lengthFromAngstroms(vec3(10, 10, 10)));
     system.createFCCLattice(5, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(300));
     system.setPotential(new LennardJones(1.0, 1.0)); // You must insert correct parameters here
     system.setIntegrator(new EulerCromer());

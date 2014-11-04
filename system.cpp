@@ -7,10 +7,12 @@
 System::System() :
     m_potential(0),
     m_integrator(0),
+    m_cellList(0),
     m_currentTime(0),
-    m_steps(0)
+    m_steps(0),
+    m_initialized(false)
 {
-
+    m_cellList = new CellList();
 }
 
 System::~System()
@@ -18,6 +20,10 @@ System::~System()
     delete m_potential;
     delete m_integrator;
     m_atoms.clear();
+}
+
+void System::initialize(float cutoffRadius) {
+    m_cellList->setup(this, cutoffRadius);
 }
 
 void System::applyPeriodicBoundaryConditions() {
