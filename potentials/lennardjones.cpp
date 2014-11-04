@@ -1,6 +1,7 @@
 #include "potentials/lennardjones.h"
 #include "celllist.h"
 #include "neighborlist.h"
+#include "cpelapsedtimer.h"
 #include <cmath>
 #include <iostream>
 using namespace std;
@@ -52,8 +53,8 @@ void LennardJones::calculateForces(System *system)
     m_potentialEnergy = 0; // Remember to compute this in the loop
     CellList &cellList = system->cellList();
     cellList.update();
-    system->resetForcesOnAllAtoms();
 
+    CPElapsedTimer::calculateForces().start();
     for(int cx=0; cx<cellList.numberOfCellsX(); cx++) {
         for(int cy=0; cy<cellList.numberOfCellsY(); cy++) {
             for(int cz=0; cz<cellList.numberOfCellsZ(); cz++) {
@@ -68,10 +69,12 @@ void LennardJones::calculateForces(System *system)
 
                             for(int i=0; i<cell1.size(); i++) {
                                 Atom *atom1 = cell1[i];
+                                vec3 deltaRVector;
                                 for(int j=0; j<cell2.size(); j++) {
                                     Atom *atom2 = cell2[j];
                                     if(atom1->index() <= atom2->index()) continue; // Newton's 3rd law
-                                    calculateForcesBetweenAtoms(atom1,atom2, systemSize);
+
+                                    calculateForcesBetweenAtoms(atom1,atom2, deltaRVector, systemSize);
 
                                 }
                             }
@@ -81,6 +84,7 @@ void LennardJones::calculateForces(System *system)
             }
         }
     }
+    CPElapsedTimer::calculateForces().stop();
 }
 #else
 #ifdef NEIGHBORLISTS
@@ -95,6 +99,7 @@ void LennardJones::calculateForces(System *system)
         m_timeSinceLastNeighborListUpdate = 0;
     }
 
+    CPElapsedTimer::calculateForces().start();
     for(unsigned int i=0; i<system->atoms().size(); i++) {
         Atom *atom1 = system->atoms()[i];
         vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
@@ -104,6 +109,8 @@ void LennardJones::calculateForces(System *system)
             calculateForcesBetweenAtoms(atom1, atom2, deltaRVector, systemSize);
         }
     }
+
+    CPElapsedTimer::calculateForces().stop();
 }
 
 #else
@@ -112,6 +119,7 @@ void LennardJones::calculateForces(System *system)
     m_potentialEnergy = 0; // Remember to compute this in the loop
     vec3 systemSize = system->systemSize();
     int count = 0;
+    CPElapsedTimer::calculateForces().start();
     for(int i=0; i<system->atoms().size(); i++) {
         for(int j=i+1; j<system->atoms().size(); j++) {
             Atom *atom1 = system->atoms()[i];
@@ -120,6 +128,7 @@ void LennardJones::calculateForces(System *system)
             count++;
         }
     }
+    CPElapsedTimer::calculateForces().stop();
 }
 #endif
 #endif

@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-    int numTimeSteps = 1000;
+    int numTimeSteps = 20;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
@@ -26,7 +26,7 @@ int main()
 
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
     System system;
-    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(300));
+    system.createFCCLattice(80, UnitConverter::lengthFromAngstroms(5.26*1.0875335), UnitConverter::temperatureFromSI(300));
     system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);
@@ -39,10 +39,10 @@ int main()
 
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
         system.step(dt);
-        if( !(timestep % 100)) {
+        if( !(timestep % 2)) {
             // statisticsSampler->sample(&system);
-
-            cout << "Step " << timestep << " Epot = " << statisticsSampler->samplePotentialEnergy(&system) << "   Ekin = " << statisticsSampler->sampleKineticEnergy(&system) << "   Etot = " << statisticsSampler->totalEnergy() <<  endl;
+            // cout << "Step " << timestep << " Epot = " << statisticsSampler->samplePotentialEnergy(&system) << "   Ekin = " << statisticsSampler->sampleKineticEnergy(&system) << "   Etot = " << statisticsSampler->totalEnergy() <<  endl;
+            cout << "Step " << timestep << endl;
         }
         // movie->saveState(&system);
     }

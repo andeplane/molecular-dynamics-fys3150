@@ -26,7 +26,7 @@ System::~System()
 
 void System::initialize(float cutoffRadius) {
     m_cellList.setup(this, cutoffRadius);
-    m_neighborList.setup(this, cutoffRadius*1.2);
+    m_neighborList.setup(this, cutoffRadius*1.12);
     m_initialized = true;
 }
 
@@ -89,9 +89,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 
 void System::calculateForces() {
     resetForcesOnAllAtoms();
-    CPElapsedTimer::calculateForces().start();
     m_potential->calculateForces(this);
-    CPElapsedTimer::calculateForces().stop();
 }
 
 void System::step(float dt) {
