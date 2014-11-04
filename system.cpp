@@ -32,6 +32,7 @@ void System::initialize(float cutoffRadius) {
 
 void System::applyPeriodicBoundaryConditions() {
     CPElapsedTimer::periodicBoundaryConditions().start();
+    #pragma ivdep
     for(int i=0; i<m_atoms.size(); i++) {
         Atom *atom = m_atoms[i];
         for(int a=0; a<3; a++) {
@@ -56,6 +57,7 @@ void System::removeMomentum() {
 }
 
 void System::resetForcesOnAllAtoms() {
+    #pragma ivdep
     for(int i=0; i<m_atoms.size(); i++) {
         Atom *atom = m_atoms[i];
         atom->resetForce();

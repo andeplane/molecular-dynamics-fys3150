@@ -19,6 +19,7 @@ VelocityVerlet::~VelocityVerlet()
 void VelocityVerlet::halfKick(System *system, float dt)
 {
     CPElapsedTimer::halfKick().start();
+    #pragma ivdep
     for(int i=0; i<system->atoms().size(); i++) {
         Atom *atom = system->atoms()[i];
         atom->velocity.addAndMultiply(atom->force, 0.5*dt/atom->mass());
@@ -29,6 +30,7 @@ void VelocityVerlet::halfKick(System *system, float dt)
 void VelocityVerlet::move(System *system, float dt)
 {
     CPElapsedTimer::move().start();
+    #pragma ivdep
     for(int i=0; i<system->atoms().size(); i++) {
         Atom *atom = system->atoms()[i];
         atom->position.addAndMultiply(atom->velocity, dt);

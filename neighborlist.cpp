@@ -50,9 +50,9 @@ void NeighborList::update()
         for(int dz=-1; dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
             vector<Atom*> &cell2 = m_cellList.cells().at(cellIndex2);
-
             for(unsigned int i=0; i<cell1.size(); i++) {
                 Atom *atom1 = cell1[i];
+                #pragma ivdep
                 for(unsigned int j=0; j<cell2.size(); j++) {
                     Atom *atom2 = cell2[j];
                     if(atom1->index() <= atom2->index()) continue;

@@ -102,11 +102,41 @@ void LennardJones::calculateForces(System *system)
     CPElapsedTimer::calculateForces().start();
     for(unsigned int i=0; i<system->atoms().size(); i++) {
         Atom *atom1 = system->atoms()[i];
+
         vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
-        vec3 deltaRVector;
+        // vec3 deltaRVector;
+        #pragma ivdep
         for(unsigned int j=0; j<neighbors.size(); j++) {
             Atom *atom2 = neighbors[j];
-            calculateForcesBetweenAtoms(atom1, atom2, deltaRVector, systemSize);
+
+            vec3 deltaRVector;
+            deltaRVector.subtract(atom1->position, atom2->position);
+
+            // Minimum image convention
+            for(int a=0; a<3; a++) {
+                if(deltaRVector[a] > 0.5*systemSize[a]) deltaRVector[a] -= systemSize[a];
+                else if(deltaRVector[a] < -0.5*systemSize[a]) deltaRVector[a] += systemSize[a];
+            }
+
+            float dr2 = deltaRVector.lengthSquared();
+            // if(dr2 > m_rCutSquared) return;
+
+            float oneOverDr2 = 1.0/dr2;
+            float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
+
+            float sigmaSixth = pow(m_sigma, 6.0);
+            float force = -24*m_epsilon*sigmaSixth*oneOverDr6*(2*sigmaSixth*oneOverDr6 - 1)*oneOverDr2 * (dr2 < m_rCutSquared);
+
+            atom1->force.addAndMultiply(deltaRVector, -force);
+            atom2->force.addAndMultiply(deltaRVector, force);
+
+//            float oneOverDrCut2 = 1.0/m_rCutSquared;
+//            float oneOverDrCut6 = oneOverDrCut2*oneOverDrCut2*oneOverDrCut2;
+
+//            float potentialEnergyCutoff = 4*m_epsilon*sigmaSixth*oneOverDrCut6*(sigmaSixth*oneOverDrCut6 - 1);
+//            float potentialEnergy = 4*m_epsilon*sigmaSixth*oneOverDr6*(sigmaSixth*oneOverDr6 - 1) - potentialEnergyCutoff;
+//            addPotentialEnergy(potentialEnergy);
+            // calculateForcesBetweenAtoms(atom1, atom2, deltaRVector, systemSize);
         }
     }
 
