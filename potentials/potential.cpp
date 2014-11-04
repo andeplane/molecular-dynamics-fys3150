@@ -18,5 +18,5 @@ void Potential::setPotentialEnergy(float potentialEnergy)
 
 void Potential::addPotentialEnergy(float potentialEnergy)
 {
-    m_potentialEnergy = +potentialEnergy;
+    m_potentialEnergy += potentialEnergy;
 }

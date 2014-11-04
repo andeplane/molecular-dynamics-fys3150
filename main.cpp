@@ -46,7 +46,7 @@ void testVec3() {
 int main()
 {
 
-    double dt = UnitConverter::timeFromSI(1e-15); // You should try different values for dt as well.
+    double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
     cout << "One unit of velocity is " << UnitConverter::velocityToSI(1.0) << " meters/second" << endl;
@@ -57,7 +57,7 @@ int main()
 
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
     System system;
-    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(600));
+    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(300));
     system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);

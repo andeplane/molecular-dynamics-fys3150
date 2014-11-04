@@ -13,8 +13,8 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 
 }
 
-#define CELLLISTS
-// #define NEIGHBORLISTS
+// #define CELLLISTS
+#define NEIGHBORLISTS
 
 inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, const vec3 &systemSize) {
     vec3 deltaRVector = atom1->position - atom2->position;
@@ -37,7 +37,11 @@ inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, 
     atom1->force.addAndMultiply(deltaRVector, -force);
     atom2->force.addAndMultiply(deltaRVector, force);
 
-    float potentialEnergy = 4*m_epsilon*sigmaSixth*oneOverDr6*(sigmaSixth*oneOverDr6 - 1);
+    float oneOverDrCut2 = 1.0/m_rCutSquared;
+    float oneOverDrCut6 = oneOverDrCut2*oneOverDrCut2*oneOverDrCut2;
+
+    float potentialEnergyCutoff = 4*m_epsilon*sigmaSixth*oneOverDrCut6*(sigmaSixth*oneOverDrCut6 - 1);
+    float potentialEnergy = 4*m_epsilon*sigmaSixth*oneOverDr6*(sigmaSixth*oneOverDr6 - 1) - potentialEnergyCutoff;
     addPotentialEnergy(potentialEnergy);
 }
 
@@ -85,16 +89,16 @@ void LennardJones::calculateForces(System *system)
 {
     m_potentialEnergy = 0; // Remember to compute this in the loop
     vec3 systemSize = system->systemSize();
-    int count = 0;
-    if(m_timeSinceLastNeighborListUpdate++ > 20) {
+
+    if(m_timeSinceLastNeighborListUpdate++ > 10) {
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 0;
     }
 
-    for(int i=0; i<system->atoms().size(); i++) {
+    for(unsigned int i=0; i<system->atoms().size(); i++) {
         Atom *atom1 = system->atoms()[i];
         vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
-        for(int j=0; j<neighbors.size(); j++) {
+        for(unsigned int j=0; j<neighbors.size(); j++) {
             Atom *atom2 = neighbors[j];
             calculateForcesBetweenAtoms(atom1, atom2, systemSize);
         }
