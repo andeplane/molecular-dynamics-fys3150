@@ -11,6 +11,8 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 
 }
 
+#define CELLLISTS
+
 inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, const vec3 &systemSize) {
     vec3 deltaRVector = atom1->position - atom2->position;
 
@@ -29,8 +31,8 @@ inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, 
     float sigmaSixth = pow(m_sigma, 6.0);
     float force = -24*m_epsilon*sigmaSixth*oneOverDr6*(2*sigmaSixth*oneOverDr6 - 1)*oneOverDr2;
 
-    atom1->force -= deltaRVector*force;
-    atom2->force += deltaRVector*force;
+    atom1->force.addAndMultiply(deltaRVector, -force);
+    atom2->force.addAndMultiply(deltaRVector, force);
 }
 #ifdef CELLLISTS
 void LennardJones::calculateForces(System *system)
