@@ -19,7 +19,6 @@ void VelocityVerlet::halfKick(System *system, float dt)
 {
     for(int i=0; i<system->atoms().size(); i++) {
         Atom *atom = system->atoms()[i];
-        // atom->velocity += atom->force*(0.5*dt/atom->mass());
         atom->velocity.addAndMultiply(atom->force, 0.5*dt/atom->mass());
     }
 }
@@ -28,8 +27,6 @@ void VelocityVerlet::move(System *system, float dt)
 {
     for(int i=0; i<system->atoms().size(); i++) {
         Atom *atom = system->atoms()[i];
-        // atom->position += atom->velocity*dt;
-
         atom->position.addAndMultiply(atom->velocity, dt);
     }
 }
