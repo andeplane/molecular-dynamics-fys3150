@@ -15,11 +15,15 @@ private:
     vector<Atom*> m_atoms;
     Potential *m_potential;
     Integrator *m_integrator;
+    vector<Atom*> m_ghostAtoms;
+    int m_ghostAtomsInUse;
+
     CellList m_cellList;
     NeighborList m_neighborList;
     float m_currentTime;
     int m_steps;
     bool m_initialized;
+    void createGhostAtoms();
 public:
     System();
     ~System();
@@ -46,4 +50,5 @@ public:
     CellList &cellList() { return m_cellList; }
     NeighborList &neighborList() { return m_neighborList; }
     void initialize(float cutoffRadius);
+    void copyAtomToGhostAtom(Atom *atom);
 };

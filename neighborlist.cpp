@@ -43,13 +43,13 @@ void NeighborList::update()
     for(int cy=0; cy<m_cellList.numberOfCellsY(); cy++) {
     for(int cz=0; cz<m_cellList.numberOfCellsZ(); cz++) {
         int cellIndex1 = m_cellList.index(cx, cy, cz);
-        vector<Atom*> &cell1 = m_cellList.cells().at(cellIndex1);
+        vector<Atom*> &cell1 = m_cellList.cells()[cellIndex1];
 
         for(int dx=-1; dx<=1; dx++) {
         for(int dy=-1; dy<=1; dy++) {
         for(int dz=-1; dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
-            vector<Atom*> &cell2 = m_cellList.cells().at(cellIndex2);
+            vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
             for(unsigned int i=0; i<cell1.size(); i++) {
                 Atom *atom1 = cell1[i];
                 #pragma ivdep

@@ -12,7 +12,8 @@ System::System() :
     m_integrator(0),
     m_currentTime(0),
     m_steps(0),
-    m_initialized(false)
+    m_initialized(false),
+    m_ghostAtomsInUse(0)
 {
 
 }
@@ -87,6 +88,18 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float sideLength = numberOfUnitCellsEachDimension*latticeConstant;
     setSystemSize(vec3(sideLength, sideLength, sideLength));
     cout << "Added " << m_atoms.size() << " atoms in an FCC lattice." << endl;
+}
+
+void System::copyAtomToGhostAtom(Atom *atom) {
+
+}
+
+void System::createGhostAtoms() {
+    float fraction = 0.02;
+    for(int i=0; i<m_atoms.size()*fraction; i++) {
+        Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
+        m_ghostAtoms.push_back(atom);
+    }
 }
 
 void System::calculateForces() {

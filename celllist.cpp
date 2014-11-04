@@ -8,6 +8,7 @@ using namespace std;
 
 int CellList::index(int cx, int cy, int cz)
 {
+    //return (cx+1)*m_numberOfCellsY*m_numberOfCellsZ + (cy+1)*m_numberOfCellsZ + (cz+1);
     return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz;
 }
 
@@ -43,6 +44,10 @@ void CellList::setup(System *system, float rCut)
 {
     m_system = system;
 
+//    m_numberOfCellsX = system->systemSize().x() / rCut + 2;
+//    m_numberOfCellsY = system->systemSize().y() / rCut + 2;
+//    m_numberOfCellsZ = system->systemSize().z() / rCut + 2;
+
     m_numberOfCellsX = system->systemSize().x() / rCut;
     m_numberOfCellsY = system->systemSize().y() / rCut;
     m_numberOfCellsZ = system->systemSize().z() / rCut;
@@ -64,7 +69,8 @@ void CellList::update()
     for(unsigned int i=0; i<m_system->atoms().size(); i++) {
         Atom *atom = m_system->atoms()[i];
         int cellIndex = index(atom->position);
-        m_cells.at(cellIndex).push_back(atom);
+        m_cells[cellIndex].push_back(atom);
     }
+
     CPElapsedTimer::updateCellList().stop();
 }
