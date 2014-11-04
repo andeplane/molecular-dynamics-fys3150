@@ -13,7 +13,7 @@ System::System() :
     m_currentTime(0),
     m_steps(0),
     m_initialized(false),
-    m_ghostAtomsInUse(0)
+    m_numGhostAtomsInUse(0)
 {
 
 }
@@ -88,14 +88,34 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float sideLength = numberOfUnitCellsEachDimension*latticeConstant;
     setSystemSize(vec3(sideLength, sideLength, sideLength));
     cout << "Added " << m_atoms.size() << " atoms in an FCC lattice." << endl;
+    createGhostAtoms();
 }
 
-void System::copyAtomToGhostAtom(Atom *atom) {
+Atom *System::copyAtomToGhostAtom(CellList *cellList, Atom *atom) {
+    cout << m_numGhostAtomsInUse << " and size is " << m_ghostAtoms.size() << endl;
 
+    Atom *ghostAtom = m_ghostAtoms.at(m_numGhostAtomsInUse++);
+    ghostAtom->position = atom->position;
+
+    int cx, cy, cz;
+    cellList->index3D(atom->position, cx, cy, cz);
+    if(cx==1) ghostAtom->position.addX(m_systemSize[0]);
+    else if(cx==cellList->numberOfCellsX()-2) ghostAtom->position.addX(-m_systemSize[0]);
+
+    if(cy==1) ghostAtom->position.addY(m_systemSize[1]);
+    else if(cy==cellList->numberOfCellsY()-2) ghostAtom->position.addY(-m_systemSize[1]);
+
+    if(cz==1) ghostAtom->position.addZ(m_systemSize[2]);
+    else if(cz==cellList->numberOfCellsZ()-2) ghostAtom->position.addZ(-m_systemSize[2]);
+    return ghostAtom;
+}
+
+void System::resetGhostAtoms() {
+    m_numGhostAtomsInUse = 0;
 }
 
 void System::createGhostAtoms() {
-    float fraction = 0.02;
+    float fraction = 100.0;
     for(int i=0; i<m_atoms.size()*fraction; i++) {
         Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
         m_ghostAtoms.push_back(atom);

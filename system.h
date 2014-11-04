@@ -16,7 +16,7 @@ private:
     Potential *m_potential;
     Integrator *m_integrator;
     vector<Atom*> m_ghostAtoms;
-    int m_ghostAtomsInUse;
+    int m_numGhostAtomsInUse;
 
     CellList m_cellList;
     NeighborList m_neighborList;
@@ -50,5 +50,6 @@ public:
     CellList &cellList() { return m_cellList; }
     NeighborList &neighborList() { return m_neighborList; }
     void initialize(float cutoffRadius);
-    void copyAtomToGhostAtom(Atom *atom);
+    Atom *copyAtomToGhostAtom(CellList *cellList, Atom *atom);
+    void resetGhostAtoms();
 };

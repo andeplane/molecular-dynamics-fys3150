@@ -25,6 +25,7 @@ public:
     int index(int cx, int cy, int cz);
     int indexPeriodic(int cx, int cy, int cz);
     int index(const vec3 &position);
+    void index3D(const vec3 &position, int &cx, int &cy, int &cz);
     vector<Atom*> &operator[](int index) { return m_cells[index]; }
     vector<vector<Atom*> > &cells();
 };

@@ -26,7 +26,7 @@ int main()
 
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
     System system;
-    system.createFCCLattice(80, UnitConverter::lengthFromAngstroms(5.26*1.0875335), UnitConverter::temperatureFromSI(300));
+    system.createFCCLattice(10, UnitConverter::lengthFromAngstroms(5.26*1.0875335), UnitConverter::temperatureFromSI(300));
     system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);

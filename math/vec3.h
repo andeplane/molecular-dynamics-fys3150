@@ -47,6 +47,9 @@ public:
     inline float x() const { return m_vec[0]; }
     inline float y() const { return m_vec[1]; }
     inline float z() const { return m_vec[2]; }
+    inline void addX(float val) { m_vec[0] += val; }
+    inline void addY(float val) { m_vec[1] += val; }
+    inline void addZ(float val) { m_vec[2] += val; }
     inline float &operator[](int index) { return m_vec[index]; }
     inline float operator[](int index) const { return m_vec[index]; }
     inline float lengthSquared() { return m_vec[0]*m_vec[0] + m_vec[1]*m_vec[1] + m_vec[2]*m_vec[2]; }
