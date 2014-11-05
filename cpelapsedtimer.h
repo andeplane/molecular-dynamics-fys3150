@@ -42,6 +42,7 @@ public:
     CPTimingObject m_periodicBoundaryConditions;
     CPTimingObject m_sampling;
     CPTimingObject m_disk;
+    CPTimingObject m_timeEvolution;
 
     static CPTimingObject &calculateForces() { return CPElapsedTimer::getInstance().m_calculateForces; }
     static CPTimingObject &updateCellList() { return CPElapsedTimer::getInstance().m_updateCellList; }
@@ -51,6 +52,8 @@ public:
     static CPTimingObject &periodicBoundaryConditions() { return CPElapsedTimer::getInstance().m_periodicBoundaryConditions; }
     static CPTimingObject &sampling() { return CPElapsedTimer::getInstance().m_sampling; }
     static CPTimingObject &disk() { return CPElapsedTimer::getInstance().m_disk; }
+    static CPTimingObject &timeEvolution() { return CPElapsedTimer::getInstance().m_timeEvolution; }
+
     static double totalTime() { return CPElapsedTimer::getInstance().m_timer.elapsed() / double(1000); }
 };
 

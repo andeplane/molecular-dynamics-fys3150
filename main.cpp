@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-    int numTimeSteps = 20;
+    int numTimeSteps = 2000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
@@ -25,8 +25,9 @@ int main()
     cout << "One unit of pressure is " << UnitConverter::pressureToSI(1.0) << " Pa" << endl;
 
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
+
     System system;
-    system.createFCCLattice(80, UnitConverter::lengthFromAngstroms(5.26*1.0875335), UnitConverter::temperatureFromSI(300));
+    system.createFCCLattice(20, UnitConverter::lengthFromAngstroms(5.26*1.0875335), UnitConverter::temperatureFromSI(50));
     system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);
@@ -37,15 +38,19 @@ int main()
     IO *movie = new IO(); // To write the state to file
     movie->open("movie.xyz");
 
+
+    CPElapsedTimer::timeEvolution().start();
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
         system.step(dt);
-        if( !(timestep % 2)) {
-            // statisticsSampler->sample(&system);
-            // cout << "Step " << timestep << " Epot = " << statisticsSampler->samplePotentialEnergy(&system) << "   Ekin = " << statisticsSampler->sampleKineticEnergy(&system) << "   Etot = " << statisticsSampler->totalEnergy() <<  endl;
-            cout << "Step " << timestep << endl;
+        if( !(timestep % 100)) {
+            CPElapsedTimer::sampling().start();
+            cout << "Step " << timestep << " Epot/n = " << statisticsSampler->samplePotentialEnergy(&system)/system.atoms().size() << "   Ekin/n = " << statisticsSampler->sampleKineticEnergy(&system)/system.atoms().size() << "   Etot/n = " << statisticsSampler->totalEnergy()/system.atoms().size() <<  endl;
+            CPElapsedTimer::sampling().stop();
         }
         // movie->saveState(&system);
     }
+    CPElapsedTimer::timeEvolution().stop();
+
 
     float calculateForcesFraction = CPElapsedTimer::calculateForces().elapsedTime() / CPElapsedTimer::totalTime();
     float halfKickFraction = CPElapsedTimer::halfKick().elapsedTime() / CPElapsedTimer::totalTime();
@@ -54,9 +59,11 @@ int main()
     float updateCellListFraction = CPElapsedTimer::updateCellList().elapsedTime() / CPElapsedTimer::totalTime();
     float periodicBoundaryConditionsFraction = CPElapsedTimer::periodicBoundaryConditions().elapsedTime() / CPElapsedTimer::totalTime();
     float samplingFraction = CPElapsedTimer::sampling().elapsedTime() / CPElapsedTimer::totalTime();
+    float timeEvolutionFraction = CPElapsedTimer::timeEvolution().elapsedTime() / CPElapsedTimer::totalTime();
 
     cout << endl << "Program finished after " << CPElapsedTimer::totalTime() << " seconds. Time analysis:" << endl;
     cout << fixed
+         << "      Time evolution    : " << CPElapsedTimer::timeEvolution().elapsedTime() << " s ( " << 100*timeEvolutionFraction << "%)" <<  endl
          << "      Force calculation : " << CPElapsedTimer::calculateForces().elapsedTime() << " s ( " << 100*calculateForcesFraction << "%)" <<  endl
          << "      Moving            : " << CPElapsedTimer::move().elapsedTime() << " s ( " << 100*moveFraction << "%)" <<  endl
          << "      Half kick         : " << CPElapsedTimer::halfKick().elapsedTime() << " s ( " << 100*halfKickFraction << "%)" <<  endl

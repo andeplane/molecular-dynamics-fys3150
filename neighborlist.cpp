@@ -27,7 +27,6 @@ void NeighborList::setup(System *system, float rShell)
     m_rShellSquared = rShell*rShell;
     m_cellList.setup(system, rShell);
     m_neighbors.resize(system->atoms().size());
-    update();
 }
 
 void NeighborList::update()

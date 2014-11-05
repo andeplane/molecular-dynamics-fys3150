@@ -27,7 +27,7 @@ System::~System()
 
 void System::initialize(float cutoffRadius) {
     m_cellList.setup(this, cutoffRadius);
-    m_neighborList.setup(this, cutoffRadius*1.12);
+    m_neighborList.setup(this, cutoffRadius*1.2);
     m_initialized = true;
 }
 

@@ -8,8 +8,8 @@ private:
     float m_sigma6;
     float m_epsilon;
     float m_rCutSquared;
+    float m_potentialEnergyAtRcut;
     int   m_timeSinceLastNeighborListUpdate;
-    vec3  m_deltaRVector;
 public:
     LennardJones(float sigma, float epsilon, float cutoffRadius);
     ~LennardJones() {}
