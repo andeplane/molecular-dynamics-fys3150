@@ -1,6 +1,7 @@
 #include "statisticssampler.h"
 #include "potentials/potential.h"
 #include "cpelapsedtimer.h"
+#include "potentials/lennardjones.h"
 
 StatisticsSampler::StatisticsSampler() :
     m_kineticEnergy(0),
@@ -24,6 +25,7 @@ void StatisticsSampler::sample(System *system)
     samplePotentialEnergy(system);
     sampleTemperature(system);
     sampleDensity(system);
+    samplePressure(system);
     CPElapsedTimer::sampling().stop();
 }
 
@@ -54,6 +56,19 @@ float StatisticsSampler::sampleDensity(System *system)
 {
     m_density = system->atoms().size() / system->volume();
     return m_density;
+}
+
+float StatisticsSampler::samplePressure(System *system)
+{
+    float idealGasPressure = m_density*m_temperature;
+    float virialPressure = ((LennardJones*)system->potential())->pressureVirial();
+//    float virialPressure = 0;
+//    for(int i=0; i<system->atoms().size(); i++) {
+//        Atom *atom = system->atoms()[i];
+//        virialPressure += atom->position.dot(atom->force);
+//    }
+    virialPressure /= 3*system->volume();
+    m_pressure = idealGasPressure + virialPressure;
 }
 
 float StatisticsSampler::totalEnergy()

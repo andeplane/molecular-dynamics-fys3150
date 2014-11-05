@@ -42,8 +42,7 @@ inline void LennardJones::calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, 
     atom1->force.addAndMultiply(deltaRVector, -force);
     atom2->force.addAndMultiply(deltaRVector, force);
 
-    float potentialEnergy = (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
-    addPotentialEnergy(potentialEnergy);
+    m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
 }
 
 
@@ -91,7 +90,8 @@ void LennardJones::calculateForces(System *system)
 
 void LennardJones::calculateForces(System *system)
 {
-    m_potentialEnergy = 0; // Remember to compute this in the loop
+    m_potentialEnergy = 0;
+    m_pressureVirial = 0;
     vec3 systemSize = system->systemSize();
 
     if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
@@ -125,8 +125,8 @@ void LennardJones::calculateForces(System *system)
             atom1->force.addAndMultiply(deltaRVector, -force);
             atom2->force.addAndMultiply(deltaRVector, force);
 
-            float potentialEnergy = (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
-            addPotentialEnergy(potentialEnergy);
+            m_pressureVirial += force*sqrt(dr2)*dr2;
+            m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
     }
 

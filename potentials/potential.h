@@ -6,12 +6,13 @@
 class Potential
 {
 protected:
-    double m_potentialEnergy;
+    float m_potentialEnergy;
+    float m_pressureVirial;
 public:
     Potential();
     virtual ~Potential() {}
     virtual void calculateForces(System *system) = 0;
     float potentialEnergy();
-    void setPotentialEnergy(float potentialEnergy);
-    void addPotentialEnergy(float potentialEnergy);
+    float pressureVirial();
+
 };

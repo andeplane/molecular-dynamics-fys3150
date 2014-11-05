@@ -1,9 +1,9 @@
 #include <iostream>
-#include <math/random.h>
+#include "math/random.h"
 
-#include <potentials/lennardjones.h>
-#include <integrators/velocityverlet.h>
-#include <system.h>
+#include "potentials/lennardjones.h"
+#include "integrators/velocityverlet.h"
+#include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
 #include "io.h"
@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-    int numTimeSteps = 2000;
+    int numTimeSteps = 1000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
@@ -33,7 +33,7 @@ int main()
     system.initialize(rCut);
     system.removeMomentum();
 
-    StatisticsSampler *statisticsSampler = new StatisticsSampler(); //
+    StatisticsSampler *statisticsSampler = new StatisticsSampler();
 
     IO *movie = new IO(); // To write the state to file
     movie->open("movie.xyz");
@@ -44,7 +44,12 @@ int main()
         system.step(dt);
         if( !(timestep % 100)) {
             CPElapsedTimer::sampling().start();
-            cout << "Step " << timestep << " Epot/n = " << statisticsSampler->samplePotentialEnergy(&system)/system.atoms().size() << "   Ekin/n = " << statisticsSampler->sampleKineticEnergy(&system)/system.atoms().size() << "   Etot/n = " << statisticsSampler->totalEnergy()/system.atoms().size() <<  endl;
+            statisticsSampler->sample(&system);
+            cout << "Step " << timestep << " Epot/n = " << statisticsSampler->potentialEnergy()/system.atoms().size() << "   Ekin/n = " << statisticsSampler->kineticEnergy()/system.atoms().size() << "   Etot/n = " << statisticsSampler->totalEnergy()/system.atoms().size() <<  endl;
+            float idealGasRHS = statisticsSampler->temperature()*system.atoms().size();
+            float idealGasLHS = statisticsSampler->pressure() * system.volume();
+            float ratio = idealGasLHS/idealGasRHS;
+            cout << "PV/NkT=" << ratio << endl;
             CPElapsedTimer::sampling().stop();
         }
         // movie->saveState(&system);

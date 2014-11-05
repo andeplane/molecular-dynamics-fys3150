@@ -11,12 +11,8 @@ float Potential::potentialEnergy()
     return m_potentialEnergy;
 }
 
-void Potential::setPotentialEnergy(float potentialEnergy)
+float Potential::pressureVirial()
 {
-    m_potentialEnergy = potentialEnergy;
+    return m_pressureVirial;
 }
 
-void Potential::addPotentialEnergy(float potentialEnergy)
-{
-    m_potentialEnergy += potentialEnergy;
-}
