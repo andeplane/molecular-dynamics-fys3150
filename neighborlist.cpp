@@ -42,19 +42,19 @@ void NeighborList::update()
     for(int cy=0; cy<m_cellList.numberOfCellsY(); cy++) {
     for(int cz=0; cz<m_cellList.numberOfCellsZ(); cz++) {
         int cellIndex1 = m_cellList.index(cx, cy, cz);
-        vector<Atom*> &cell1 = m_cellList.cells()[cellIndex1];
+        vector<int> &cell1 = m_cellList.cells()[cellIndex1];
 
         for(int dx=-1; dx<=1; dx++) {
         for(int dy=-1; dy<=1; dy++) {
         for(int dz=-1; dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
-            vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
+            vector<int> &cell2 = m_cellList.cells()[cellIndex2];
             for(unsigned int i=0; i<cell1.size(); i++) {
-                Atom *atom1 = cell1[i];
-                #pragma ivdep
+                Atom *atom1 = m_system->atoms()[cell1[i]];
                 for(unsigned int j=0; j<cell2.size(); j++) {
-                    Atom *atom2 = cell2[j];
-                    if(atom1->index() <= atom2->index()) continue;
+                    Atom *atom2 = m_system->atoms()[cell2[j]];
+                    // if(atom1->index() <= atom2->index()) continue;
+                    if(atom1->index() == atom2->index()) continue;
 
                     m_deltaRVector.subtract(atom1->position, atom2->position);
 
@@ -65,7 +65,7 @@ void NeighborList::update()
 
                     float dr2 = m_deltaRVector.lengthSquared();
                     if(dr2 > m_rShellSquared) continue;
-                    m_neighbors[atom1->index()].push_back(atom2);
+                    m_neighbors[atom1->index()].push_back(cell2[j]);
                 }
             }
         }}}

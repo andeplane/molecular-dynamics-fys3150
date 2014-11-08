@@ -34,31 +34,48 @@ void LennardJones::calculateForces(System *system)
     for(unsigned int i=0; i<system->atoms().size(); i++) {
         Atom *atom1 = system->atoms()[i];
 
-        vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
+        vector<int> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
 
-        for(unsigned int j=0; j<neighbors.size(); j++) {
-            Atom *atom2 = neighbors[j];
+        int size = neighbors.size();
+        // #pragma ivdep
+        for(unsigned int k=0; k<size; k++) {
+            int j = neighbors[k];
+            // Atom *atom2 = neighbors[j];
 
-            vec3 deltaRVector = atom1->position - atom2->position;
+            // vec3 deltaRVector = atom1->position - atom2->position;
+            float dx = system->m_positionsAndForces[6*i+0] - system->m_positionsAndForces[6*j+0];
+            float dy = system->m_positionsAndForces[6*i+1] - system->m_positionsAndForces[6*j+1];
+            float dz = system->m_positionsAndForces[6*i+2] - system->m_positionsAndForces[6*j+2];
+
+            dx += systemSize[0]*((dx < -0.5*systemSize[0]) - (dx > 0.5*systemSize[0]));
+            dy += systemSize[1]*((dy < -0.5*systemSize[1]) - (dy > 0.5*systemSize[1]));
+            dz += systemSize[2]*((dz < -0.5*systemSize[2]) - (dz > 0.5*systemSize[2]));
 
             // Minimum image convention
-            deltaRVector = atom1->position - atom2->position;
-            deltaRVector[0] +=systemSize[0]*((deltaRVector[0] < -0.5*systemSize[0]) - (deltaRVector[0] > 0.5*systemSize[0]));
-            deltaRVector[1] +=systemSize[1]*((deltaRVector[1] < -0.5*systemSize[1]) - (deltaRVector[1] > 0.5*systemSize[1]));
-            deltaRVector[2] +=systemSize[2]*((deltaRVector[2] < -0.5*systemSize[2]) - (deltaRVector[2] > 0.5*systemSize[2]));
+            // deltaRVector = atom1->position - atom2->position;
+//            deltaRVector[0] +=systemSize[0]*((deltaRVector[0] < -0.5*systemSize[0]) - (deltaRVector[0] > 0.5*systemSize[0]));
+//            deltaRVector[1] +=systemSize[1]*((deltaRVector[1] < -0.5*systemSize[1]) - (deltaRVector[1] > 0.5*systemSize[1]));
+//            deltaRVector[2] +=systemSize[2]*((deltaRVector[2] < -0.5*systemSize[2]) - (deltaRVector[2] > 0.5*systemSize[2]));
 
-            float dr2 = deltaRVector.lengthSquared();
-            // float dr2 = dr[0]*dr[0] + dr[1]*dr[1] + dr[2]*dr[2];
+            // float dr2 = deltaRVector.lengthSquared();
+            float dr2 = dx*dx + dy*dy + dz*dz;
             float oneOverDr2 = 1.0/dr2;
             float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
 
             float force = -24*m_epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2 * (dr2 < m_rCutSquared);
 
-            atom1->force.addAndMultiply(deltaRVector, -force);
-            atom2->force.addAndMultiply(deltaRVector, force);
+            // atom1->force.addAndMultiply(deltaRVector, -force);
+            // atom2->force.addAndMultiply(deltaRVector, force);
+//            system->m_positionsAndForces[6*i+3] -= force*dx;
+//            system->m_positionsAndForces[6*i+4] -= force*dy;
+//            system->m_positionsAndForces[6*i+5] -= force*dz;
 
-            m_pressureVirial += force*sqrt(dr2)*dr2;
-            m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+            system->m_positionsAndForces[6*j+3] += force*dx;
+            system->m_positionsAndForces[6*j+4] += force*dy;
+            system->m_positionsAndForces[6*j+5] += force*dz;
+
+            // m_pressureVirial += force*sqrt(dr2)*dr2;
+            // m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
     }
 

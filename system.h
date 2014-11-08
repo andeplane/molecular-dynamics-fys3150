@@ -25,6 +25,8 @@ private:
     bool m_initialized;
     void createGhostAtoms();
 public:
+    vector<float> m_positionsAndForces;
+    vector<float> m_forces;
     System();
     ~System();
     void resetForcesOnAllAtoms();

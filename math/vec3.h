@@ -4,7 +4,8 @@
 class vec3
 {
 private:
-    float m_vec[3];
+    // float m_vec[3];
+    float *m_vec;
 public:
     vec3(); // Create a zero vector
     vec3(float x, float y, float z);
@@ -51,6 +52,8 @@ public:
     inline float operator[](int index) const { return m_vec[index]; }
     inline float lengthSquared() { return m_vec[0]*m_vec[0] + m_vec[1]*m_vec[1] + m_vec[2]*m_vec[2]; }
     inline void subtract(const vec3 &v1, const vec3 &v2) { m_vec[0] = v1[0] - v2[0]; m_vec[1] = v1[1] - v2[1]; m_vec[2] = v1[2] - v2[2]; }
+    vec3(float *ptr);
+    void setPointer(float *ptr) { m_vec = ptr; }
 private:
     friend std::ostream& operator<<(std::ostream&stream, vec3 vec);
 };

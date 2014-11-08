@@ -70,17 +70,26 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float xCell[4] = {0, 0.5, 0.5, 0};
     float yCell[4] = {0, 0.5, 0, 0.5};
     float zCell[4] = {0, 0, 0.5, 0.5};
+
+    int numAtoms = 4*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension;
+    //m_positions.resize(3*numAtoms);
+    m_positionsAndForces.resize(6*numAtoms);
+    m_forces.resize(3*numAtoms);
+    int count = 0;
     for(int i=0; i< numberOfUnitCellsEachDimension; i++) {
         for(int j=0; j< numberOfUnitCellsEachDimension; j++) {
             for(int k=0; k< numberOfUnitCellsEachDimension; k++) {
                 for(int l=0; l<4; l++) {
                     Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
+                    atom->position.setPointer(&m_positionsAndForces[count]);
+                    atom->force.setPointer(&m_positionsAndForces[count+3]);
                     float x = (i+xCell[l])*latticeConstant;
                     float y = (j+yCell[l])*latticeConstant;
                     float z = (k+zCell[l])*latticeConstant;
                     atom->position.set(x,y,z);
                     atom->resetVelocityMaxwellian(temperature);
                     m_atoms.push_back(atom);
+                    count += 6;
                 }
             }
         }

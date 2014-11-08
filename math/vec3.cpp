@@ -3,11 +3,18 @@
 #include <math/random.h>
 vec3::vec3()
 {
+    m_vec = new float[3];
+    setToZero();
+}
+
+vec3::vec3(float *ptr) {
+    m_vec = ptr;
     setToZero();
 }
 
 vec3::vec3(float x, float y, float z)
 {
+    m_vec = new float[3];
     set(x,y,z);
 }
 
