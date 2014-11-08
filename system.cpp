@@ -4,6 +4,7 @@
 #include "statisticssampler.h"
 #include "unitconverter.h"
 #include "cpelapsedtimer.h"
+#include <stdlib.h>
 
 using namespace std;
 

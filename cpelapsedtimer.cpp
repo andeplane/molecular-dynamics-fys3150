@@ -2,5 +2,5 @@
 
 CPElapsedTimer::CPElapsedTimer()
 {
-    m_timer.start();
+    m_startedAt = clock();
 }

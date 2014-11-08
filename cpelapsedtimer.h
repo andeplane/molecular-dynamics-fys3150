@@ -1,21 +1,22 @@
 #ifndef CPELAPSEDTIMER_H
 #define CPELAPSEDTIMER_H
-#include <QElapsedTimer>
-#include <QDebug>
+#include <time.h>
+
 class CPTimingObject {
 private:
-    QElapsedTimer m_timer;
     double m_timeElapsed;
+    clock_t m_startedAt;
 public:
-    CPTimingObject() : m_timeElapsed(0) { }
+    CPTimingObject() : m_timeElapsed(0), m_startedAt(0) { }
 
     void start() {
-        m_timer.restart();
+         m_startedAt = clock();
     }
 
-    void stop() {
-        m_timeElapsed += m_timer.elapsed() / double(1000);
-        m_timer.restart();
+    double stop() {
+        double t = double(clock() - m_startedAt)/CLOCKS_PER_SEC;
+        m_timeElapsed += t;
+        return t;
     }
 
     double elapsedTime() { return m_timeElapsed; }
@@ -33,7 +34,7 @@ public:
         return instance;
     }
 
-    QElapsedTimer  m_timer;
+    clock_t        m_startedAt;
     CPTimingObject m_calculateForces;
     CPTimingObject m_updateCellList;
     CPTimingObject m_updateNeighborList;
@@ -43,6 +44,7 @@ public:
     CPTimingObject m_sampling;
     CPTimingObject m_disk;
     CPTimingObject m_timeEvolution;
+    CPTimingObject m_thermostat;
 
     static CPTimingObject &calculateForces() { return CPElapsedTimer::getInstance().m_calculateForces; }
     static CPTimingObject &updateCellList() { return CPElapsedTimer::getInstance().m_updateCellList; }
@@ -53,8 +55,9 @@ public:
     static CPTimingObject &sampling() { return CPElapsedTimer::getInstance().m_sampling; }
     static CPTimingObject &disk() { return CPElapsedTimer::getInstance().m_disk; }
     static CPTimingObject &timeEvolution() { return CPElapsedTimer::getInstance().m_timeEvolution; }
+    static CPTimingObject &thermostat() { return CPElapsedTimer::getInstance().m_thermostat; }
 
-    static double totalTime() { return CPElapsedTimer::getInstance().m_timer.elapsed() / double(1000); }
+    static double totalTime() { return double(clock() - CPElapsedTimer::getInstance().m_startedAt)/ CLOCKS_PER_SEC; }
 };
 
 #endif // CPELAPSEDTIMER_H

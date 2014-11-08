@@ -3,9 +3,10 @@ CONFIG += console
 CONFIG -= app_bundle
 #CONFIG -= qt
 INCLUDEPATH +=
-QT += quick widgets
+# QT += quick widgets
 #CONFIG += c++11
-
+QMAKE_CXX = g++-4.9
+CXX = g++-4.9
 SOURCES += main.cpp \
     atom.cpp \
     system.cpp \
@@ -21,7 +22,8 @@ SOURCES += main.cpp \
     unitconverter.cpp \
     celllist.cpp \
     neighborlist.cpp \
-    cpelapsedtimer.cpp
+    cpelapsedtimer.cpp \
+    modifiers/berendsenthermostat.cpp
 
 HEADERS += \
     atom.h \
@@ -38,5 +40,6 @@ HEADERS += \
     unitconverter.h \
     celllist.h \
     neighborlist.h \
-    cpelapsedtimer.h
+    cpelapsedtimer.h \
+    modifiers/berendsenthermostat.h
 
