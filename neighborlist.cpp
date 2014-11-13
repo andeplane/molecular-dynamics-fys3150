@@ -65,7 +65,8 @@ void NeighborList::update()
 
                     float dr2 = m_deltaRVector.lengthSquared();
                     if(dr2 > m_rShellSquared) continue;
-                    m_neighbors[atom1->index()].push_back(cell2[j]);
+                    int atomIndex = cell2[j];
+                    m_neighbors[atom1->index()].push_back(&m_system->m_positionsAndForces[6*atomIndex]);
                 }
             }
         }}}
