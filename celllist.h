@@ -22,8 +22,8 @@ public:
     int numberOfCellsX() { return m_numberOfCellsX; }
     int numberOfCellsY() { return m_numberOfCellsY; }
     int numberOfCellsZ() { return m_numberOfCellsZ; }
-    int index(int cx, int cy, int cz);
-    int indexPeriodic(int cx, int cy, int cz);
+    int index(int cx, int cy, int cz) { return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz; }
+    int indexPeriodic(int cx, int cy, int cz) { return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ); }
     int index(const vec3 &position);
     vector<Atom*> &operator[](int index) { return m_cells[index]; }
     vector<vector<Atom*> > &cells();

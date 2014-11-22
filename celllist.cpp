@@ -6,16 +6,6 @@
 
 using namespace std;
 
-int CellList::index(int cx, int cy, int cz)
-{
-    //return (cx+1)*m_numberOfCellsY*m_numberOfCellsZ + (cy+1)*m_numberOfCellsZ + (cz+1);
-    return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz;
-}
-
-int CellList::indexPeriodic(int cx, int cy, int cz)
-{
-    return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ);
-}
 
 int CellList::index(const vec3 &position)
 {

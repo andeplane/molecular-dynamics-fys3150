@@ -54,10 +54,10 @@ void NeighborList::update()
         for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
             const vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
-            unsigned int cell1Size = cell1.size();
+            const unsigned int cell1Size = cell1.size();
             for(unsigned int i=0; i<cell1Size; i++) {
                 Atom *atom1 = cell1[i];
-                unsigned int cell2Size = cell2.size();
+                const unsigned int cell2Size = cell2.size();
 
                 for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
                     Atom *atom2 = cell2[j];
