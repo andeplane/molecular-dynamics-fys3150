@@ -8,6 +8,7 @@ class Potential
 protected:
     float m_potentialEnergy;
     float m_pressureVirial;
+    bool m_shouldComputeEnergyAndPressureVirial;
 public:
     Potential();
     virtual ~Potential() {}
@@ -15,4 +16,6 @@ public:
     float potentialEnergy();
     float pressureVirial();
 
+    bool shouldComputeEnergyAndPressureVirial() const;
+    void setShouldComputeEnergyAndPressureVirial(bool shouldComputeEnergyAndPressureVirial);
 };

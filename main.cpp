@@ -27,7 +27,7 @@ int main(int args, char *argv[])
 {
     int numTimeSteps = 1000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 8;
+    int numUnitCells = 10;
     float latticeConstant = 5.26;
     bool loadState = false;
     bool thermostatEnabled = false;
@@ -60,14 +60,21 @@ int main(int args, char *argv[])
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
+        bool shouldSample = !(timestep % 100) || thermostatEnabled;
+        system.setShouldSample(shouldSample);
         system.step(dt);
-        CPElapsedTimer::sampling().start();
-        statisticsSampler.sample(&system);
-        CPElapsedTimer::sampling().stop();
 
-        CPElapsedTimer::thermostat().start();
-        if(thermostatEnabled) thermostat.apply(&system, &statisticsSampler);
-        CPElapsedTimer::thermostat().stop();
+        if(shouldSample) {
+            CPElapsedTimer::sampling().start();
+            statisticsSampler.sample(&system);
+            CPElapsedTimer::sampling().stop();
+        }
+
+        if(thermostatEnabled) {
+            CPElapsedTimer::thermostat().start();
+            thermostat.apply(&system, &statisticsSampler);
+            CPElapsedTimer::thermostat().stop();
+        }
 
         if( !(timestep % 100)) {
             cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().size() << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().size() << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().size() <<  endl;

@@ -38,33 +38,44 @@ void NeighborList::update()
     CPElapsedTimer::updateNeighborList().start();
     clear();
 
+//    for(int i=0; i<m_system->atoms().size(); i++) {
+//        Atom *atom = m_system->atoms()[i];
+//        atom->resetNeighbors();
+//    }
+
     for(int cx=0; cx<m_cellList.numberOfCellsX(); cx++) {
     for(int cy=0; cy<m_cellList.numberOfCellsY(); cy++) {
     for(int cz=0; cz<m_cellList.numberOfCellsZ(); cz++) {
         int cellIndex1 = m_cellList.index(cx, cy, cz);
-        vector<Atom*> &cell1 = m_cellList.cells()[cellIndex1];
+        const vector<Atom*> &cell1 = m_cellList.cells()[cellIndex1];
 
         for(int dx=-1; dx<=1; dx++) {
         for(int dy=-1; dy<=1; dy++) {
         for(int dz=-1; dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
-            vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
-            for(unsigned int i=0; i<cell1.size(); i++) {
+            const vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
+            unsigned int cell1Size = cell1.size();
+            for(unsigned int i=0; i<cell1Size; i++) {
                 Atom *atom1 = cell1[i];
-                #pragma ivdep
-                for(unsigned int j=0; j<cell2.size(); j++) {
+                unsigned int cell2Size = cell2.size();
+
+                for(unsigned int j=0; j<cell2Size; j++) {
                     Atom *atom2 = cell2[j];
                     if(atom1->index() <= atom2->index()) continue;
 
-                    m_deltaRVector.subtract(atom1->position, atom2->position);
+                    vec3 deltaRVector = atom1->position;
+                    deltaRVector.addAndMultiply(atom2->position, -1);
 
-                    for(int a=0; a<3; a++) {
-                        if(m_deltaRVector[a] > 0.5*systemSize[a]) m_deltaRVector[a] -= systemSize[a];
-                        else if(m_deltaRVector[a] < -0.5*systemSize[a]) m_deltaRVector[a] += systemSize[a];
-                    }
+                    if(deltaRVector[0] > 0.5*systemSize[0]) deltaRVector[0] -= systemSize[0];
+                    else if(deltaRVector[0] < -0.5*systemSize[0]) deltaRVector[0] += systemSize[0];
+                    if(deltaRVector[1] > 0.5*systemSize[1]) deltaRVector[1] -= systemSize[1];
+                    else if(deltaRVector[1] < -0.5*systemSize[1]) deltaRVector[1] += systemSize[1];
+                    if(deltaRVector[2] > 0.5*systemSize[2]) deltaRVector[2] -= systemSize[2];
+                    else if(deltaRVector[2] < -0.5*systemSize[2]) deltaRVector[2] += systemSize[2];
 
-                    float dr2 = m_deltaRVector.lengthSquared();
+                    float dr2 = deltaRVector.lengthSquared();
                     if(dr2 > m_rShellSquared) continue;
+                    // atom1->addNeighbor(atom2);
                     m_neighbors[atom1->index()].push_back(atom2);
                 }
             }

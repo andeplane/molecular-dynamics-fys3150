@@ -28,7 +28,7 @@ System::~System()
 
 void System::initialize(float cutoffRadius) {
     m_cellList.setup(this, cutoffRadius);
-    m_neighborList.setup(this, cutoffRadius*1.2);
+    m_neighborList.setup(this, UnitConverter::lengthFromAngstroms(2.8*3.405));
     m_initialized = true;
 }
 
@@ -93,6 +93,11 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 
 void System::copyAtomToGhostAtom(Atom *atom) {
 
+}
+
+void System::setShouldSample(bool shouldSample)
+{
+    m_potential->setShouldComputeEnergyAndPressureVirial(shouldSample);
 }
 
 void System::createGhostAtoms() {
