@@ -44,10 +44,6 @@ void CellList::setup(System *system, float rCut)
 {
     m_system = system;
 
-//    m_numberOfCellsX = system->systemSize().x() / rCut + 2;
-//    m_numberOfCellsY = system->systemSize().y() / rCut + 2;
-//    m_numberOfCellsZ = system->systemSize().z() / rCut + 2;
-
     m_numberOfCellsX = system->systemSize().x() / rCut;
     m_numberOfCellsY = system->systemSize().y() / rCut;
     m_numberOfCellsZ = system->systemSize().z() / rCut;

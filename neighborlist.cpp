@@ -49,9 +49,9 @@ void NeighborList::update()
         int cellIndex1 = m_cellList.index(cx, cy, cz);
         const vector<Atom*> &cell1 = m_cellList.cells()[cellIndex1];
 
-        for(int dx=-1; dx<=1; dx++) {
-        for(int dy=-1; dy<=1; dy++) {
-        for(int dz=-1; dz<=1; dz++) {
+        for(int dx=0; dx<=1; dx++) {
+        for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
+        for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
             int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
             const vector<Atom*> &cell2 = m_cellList.cells()[cellIndex2];
             unsigned int cell1Size = cell1.size();
@@ -59,9 +59,8 @@ void NeighborList::update()
                 Atom *atom1 = cell1[i];
                 unsigned int cell2Size = cell2.size();
 
-                for(unsigned int j=0; j<cell2Size; j++) {
+                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
                     Atom *atom2 = cell2[j];
-                    if(atom1->index() <= atom2->index()) continue;
 
                     vec3 deltaRVector = atom1->position;
                     deltaRVector.addAndMultiply(atom2->position, -1);
@@ -73,9 +72,9 @@ void NeighborList::update()
                     if(deltaRVector[2] > 0.5*systemSize[2]) deltaRVector[2] -= systemSize[2];
                     else if(deltaRVector[2] < -0.5*systemSize[2]) deltaRVector[2] += systemSize[2];
 
-                    float dr2 = deltaRVector.lengthSquared();
+                    const float dr2 = deltaRVector.lengthSquared();
                     if(dr2 > m_rShellSquared) continue;
-                    // atom1->addNeighbor(atom2);
+
                     m_neighbors[atom1->index()].push_back(atom2);
                 }
             }

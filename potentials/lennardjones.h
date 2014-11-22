@@ -7,6 +7,7 @@ private:
     float m_sigma;
     float m_sigma6;
     float m_epsilon;
+    float m_24epsilon;
     float m_rCutSquared;
     float m_potentialEnergyAtRcut;
     int   m_timeSinceLastNeighborListUpdate;
