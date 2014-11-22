@@ -8,7 +8,9 @@ class Atom
 private:
     static int totalNumberOfAtoms;
     float m_mass;
-    int   m_index;
+    unsigned int   m_index;
+    unsigned int   m_cellIndex;
+
 public:
     // int   m_numNeighbors;
     // Atom  *m_neighbors[150];
@@ -27,4 +29,6 @@ public:
     inline int index() { return m_index; }
     void addNeighbor(Atom *atom);
     void resetNeighbors();
+    unsigned int cellIndex() const;
+    void setCellIndex(unsigned int cellIndex);
 };

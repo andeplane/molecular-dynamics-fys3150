@@ -16,6 +16,11 @@ int CellList::index(const vec3 &position)
     return index(cx, cy, cz);
 }
 
+void CellList::sort()
+{
+
+}
+
 vector<vector<Atom *> > &CellList::cells()
 {
     return m_cells;
@@ -55,6 +60,7 @@ void CellList::update()
     for(unsigned int i=0; i<m_system->atoms().size(); i++) {
         Atom *atom = m_system->atoms()[i];
         int cellIndex = index(atom->position);
+        atom->setCellIndex(cellIndex);
         m_cells[cellIndex].push_back(atom);
     }
 

@@ -8,9 +8,20 @@ using namespace std;
 
 int Atom::totalNumberOfAtoms = 0;
 
+
+unsigned int Atom::cellIndex() const
+{
+    return m_cellIndex;
+}
+
+void Atom::setCellIndex(unsigned int cellIndex)
+{
+    m_cellIndex = cellIndex;
+}
 Atom::Atom(float mass) :
     m_mass(mass),
-    m_index(Atom::totalNumberOfAtoms++)
+    m_index(Atom::totalNumberOfAtoms++),
+    m_cellIndex(0)
 {
 
 }

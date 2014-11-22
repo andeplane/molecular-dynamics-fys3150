@@ -47,6 +47,5 @@ public:
     CellList &cellList() { return m_cellList; }
     NeighborList &neighborList() { return m_neighborList; }
     void initialize(float cutoffRadius);
-    void copyAtomToGhostAtom(Atom *atom);
     void setShouldSample(bool shouldSample);
 };
