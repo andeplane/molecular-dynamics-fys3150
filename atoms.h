@@ -5,7 +5,9 @@ class Atoms
 {
 public:
     Atoms();
-    unsigned int numberOfAtoms;
+    unsigned int i;
+    unsigned int j;
+    unsigned int k;
     float x[MAXNUMATOMS];
     float y[MAXNUMATOMS];
     float z[MAXNUMATOMS];
@@ -20,6 +22,7 @@ public:
 
     float mass[MAXNUMATOMS];
     int   index[MAXNUMATOMS];
+    unsigned int numberOfAtoms;
 };
 
 #endif // ATOMS_H

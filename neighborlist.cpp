@@ -12,12 +12,15 @@ NeighborList::NeighborList() :
     m_system(0),
     m_rShellSquared(-1)
 {
-
+    m_neighbors = new unsigned int*[MAXNUMATOMS];
+    for(int i=0; i<MAXNUMATOMS; i++) {
+        m_neighbors[i] = new unsigned int[500];
+    }
 }
 
 void NeighborList::clear() {
-    for(unsigned int i=0; i<m_neighbors.size(); i++) {
-        m_neighbors[i].clear();
+    for(unsigned int i=0; i<m_system->atoms().numberOfAtoms; i++) {
+        m_neighbors[i][0] = 0;
     }
 }
 
@@ -26,7 +29,6 @@ void NeighborList::setup(System *system, float rShell)
     m_system = system;
     m_rShellSquared = rShell*rShell;
     m_cellList.setup(system, rShell);
-    m_neighbors.resize(system->atoms().numberOfAtoms);
 }
 
 void NeighborList::update()
@@ -79,7 +81,7 @@ void NeighborList::update()
                     const float dr2 = dx*dx + dy*dy + dz*dz;
                     if(dr2 > m_rShellSquared) continue;
 
-                    m_neighbors[atom1Index].push_back(atom2Index);
+                    m_neighbors[atom1Index][ ++m_neighbors[atom1Index][0] ] = atom2Index;
                 }
             }
         }}}

@@ -33,19 +33,27 @@ void LennardJones::calculateForces(System *system)
     }
 
     CPElapsedTimer::calculateForces().start();
-    const unsigned int numAtoms = system->atoms().numberOfAtoms;
+
     Atoms &atoms = system->atoms();
 
-    for(unsigned int i=0; i<numAtoms; i++) {
+    // unsigned int &i = atoms.i;
+    // unsigned int &j = atoms.j;
+    for(unsigned i=0; i<atoms.numberOfAtoms; i++) {
         float x = atoms.x[i];
         float y = atoms.y[i];
         float z = atoms.z[i];
+        float fix = 0;
+        float fiy = 0;
+        float fiz = 0;
 
-        const vector<unsigned int> &neighbors = system->neighborList().neighborsForAtomWithIndex(i);
+        unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
+        float pressureVirial = 0;
+        float potentialEnergy = 0;
 
-        const unsigned int numNeighbors = neighbors.size();
-        for(unsigned int j=0; j<numNeighbors; j++) {
-            int neighborIndex = neighbors[j];
+        const unsigned int numNeighbors = neighbors[0];
+#pragma simd reduction (+: fix, fiy, fiz, pressureVirial, potentialEnergy)
+        for(unsigned int j=1; j<=numNeighbors; j++) {
+            unsigned int neighborIndex = neighbors[j];
             float dx = x - atoms.x[neighborIndex];
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
@@ -60,19 +68,23 @@ void LennardJones::calculateForces(System *system)
 
             const float force = -m_24epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
 
-            atoms.fx[i] -= dx*force;
-            atoms.fy[i] -= dy*force;
-            atoms.fz[i] -= dz*force;
+            fix -= dx*force;
+            fiy -= dy*force;
+            fiz -= dz*force;
 
             atoms.fx[neighborIndex] += dx*force;
             atoms.fy[neighborIndex] += dy*force;
             atoms.fz[neighborIndex] += dz*force;
 
-            if(m_shouldComputeEnergyAndPressureVirial) {
-                m_pressureVirial += force*sqrt(dr2)*dr2;
-                m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
-            }
+            // pressureVirial += m_shouldComputeEnergyAndPressureVirial*force*sqrt(dr2)*dr2;
+            // potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
+
+        atoms.fx[i] += fix;
+        atoms.fy[i] += fiy;
+        atoms.fz[i] += fiz;
+        m_pressureVirial += pressureVirial;
+        m_potentialEnergy += potentialEnergy;
     }
 
     CPElapsedTimer::calculateForces().stop();
