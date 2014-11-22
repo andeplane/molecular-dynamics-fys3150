@@ -13,8 +13,10 @@ BerendsenThermostat::BerendsenThermostat(float temperature, float relaxationFact
 void BerendsenThermostat::apply(System *system, StatisticsSampler *sampler)
 {
     float scaleFactor = sqrt(1 + m_relaxationFactor*(sampler->temperature()/m_temperature - 1));
-    for(int n=0; n<system->atoms().size(); n++) {
-        Atom &atom = system->atoms()[n];
-        atom.velocity *= scaleFactor;
+    Atoms &atoms = system->atoms();
+    for(int i=0; i<atoms.numberOfAtoms; i++) {
+        atoms.vx[i] *= scaleFactor;
+        atoms.vy[i] *= scaleFactor;
+        atoms.vz[i] *= scaleFactor;
     }
 }

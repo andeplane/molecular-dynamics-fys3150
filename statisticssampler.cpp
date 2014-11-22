@@ -32,9 +32,9 @@ void StatisticsSampler::sample(System *system)
 float StatisticsSampler::sampleKineticEnergy(System *system)
 {
     m_kineticEnergy = 0;
-    for(int i=0; i<system->atoms().size(); i++) {
-        Atom &atom = system->atoms()[i];
-        m_kineticEnergy += 0.5*atom.mass()*atom.velocity.lengthSquared();
+    Atoms &atoms = system->atoms();
+    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
+        m_kineticEnergy += 0.5*atoms.mass[i]*(atoms.vx[i]*atoms.vx[i] + atoms.vy[i]*atoms.vy[i] + atoms.vz[i]*atoms.vz[i]);
     }
 
     return m_kineticEnergy;
@@ -48,13 +48,13 @@ float StatisticsSampler::samplePotentialEnergy(System *system)
 
 float StatisticsSampler::sampleTemperature(System *system)
 {
-    m_temperature = 2.0*m_kineticEnergy/(3*system->atoms().size());
+    m_temperature = 2.0*m_kineticEnergy/(3*system->atoms().numberOfAtoms);
     return m_temperature;
 }
 
 float StatisticsSampler::sampleDensity(System *system)
 {
-    m_density = system->atoms().size() / system->volume();
+    m_density = system->atoms().numberOfAtoms / system->volume();
     return m_density;
 }
 
@@ -80,10 +80,11 @@ float StatisticsSampler::totalEnergy()
 vec3 StatisticsSampler::sampleMomentum(System *system)
 {
     m_momentum.setToZero();
-
-    for(int i=0; i<system->atoms().size(); i++) {
-        Atom &atom = system->atoms()[i];
-        m_momentum.addAndMultiply(atom.velocity, atom.mass());
+    Atoms &atoms = system->atoms();
+    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
+        m_momentum[0] += atoms.vx[i]*atoms.mass[i];
+        m_momentum[1] += atoms.vy[i]*atoms.mass[i];
+        m_momentum[2] += atoms.vz[i]*atoms.mass[i];
     }
     return m_momentum;
 }

@@ -14,20 +14,11 @@
 
 using namespace std;
 
-void printUnits() {
-    cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
-    cout << "One unit of velocity is " << UnitConverter::velocityToSI(1.0) << " meters/second" << endl;
-    cout << "One unit of time is " << UnitConverter::timeToSI(1.0) << " seconds" << endl;
-    cout << "One unit of mass is " << UnitConverter::massToSI(1.0) << " kg" << endl;
-    cout << "One unit of temperature is " << UnitConverter::temperatureToSI(1.0) << " K" << endl;
-    cout << "One unit of pressure is " << UnitConverter::pressureToSI(1.0) << " Pa" << endl;
-}
-
 int main(int args, char *argv[])
 {
     int numTimeSteps = 1000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 20;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
@@ -78,7 +69,7 @@ int main(int args, char *argv[])
         }
 
         if( !(timestep % 100)) {
-            cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().size() << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().size() << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().size() <<  endl;
+            cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
         }
         // movie->saveState(&system);
     }
@@ -107,7 +98,7 @@ int main(int args, char *argv[])
          << "      Periodic boundary : " << CPElapsedTimer::periodicBoundaryConditions().elapsedTime() << " s ( " << 100*periodicBoundaryConditionsFraction << "%)" <<  endl
          << "      Sampling          : " << CPElapsedTimer::sampling().elapsedTime() << " s ( " << 100*samplingFraction << "%)" <<  endl;
     cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
-    cout << system.atoms().size()*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
+    cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
 
     movie->close();
 

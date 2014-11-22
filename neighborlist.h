@@ -8,7 +8,7 @@ using std::vector;
 class NeighborList
 {
 private:
-    vector<vector<Atom*> > m_neighbors;
+    vector<vector<unsigned int> > m_neighbors;
     CellList  m_cellList;
     System   *m_system;
     float     m_rShellSquared;
@@ -18,7 +18,7 @@ public:
     NeighborList();
     void setup(System *system, float rShell);
     void update();
-    vector<Atom*> &neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
+    vector<unsigned int> &neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
 };
 
 #endif // NEIGHBORLIST_H

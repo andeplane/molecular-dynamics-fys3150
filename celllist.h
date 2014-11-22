@@ -12,7 +12,7 @@ private:
     int m_numberOfCellsX;
     int m_numberOfCellsY;
     int m_numberOfCellsZ;
-    vector<vector<Atom*> > m_cells;
+    vector<vector<unsigned int> > m_cells;
 
 public:
     CellList();
@@ -22,12 +22,13 @@ public:
     int numberOfCellsX() { return m_numberOfCellsX; }
     int numberOfCellsY() { return m_numberOfCellsY; }
     int numberOfCellsZ() { return m_numberOfCellsZ; }
+    int index(float x, float y, float z);
     int index(int cx, int cy, int cz) { return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz; }
     int indexPeriodic(int cx, int cy, int cz) { return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ); }
     int index(const vec3 &position);
     void sort();
-    vector<Atom*> &operator[](int index) { return m_cells[index]; }
-    vector<vector<Atom*> > &cells();
+    vector<unsigned int> &operator[](int index) { return m_cells[index]; }
+    vector<vector<unsigned int> > &cells();
 };
 
 #endif // CELLLIST_H

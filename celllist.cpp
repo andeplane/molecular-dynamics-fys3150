@@ -3,9 +3,18 @@
 #include "system.h"
 #include <iostream>
 #include "cpelapsedtimer.h"
+#include <cassert>
 
 using namespace std;
 
+int CellList::index(float x, float y, float z)
+{
+    int cx = x/m_system->systemSize()[0]*m_numberOfCellsX;
+    int cy = y/m_system->systemSize()[1]*m_numberOfCellsY;
+    int cz = z/m_system->systemSize()[2]*m_numberOfCellsZ;
+
+    return index(cx, cy, cz);
+}
 
 int CellList::index(const vec3 &position)
 {
@@ -21,7 +30,7 @@ void CellList::sort()
 
 }
 
-vector<vector<Atom *> > &CellList::cells()
+vector<vector<unsigned int> > &CellList::cells()
 {
     return m_cells;
 }
@@ -57,11 +66,11 @@ void CellList::update()
 {
     CPElapsedTimer::updateCellList().start();
     clear();
-    for(unsigned int i=0; i<m_system->atoms().size(); i++) {
-        Atom &atom = m_system->atoms()[i];
-        int cellIndex = index(atom.position);
-        atom.setCellIndex(cellIndex);
-        m_cells[cellIndex].push_back(&atom);
+    Atoms &atoms = m_system->atoms();
+    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
+        int cellIndex = index(atoms.x[i], atoms.y[i], atoms.z[i]);
+        assert(cellIndex < m_cells.size() && cellIndex >= 0 && "Cell index out of bounds");
+        m_cells[cellIndex].push_back(i);
     }
 
     CPElapsedTimer::updateCellList().stop();

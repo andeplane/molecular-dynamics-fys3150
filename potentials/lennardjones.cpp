@@ -33,42 +33,46 @@ void LennardJones::calculateForces(System *system)
     }
 
     CPElapsedTimer::calculateForces().start();
-    const unsigned int numAtoms = system->atoms().size();
-    Atom *atom1 = &system->atoms()[0];
-    for(unsigned int i=0; i<numAtoms; i++) {
-        //Atom &atom1 = system->atoms()[i];
+    const unsigned int numAtoms = system->atoms().numberOfAtoms;
+    Atoms &atoms = system->atoms();
 
-        const vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
+    for(unsigned int i=0; i<numAtoms; i++) {
+        float x = atoms.x[i];
+        float y = atoms.y[i];
+        float z = atoms.z[i];
+
+        const vector<unsigned int> &neighbors = system->neighborList().neighborsForAtomWithIndex(i);
+
         const unsigned int numNeighbors = neighbors.size();
         for(unsigned int j=0; j<numNeighbors; j++) {
-            Atom *atom2 = neighbors[j];
+            int neighborIndex = neighbors[j];
+            float dx = x - atoms.x[neighborIndex];
+            float dy = y - atoms.y[neighborIndex];
+            float dz = z - atoms.z[neighborIndex];
 
-            vec3 deltaRVector = atom1->position;
-            deltaRVector.addAndMultiply(atom2->position, -1);
+            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
+            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
+            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
 
-            // Minimum image convention
-            if(deltaRVector[0] > systemSizeHalf[0]) deltaRVector[0] -= systemSize[0];
-            else if(deltaRVector[0] < -systemSizeHalf[0]) deltaRVector[0] += systemSize[0];
-            if(deltaRVector[1] > systemSizeHalf[1]) deltaRVector[1] -= systemSize[1];
-            else if(deltaRVector[1] < -systemSizeHalf[1]) deltaRVector[1] += systemSize[1];
-            if(deltaRVector[2] > systemSizeHalf[2]) deltaRVector[2] -= systemSize[2];
-            else if(deltaRVector[2] < -systemSizeHalf[2]) deltaRVector[2] += systemSize[2];
-
-            const float dr2 = deltaRVector.lengthSquared();
+            const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
             const float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
 
             const float force = -m_24epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
 
-            atom1->force.addAndMultiply(deltaRVector, -force);
-            atom2->force.addAndMultiply(deltaRVector, force);
+            atoms.fx[i] -= dx*force;
+            atoms.fy[i] -= dy*force;
+            atoms.fz[i] -= dz*force;
+
+            atoms.fx[neighborIndex] += dx*force;
+            atoms.fy[neighborIndex] += dy*force;
+            atoms.fz[neighborIndex] += dz*force;
 
             if(m_shouldComputeEnergyAndPressureVirial) {
                 m_pressureVirial += force*sqrt(dr2)*dr2;
                 m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
             }
         }
-        atom1++;
     }
 
     CPElapsedTimer::calculateForces().stop();

@@ -34,11 +34,10 @@ void IO::close() {
 void IO::saveState(System *system)
 {
     CPElapsedTimer::disk().start();
-    file << system->atoms().size() << endl;
+    file << system->atoms().numberOfAtoms << endl;
     file << "The is an optional comment line that can be empty." << endl;
-    for(int n=0; n<system->atoms().size(); n++) {
-        Atom &atom = system->atoms()[n];
-        file << "Ar " << UnitConverter::lengthToAngstroms(atom.position.x()) << " " << UnitConverter::lengthToAngstroms(atom.position.y()) << " " << UnitConverter::lengthToAngstroms(atom.position.z()) << endl;
+    for(int n=0; n<system->atoms().numberOfAtoms; n++) {
+        // file << "Ar " << UnitConverter::lengthToAngstroms(atom.position.x()) << " " << UnitConverter::lengthToAngstroms(atom.position.y()) << " " << UnitConverter::lengthToAngstroms(atom.position.z()) << endl;
     }
     CPElapsedTimer::disk().stop();
 }

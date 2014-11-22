@@ -5,6 +5,7 @@
 #include "unitconverter.h"
 #include "cpelapsedtimer.h"
 #include <stdlib.h>
+#include <cmath>
 
 using namespace std;
 
@@ -22,7 +23,6 @@ System::~System()
 {
     delete m_potential;
     delete m_integrator;
-    m_atoms.clear();
 }
 
 void System::initialize(float cutoffRadius) {
@@ -33,13 +33,15 @@ void System::initialize(float cutoffRadius) {
 
 void System::applyPeriodicBoundaryConditions() {
     CPElapsedTimer::periodicBoundaryConditions().start();
-    #pragma ivdep
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
-        for(int a=0; a<3; a++) {
-            if(atom.position[a] < 0) atom.position[a] += m_systemSize[a];
-            if(atom.position[a] >= m_systemSize[a]) atom.position[a] -= m_systemSize[a];
-        }
+    for(int i=0; i<m_atoms.numberOfAtoms; i++) {
+        if(m_atoms.x[i] < 0) m_atoms.x[i] += m_systemSize[0];
+        else if(m_atoms.x[i] >= m_systemSize[0]) m_atoms.x[i] -= m_systemSize[0];
+
+        if(m_atoms.y[i] < 0) m_atoms.y[i] += m_systemSize[1];
+        else if(m_atoms.y[i] >= m_systemSize[1]) m_atoms.y[i] -= m_systemSize[1];
+
+        if(m_atoms.z[i] < 0) m_atoms.z[i] += m_systemSize[2];
+        else if(m_atoms.z[i] >= m_systemSize[2]) m_atoms.z[i] -= m_systemSize[2];
     }
     CPElapsedTimer::periodicBoundaryConditions().stop();
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
@@ -50,17 +52,19 @@ void System::removeMomentum() {
     StatisticsSampler sampler;
     vec3 momentum = sampler.sampleMomentum(this);
 
-    momentum /= m_atoms.size();
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
-        atom.velocity -= momentum/atom.mass();
+    momentum /= m_atoms.numberOfAtoms;
+    for(int i=0; i<m_atoms.numberOfAtoms; i++) {
+        m_atoms.vx[i] -= momentum[0]/m_atoms.mass[i];
+        m_atoms.vy[i] -= momentum[1]/m_atoms.mass[i];
+        m_atoms.vz[i] -= momentum[2]/m_atoms.mass[i];
     }
 }
 
 void System::resetForcesOnAllAtoms() {
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
-        atom.resetForce();
+    for(int i=0; i<m_atoms.numberOfAtoms; i++) {
+        m_atoms.fx[i] = 0;
+        m_atoms.fy[i] = 0;
+        m_atoms.fz[i] = 0;
     }
 }
 
@@ -68,23 +72,30 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float xCell[4] = {0, 0.5, 0.5, 0};
     float yCell[4] = {0, 0.5, 0, 0.5};
     float zCell[4] = {0, 0, 0.5, 0.5};
-    int numAtoms = 4*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension;
-    m_atoms.resize(numAtoms);
-    int count = 0;
+
     for(int i=0; i< numberOfUnitCellsEachDimension; i++) {
         for(int j=0; j< numberOfUnitCellsEachDimension; j++) {
             for(int k=0; k< numberOfUnitCellsEachDimension; k++) {
                 for(int l=0; l<4; l++) {
-
-                    // Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
-                    Atom &atom = m_atoms[count++];
-                    atom.setMass(UnitConverter::massFromSI(6.63352088e-26));
+                    int atomIndex = m_atoms.numberOfAtoms;
+                    m_atoms.mass[atomIndex] = UnitConverter::massFromSI(6.63352088e-26);
                     float x = (i+xCell[l])*latticeConstant;
                     float y = (j+yCell[l])*latticeConstant;
                     float z = (k+zCell[l])*latticeConstant;
-                    atom.position.set(x,y,z);
-                    atom.resetVelocityMaxwellian(temperature);
-                    // m_atoms.push_back(atom);
+                    m_atoms.x[atomIndex] = x;
+                    m_atoms.y[atomIndex] = y;
+                    m_atoms.z[atomIndex] = z;
+
+                    vec3 velocity;
+                    float boltzmannConstant = 1.0; // In atomic units, the boltzmann constant equals 1
+                    float standardDeviation = sqrt(boltzmannConstant*temperature/m_atoms.mass[atomIndex]);
+                    velocity.randomGaussian(0, standardDeviation);
+                    m_atoms.vx[atomIndex] = velocity[0];
+                    m_atoms.vy[atomIndex] = velocity[1];
+                    m_atoms.vz[atomIndex] = velocity[2];
+                    m_atoms.index[atomIndex] = atomIndex;
+
+                    m_atoms.numberOfAtoms++;
                 }
             }
         }
@@ -92,7 +103,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 
     float sideLength = numberOfUnitCellsEachDimension*latticeConstant;
     setSystemSize(vec3(sideLength, sideLength, sideLength));
-    cout << "Added " << m_atoms.size() << " atoms in an FCC lattice." << endl;
+    cout << "Added " << m_atoms.numberOfAtoms << " atoms in an FCC lattice." << endl;
 }
 
 void System::setShouldSample(bool shouldSample)

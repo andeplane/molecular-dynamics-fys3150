@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     cpelapsedtimer.cpp \
     modifiers/berendsenthermostat.cpp \
     math/hilbert.cpp \
-    math/morton.cpp
+    math/morton.cpp \
+    atoms.cpp
 
 HEADERS += \
     atom.h \
@@ -45,5 +46,6 @@ HEADERS += \
     cpelapsedtimer.h \
     modifiers/berendsenthermostat.h \
     math/hilbert.h \
-    math/morton.h
+    math/morton.h \
+    atoms.h
 
