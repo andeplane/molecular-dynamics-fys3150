@@ -34,8 +34,9 @@ void LennardJones::calculateForces(System *system)
 
     CPElapsedTimer::calculateForces().start();
     const unsigned int numAtoms = system->atoms().size();
+    Atom *atom1 = &system->atoms()[0];
     for(unsigned int i=0; i<numAtoms; i++) {
-        Atom *atom1 = system->atoms()[i];
+        //Atom &atom1 = system->atoms()[i];
 
         const vector<Atom*> &neighbors = system->neighborList().neighborsForAtomWithIndex(atom1->index());
         const unsigned int numNeighbors = neighbors.size();
@@ -66,8 +67,8 @@ void LennardJones::calculateForces(System *system)
                 m_pressureVirial += force*sqrt(dr2)*dr2;
                 m_potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
             }
-
         }
+        atom1++;
     }
 
     CPElapsedTimer::calculateForces().stop();

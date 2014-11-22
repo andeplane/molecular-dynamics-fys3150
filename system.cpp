@@ -35,10 +35,10 @@ void System::applyPeriodicBoundaryConditions() {
     CPElapsedTimer::periodicBoundaryConditions().start();
     #pragma ivdep
     for(int i=0; i<m_atoms.size(); i++) {
-        Atom *atom = m_atoms[i];
+        Atom &atom = m_atoms[i];
         for(int a=0; a<3; a++) {
-            if(atom->position[a] < 0) atom->position[a] += m_systemSize[a];
-            if(atom->position[a] >= m_systemSize[a]) atom->position[a] -= m_systemSize[a];
+            if(atom.position[a] < 0) atom.position[a] += m_systemSize[a];
+            if(atom.position[a] >= m_systemSize[a]) atom.position[a] -= m_systemSize[a];
         }
     }
     CPElapsedTimer::periodicBoundaryConditions().stop();
@@ -52,16 +52,15 @@ void System::removeMomentum() {
 
     momentum /= m_atoms.size();
     for(int i=0; i<m_atoms.size(); i++) {
-        Atom *atom = m_atoms[i];
-        atom->velocity -= momentum/atom->mass();
+        Atom &atom = m_atoms[i];
+        atom.velocity -= momentum/atom.mass();
     }
 }
 
 void System::resetForcesOnAllAtoms() {
-    #pragma ivdep
     for(int i=0; i<m_atoms.size(); i++) {
-        Atom *atom = m_atoms[i];
-        atom->resetForce();
+        Atom &atom = m_atoms[i];
+        atom.resetForce();
     }
 }
 
@@ -69,17 +68,23 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float xCell[4] = {0, 0.5, 0.5, 0};
     float yCell[4] = {0, 0.5, 0, 0.5};
     float zCell[4] = {0, 0, 0.5, 0.5};
+    int numAtoms = 4*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension;
+    m_atoms.resize(numAtoms);
+    int count = 0;
     for(int i=0; i< numberOfUnitCellsEachDimension; i++) {
         for(int j=0; j< numberOfUnitCellsEachDimension; j++) {
             for(int k=0; k< numberOfUnitCellsEachDimension; k++) {
                 for(int l=0; l<4; l++) {
-                    Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
+
+                    // Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
+                    Atom &atom = m_atoms[count++];
+                    atom.setMass(UnitConverter::massFromSI(6.63352088e-26));
                     float x = (i+xCell[l])*latticeConstant;
                     float y = (j+yCell[l])*latticeConstant;
                     float z = (k+zCell[l])*latticeConstant;
-                    atom->position.set(x,y,z);
-                    atom->resetVelocityMaxwellian(temperature);
-                    m_atoms.push_back(atom);
+                    atom.position.set(x,y,z);
+                    atom.resetVelocityMaxwellian(temperature);
+                    // m_atoms.push_back(atom);
                 }
             }
         }

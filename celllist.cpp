@@ -58,10 +58,10 @@ void CellList::update()
     CPElapsedTimer::updateCellList().start();
     clear();
     for(unsigned int i=0; i<m_system->atoms().size(); i++) {
-        Atom *atom = m_system->atoms()[i];
-        int cellIndex = index(atom->position);
-        atom->setCellIndex(cellIndex);
-        m_cells[cellIndex].push_back(atom);
+        Atom &atom = m_system->atoms()[i];
+        int cellIndex = index(atom.position);
+        atom.setCellIndex(cellIndex);
+        m_cells[cellIndex].push_back(&atom);
     }
 
     CPElapsedTimer::updateCellList().stop();

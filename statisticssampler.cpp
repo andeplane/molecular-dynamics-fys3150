@@ -33,8 +33,8 @@ float StatisticsSampler::sampleKineticEnergy(System *system)
 {
     m_kineticEnergy = 0;
     for(int i=0; i<system->atoms().size(); i++) {
-        Atom *atom = system->atoms()[i];
-        m_kineticEnergy += 0.5*atom->mass()*atom->velocity.lengthSquared();
+        Atom &atom = system->atoms()[i];
+        m_kineticEnergy += 0.5*atom.mass()*atom.velocity.lengthSquared();
     }
 
     return m_kineticEnergy;
@@ -69,6 +69,7 @@ float StatisticsSampler::samplePressure(System *system)
 //    }
     virialPressure /= 3*system->volume();
     m_pressure = idealGasPressure + virialPressure;
+    return m_pressure;
 }
 
 float StatisticsSampler::totalEnergy()
@@ -81,8 +82,8 @@ vec3 StatisticsSampler::sampleMomentum(System *system)
     m_momentum.setToZero();
 
     for(int i=0; i<system->atoms().size(); i++) {
-        Atom *atom = system->atoms()[i];
-        m_momentum.addAndMultiply(atom->velocity, atom->mass());
+        Atom &atom = system->atoms()[i];
+        m_momentum.addAndMultiply(atom.velocity, atom.mass());
     }
     return m_momentum;
 }

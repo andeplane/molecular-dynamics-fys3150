@@ -1,10 +1,10 @@
 #include "neighborlist.h"
 #include "celllist.h"
 #include "math/vec3.h"
-#include "atom.h"
 #include "system.h"
 #include "cpelapsedtimer.h"
-
+#include "atom.h"
+#include <algorithm>
 #include <iostream>
 using namespace std;
 
@@ -32,7 +32,7 @@ void NeighborList::setup(System *system, float rShell)
 void NeighborList::update()
 {
     vec3 systemSize = m_system->systemSize();
-
+    // std::sort(m_system->atoms().begin(), m_system->atoms().end(), Atom());
     m_cellList.update();
 
     CPElapsedTimer::updateNeighborList().start();

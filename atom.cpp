@@ -18,8 +18,8 @@ void Atom::setCellIndex(unsigned int cellIndex)
 {
     m_cellIndex = cellIndex;
 }
-Atom::Atom(float mass) :
-    m_mass(mass),
+Atom::Atom() :
+    m_mass(NAN),
     m_index(Atom::totalNumberOfAtoms++),
     m_cellIndex(0)
 {

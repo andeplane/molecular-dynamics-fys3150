@@ -1,6 +1,6 @@
 #ifndef NEIGHBORLIST_H
 #define NEIGHBORLIST_H
-class System; class Atom;
+class System;
 #include "celllist.h"
 #include <vector>
 using std::vector;

@@ -12,7 +12,7 @@ class System
 {
 private:
     vec3 m_systemSize;
-    vector<Atom*> m_atoms;
+    vector<Atom> m_atoms;
     Potential *m_potential;
     Integrator *m_integrator;
 
@@ -32,7 +32,7 @@ public:
     void step(float dt);
 
     // Setters and getters
-    vector<Atom *> &atoms() { return m_atoms; }
+    vector<Atom> &atoms() { return m_atoms; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }

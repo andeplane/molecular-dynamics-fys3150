@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     celllist.cpp \
     neighborlist.cpp \
     cpelapsedtimer.cpp \
-    modifiers/berendsenthermostat.cpp
+    modifiers/berendsenthermostat.cpp \
+    math/hilbert.cpp \
+    math/morton.cpp
 
 HEADERS += \
     atom.h \
@@ -41,5 +43,7 @@ HEADERS += \
     celllist.h \
     neighborlist.h \
     cpelapsedtimer.h \
-    modifiers/berendsenthermostat.h
+    modifiers/berendsenthermostat.h \
+    math/hilbert.h \
+    math/morton.h
 
