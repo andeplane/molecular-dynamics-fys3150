@@ -16,8 +16,8 @@ QMAKE_CFLAGS += -xCORE-AVX-I -O3 -ipo -g -falign-functions=16
 #QMAKE_CXXFLAGS += -prof-gen
 #QMAKE_CFLAGS += -prof-gen
 
-QMAKE_CXXFLAGS += -prof-use
-QMAKE_CFLAGS += -prof-use
+#QMAKE_CXXFLAGS += -prof-use
+#QMAKE_CFLAGS += -prof-use
 
 DEFINES += MD_SIMD
 #DEFINES += MD_DEBUG
