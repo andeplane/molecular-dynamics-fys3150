@@ -13,30 +13,25 @@ VelocityVerlet::VelocityVerlet() :
 void VelocityVerlet::halfKick(System *system, const float dt)
 {
     CPElapsedTimer::halfKick().start();
-    Atoms &atoms = system->atoms();
-#ifdef MD_SIMD
-#pragma simd
-#endif
-    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
-        atoms.vx[i] += atoms.fx[i]*0.5*dt/atoms.mass[i];
-        atoms.vy[i] += atoms.fy[i]*0.5*dt/atoms.mass[i];
-        atoms.vz[i] += atoms.fz[i]*0.5*dt/atoms.mass[i];
-    }
+
+    system->cellList().forEachAtom([&](Cell &cell, unsigned int i) {
+        cell.vx[i] += cell.fx[i]*0.5*dt/cell.mass[i];
+        cell.vy[i] += cell.fy[i]*0.5*dt/cell.mass[i];
+        cell.vz[i] += cell.fz[i]*0.5*dt/cell.mass[i];
+    });
     CPElapsedTimer::halfKick().stop();
 }
 
 void VelocityVerlet::move(System *system, const float dt)
 {
     CPElapsedTimer::move().start();
-    Atoms &atoms = system->atoms();
-#ifdef MD_SIMD
-#pragma simd
-#endif
-    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
-        atoms.x[i] += atoms.vx[i]*dt;
-        atoms.y[i] += atoms.vy[i]*dt;
-        atoms.z[i] += atoms.vz[i]*dt;
-    }
+
+    system->cellList().forEachAtom([&](Cell &cell, unsigned int i) {
+        cell.x[i] += cell.vx[i]*dt;
+        cell.y[i] += cell.vy[i]*dt;
+        cell.z[i] += cell.vz[i]*dt;
+    });
+
     CPElapsedTimer::move().stop();
 }
 

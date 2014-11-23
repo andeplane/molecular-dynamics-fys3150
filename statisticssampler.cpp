@@ -32,16 +32,11 @@ void StatisticsSampler::sample(System *system)
 float StatisticsSampler::sampleKineticEnergy(System *system)
 {
     m_kineticEnergy = 0;
-    Atoms &atoms = system->atoms();
-    // float kineticEnergy = 0;
-//#ifdef MD_SIMD
-//#pragma simd reduction(+: kineticEnergy)
-//#endif
-    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
-        m_kineticEnergy += 0.5*atoms.mass[i]*(atoms.vx[i]*atoms.vx[i] + atoms.vy[i]*atoms.vy[i] + atoms.vz[i]*atoms.vz[i]);
-    }
 
-    // m_kineticEnergy = kineticEnergy;
+    system->cellList().forEachAtom([&](Cell &cell, unsigned int i) {
+        m_kineticEnergy += 0.5*cell.mass[i]*(cell.vx[i]*cell.vx[i] + cell.vy[i]*cell.vy[i] + cell.vz[i]*cell.vz[i]);
+    });
+
     return m_kineticEnergy;
 }
 
@@ -53,13 +48,13 @@ float StatisticsSampler::samplePotentialEnergy(System *system)
 
 float StatisticsSampler::sampleTemperature(System *system)
 {
-    m_temperature = 2.0*m_kineticEnergy/(3*system->atoms().numberOfAtoms);
+    m_temperature = 2.0*m_kineticEnergy/(3*system->numberOfAtoms);
     return m_temperature;
 }
 
 float StatisticsSampler::sampleDensity(System *system)
 {
-    m_density = system->atoms().numberOfAtoms / system->volume();
+    m_density = system->numberOfAtoms / system->volume();
     return m_density;
 }
 
@@ -85,11 +80,11 @@ float StatisticsSampler::totalEnergy()
 vec3 StatisticsSampler::sampleMomentum(System *system)
 {
     m_momentum.setToZero();
-    Atoms &atoms = system->atoms();
-    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
-        m_momentum[0] += atoms.vx[i]*atoms.mass[i];
-        m_momentum[1] += atoms.vy[i]*atoms.mass[i];
-        m_momentum[2] += atoms.vz[i]*atoms.mass[i];
-    }
+    system->cellList().forEachAtom([&](Cell &cell, unsigned int i) {
+        m_momentum[0] += cell.vx[i]*cell.mass[i];
+        m_momentum[1] += cell.vy[i]*cell.mass[i];
+        m_momentum[2] += cell.vz[i]*cell.mass[i];
+    });
+
     return m_momentum;
 }

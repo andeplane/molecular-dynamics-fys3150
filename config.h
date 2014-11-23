@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef MAXNUMATOMS
-#define MAXNUMATOMS 3000000
+#define MAXNUMATOMS 10000
 #endif
 
 #ifndef MAXNUMNEIGHBORS

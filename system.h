@@ -2,8 +2,6 @@
 #include "vector"
 #include "math/vec3.h"
 #include "celllist.h"
-#include "neighborlist.h"
-#include "atoms.h"
 
 class Potential; class Integrator;
 using std::vector;
@@ -12,11 +10,9 @@ class System
 {
 private:
     vec3 m_systemSize;
-    Atoms *m_atoms;
     Potential *m_potential;
     Integrator *m_integrator;
     CellList     m_cellList;
-    NeighborList m_neighborList;
     float m_currentTime;
     int m_steps;
     bool m_initialized;
@@ -33,9 +29,9 @@ public:
     void removeMomentum();
     void calculateForces();
     void step(float dt);
+    unsigned int numberOfAtoms;
 
     // Setters and getters
-    Atoms &atoms() { return *m_atoms; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }
@@ -47,9 +43,9 @@ public:
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     float volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
-    NeighborList &neighborList() { return m_neighborList; }
-    void initialize(float cutoffRadius);
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();
     void printStatus();
+    void setCutoffRadius(float rCut) { m_rCut = rCut; }
+    CellList &cellList() { return m_cellList; }
 };
