@@ -24,10 +24,9 @@ void LennardJones::calculateForces(System *system)
 {
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
-    vec3 systemSize = system->systemSize();
-    vec3 systemSizeHalf = system->systemSize()*0.5;
 
     if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
+        system->applyPeriodicBoundaryConditions();
         system->createGhostAtoms();
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 1;
@@ -36,7 +35,8 @@ void LennardJones::calculateForces(System *system)
     CPElapsedTimer::calculateForces().start();
 
     Atoms &atoms = system->atoms();
-    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
+    system->resetForcesOnAllAtoms();
+    for(unsigned int i=0; i<atoms.numberOfAtomsIncludingGhosts(); i++) {
         float x = atoms.x[i];
         float y = atoms.y[i];
         float z = atoms.z[i];
@@ -53,10 +53,6 @@ void LennardJones::calculateForces(System *system)
             float dx = x - atoms.x[neighborIndex];
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
-
-            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
@@ -85,10 +81,10 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 {
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
-    vec3 systemSize = system->systemSize();
-    vec3 systemSizeHalf = system->systemSize()*0.5;
 
     if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
+        system->applyPeriodicBoundaryConditions();
+        system->createGhostAtoms();
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 1;
     }
@@ -96,8 +92,9 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
     CPElapsedTimer::calculateForces().start();
 
     Atoms &atoms = system->atoms();
+    system->resetForcesOnAllAtoms();
 
-    for(unsigned i=0; i<atoms.numberOfAtoms; i++) {
+    for(unsigned int i=0; i<atoms.numberOfAtomsIncludingGhosts(); i++) {
         float x = atoms.x[i];
         float y = atoms.y[i];
         float z = atoms.z[i];
@@ -117,10 +114,6 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
-            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
             const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
@@ -134,8 +127,12 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             atoms.fy[neighborIndex] += dy*force;
             atoms.fz[neighborIndex] += dz*force;
 
-            pressureVirial += force*sqrt(dr2)*dr2;
-            potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+            float factor = 1.0;
+            factor -= 0.5*(i > atoms.numberOfAtoms); // A ghost
+            factor -= 0.5*(neighborIndex > atoms.numberOfAtoms); // A ghost
+
+            pressureVirial += force*sqrt(dr2)*dr2*factor;
+            potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared)*factor;
         }
 
         atoms.fx[i] += fix;

@@ -24,8 +24,9 @@ private:
     bool m_initialized;
     bool m_shouldSample;
     float m_rCut;
-    float m_rShell;
+
 public:
+    float m_rShell;
     System();
     ~System();
     void resetForcesOnAllAtoms();

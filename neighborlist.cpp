@@ -6,6 +6,7 @@
 #include "atom.h"
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 NeighborList::NeighborList() :
@@ -14,7 +15,7 @@ NeighborList::NeighborList() :
 {
     m_neighbors = new unsigned int*[MAXNUMATOMS];
     for(int i=0; i<MAXNUMATOMS; i++) {
-        m_neighbors[i] = new unsigned int[500];
+        m_neighbors[i] = new unsigned int[1000];
     }
 }
 
@@ -33,9 +34,6 @@ void NeighborList::setup(System *system, float rShell)
 
 void NeighborList::update()
 {
-    vec3 systemSize = m_system->systemSize();
-    vec3 systemSizeHalf = m_system->systemSize()*0.5;
-
     // m_system->atoms().sort();
     m_cellList.update();
 
@@ -50,9 +48,13 @@ void NeighborList::update()
                 const vector<unsigned int> &cell1 = m_cellList.cells()[cellIndex1];
 
                 for(int dx=0; dx<=1; dx++) {
+                    if(cx==m_cellList.numberOfCellsX()-1 && dx==1) continue;
                     for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
+                        if( (cy==0 && dy==-1) || (cy==m_cellList.numberOfCellsY()-1 && dy==1) ) continue;
                         for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
-                            int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
+                            if( (cz==0 && dz==-1) || (cz==m_cellList.numberOfCellsZ()-1 && dz==1) ) continue;
+
+                            int cellIndex2 = m_cellList.index(cx+dx, cy+dy, cz+dz);
                             const vector<unsigned int> &cell2 = m_cellList.cells()[cellIndex2];
 
                             const unsigned int cell1Size = cell1.size();
@@ -71,15 +73,12 @@ void NeighborList::update()
                                     float dy = y - atoms.y[atom2Index];
                                     float dz = z - atoms.z[atom2Index];
 
-                                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-                                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-                                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-
                                     const float dr2 = dx*dx + dy*dy + dz*dz;
 
                                     bool shouldNotAdd = dr2 > m_rShellSquared;
                                     m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
                                     m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
+                                    assert(m_neighbors[atom2Index][0] <= 500 && "Too many neighbors for one atom, sorry.");
                                 }
                             }
                         }}}

@@ -16,7 +16,7 @@ void VelocityVerlet::halfKick(System *system, float dt)
     CPElapsedTimer::halfKick().start();
     Atoms &atoms = system->atoms();
     #pragma simd
-    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
+    for(int i=0; i<system->atoms().numberOfAtomsIncludingGhosts(); i++) {
         atoms.vx[i] += atoms.fx[i]*0.5*dt/atoms.mass[i];
         atoms.vy[i] += atoms.fy[i]*0.5*dt/atoms.mass[i];
         atoms.vz[i] += atoms.fz[i]*0.5*dt/atoms.mass[i];
@@ -29,7 +29,7 @@ void VelocityVerlet::move(System *system, float dt)
     CPElapsedTimer::move().start();
     Atoms &atoms = system->atoms();
     #pragma simd
-    for(int i=0; i<system->atoms().numberOfAtoms; i++) {
+    for(int i=0; i<system->atoms().numberOfAtomsIncludingGhosts(); i++) {
         atoms.x[i] += atoms.vx[i]*dt;
         atoms.y[i] += atoms.vy[i]*dt;
         atoms.z[i] += atoms.vz[i]*dt;
@@ -45,7 +45,6 @@ void VelocityVerlet::integrate(System *system, float dt)
     }
     halfKick(system, dt);
     move(system, dt);
-    system->applyPeriodicBoundaryConditions();
     system->calculateForces();
     halfKick(system, dt);
 }

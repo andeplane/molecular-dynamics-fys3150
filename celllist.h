@@ -16,7 +16,7 @@ private:
 
 public:
     CellList();
-    void setup(System *system, float rCut);
+    void setup(System *system, float minimumCellSize);
     void clear();
     void update();
     int numberOfCellsX() { return m_numberOfCellsX; }

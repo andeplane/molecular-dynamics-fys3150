@@ -59,7 +59,7 @@ void System::removeMomentum() {
 }
 
 void System::resetForcesOnAllAtoms() {
-    for(int i=0; i<m_atoms.numberOfAtoms; i++) {
+    for(int i=0; i<m_atoms.numberOfAtomsIncludingGhosts(); i++) {
         m_atoms.fx[i] = 0;
         m_atoms.fy[i] = 0;
         m_atoms.fz[i] = 0;
@@ -171,7 +171,6 @@ void System::createGhostAtoms()
 }
 
 void System::calculateForces() {
-    resetForcesOnAllAtoms();
     if(m_shouldSample) m_potential->calculateForcesAndEnergyAndPressure(this);
     else m_potential->calculateForces(this);
 }
