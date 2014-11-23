@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#define ALIGNMALLOC 64
 #include "math/random.h"
 
 #include "potentials/lennardjones.h"
@@ -23,7 +24,7 @@ int main(int args, char *argv[])
     // float latticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
-    float temperature = 300;
+    float temperature = 1000;
     if(args>1) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);
@@ -99,6 +100,9 @@ int main(int args, char *argv[])
          << "      Sampling          : " << CPElapsedTimer::sampling().elapsedTime() << " s ( " << 100*samplingFraction << "%)" <<  endl;
     cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
     cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
+    int pairsPerSecond = system.atoms().numberOfComputedForces / (1000*CPElapsedTimer::totalTime());
+    int bytesPerSecond = pairsPerSecond*6*sizeof(float);
+    cout << pairsPerSecond << " pairs computed per second (" << bytesPerSecond/1000000. << " megabytes / sec)" << endl;
 
     movie->close();
 

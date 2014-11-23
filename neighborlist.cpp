@@ -36,7 +36,7 @@ void NeighborList::update()
     vec3 systemSize = m_system->systemSize();
     vec3 systemSizeHalf = m_system->systemSize()*0.5;
 
-    // std::sort(m_system->atoms().begin(), m_system->atoms().end(), Atom());
+    m_system->atoms().sort();
     m_cellList.update();
 
     CPElapsedTimer::updateNeighborList().start();
@@ -79,7 +79,7 @@ void NeighborList::update()
 
                                     bool shouldNotAdd = dr2 > m_rShellSquared;
                                     m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
-                                    m_neighbors[atom2Index][0] -= shouldNotAdd; // Move neighborcounter back if we shouldn't add this
+                                    m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
                                 }
                             }
                         }}}

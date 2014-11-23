@@ -1,20 +1,20 @@
 #ifndef ATOMS_H
 #define ATOMS_H
-#define MAXNUMATOMS 100000
+#define MAXNUMATOMS 50000
+#include "math/vec3.h"
+
 class Atoms
 {
 public:
-    Atoms();
-    unsigned int i;
-    unsigned int j;
-    unsigned int k;
+    unsigned int numberOfAtoms;
     float x[MAXNUMATOMS];
-    float y[MAXNUMATOMS];
-    float z[MAXNUMATOMS];
-
     float fx[MAXNUMATOMS];
+    float y[MAXNUMATOMS];
     float fy[MAXNUMATOMS];
+    float z[MAXNUMATOMS];
     float fz[MAXNUMATOMS];
+
+    int   cellIndex[MAXNUMATOMS];
 
     float vx[MAXNUMATOMS];
     float vy[MAXNUMATOMS];
@@ -22,8 +22,11 @@ public:
 
     float mass[MAXNUMATOMS];
     int   index[MAXNUMATOMS];
-    int   cellIndex[MAXNUMATOMS];
-    unsigned int numberOfAtoms;
+
+    unsigned long numberOfComputedForces;
+
+    Atoms();
+    void sort();
 };
 
 #endif // ATOMS_H

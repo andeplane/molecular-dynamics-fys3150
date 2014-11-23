@@ -35,8 +35,7 @@ void LennardJones::calculateForces(System *system)
     CPElapsedTimer::calculateForces().start();
 
     Atoms &atoms = system->atoms();
-
-    for(unsigned i=0; i<atoms.numberOfAtoms; i++) {
+    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
         float x = atoms.x[i];
         float y = atoms.y[i];
         float z = atoms.z[i];
@@ -44,7 +43,7 @@ void LennardJones::calculateForces(System *system)
         float fiy = 0;
         float fiz = 0;
 
-        unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
+        const unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
 
         const unsigned int numNeighbors = neighbors[0];
 #pragma simd reduction (+: fix, fiy, fiz)
@@ -72,6 +71,7 @@ void LennardJones::calculateForces(System *system)
             atoms.fz[neighborIndex] += dz*force;
         }
 
+        atoms.numberOfComputedForces += numNeighbors;
         atoms.fx[i] += fix;
         atoms.fy[i] += fiy;
         atoms.fz[i] += fiz;

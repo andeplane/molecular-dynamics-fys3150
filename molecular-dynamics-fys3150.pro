@@ -4,9 +4,9 @@ CONFIG -= app_bundle
 #CONFIG -= qt
 INCLUDEPATH +=
 # QT += quick widgets
-#CONFIG += c++11
+CONFIG += c++11
 QMAKE_CXX = g++-4.9
-CXX = g++-4.9
+
 SOURCES += main.cpp \
     atom.cpp \
     system.cpp \

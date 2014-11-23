@@ -20,7 +20,7 @@ public:
     NeighborList();
     void setup(System *system, float rShell);
     void update();
-    unsigned int *neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
+    inline unsigned int *neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
 };
 
 #endif // NEIGHBORLIST_H
