@@ -3,7 +3,6 @@
 #include "math/vec3.h"
 #include "system.h"
 #include "cpelapsedtimer.h"
-#include "atom.h"
 #include <algorithm>
 #include <iostream>
 #include <cassert>

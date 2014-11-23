@@ -7,7 +7,6 @@
 #include "integrators/velocityverlet.h"
 #include "system.h"
 #include "statisticssampler.h"
-#include "atom.h"
 #include "io.h"
 #include "unitconverter.h"
 #include "cpelapsedtimer.h"

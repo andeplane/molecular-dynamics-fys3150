@@ -1,10 +1,18 @@
 #ifndef CELLLIST_H
 #define CELLLIST_H
+#include "math/vec3.h"
+#include "atoms.h"
+
 #include <vector>
 using std::vector;
-#include "math/vec3.h"
 
 class Atom; class System;
+
+class Cell
+{
+
+};
+
 class CellList
 {
 private:

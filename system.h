@@ -1,6 +1,5 @@
 #pragma once
 #include "vector"
-#include "atom.h"
 #include "math/vec3.h"
 #include "celllist.h"
 #include "neighborlist.h"
@@ -13,11 +12,10 @@ class System
 {
 private:
     vec3 m_systemSize;
-    // vector<Atom> m_atoms;
     Atoms *m_atoms;
     Potential *m_potential;
     Integrator *m_integrator;
-
+    CellList     m_cellList;
     NeighborList m_neighborList;
     float m_currentTime;
     int m_steps;
