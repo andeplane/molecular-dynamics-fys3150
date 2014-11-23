@@ -105,6 +105,8 @@ int main(int args, char *argv[])
     float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
     float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
     cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
+    float numPairsPerSecond = system.potential()->numPairsComputed() / (1000*CPElapsedTimer::totalTime());
+    cout << numPairsPerSecond << " pairs computed per second" << endl;
     // cout << pairsPerSecond << " pairs computed per second (" << bytesPerSecond/1000000. << " megabytes / sec)" << endl;
 
     movie->close();
