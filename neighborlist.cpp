@@ -6,6 +6,7 @@
 #include "atom.h"
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 NeighborList::NeighborList() :
@@ -14,7 +15,7 @@ NeighborList::NeighborList() :
 {
     m_neighbors = new unsigned int*[MAXNUMATOMS];
     for(int i=0; i<MAXNUMATOMS; i++) {
-        m_neighbors[i] = new unsigned int[500];
+        m_neighbors[i] = new unsigned int[MAXNUMNEIGHBORS];
     }
 }
 
@@ -57,16 +58,18 @@ void NeighborList::update()
 
                             const unsigned int cell1Size = cell1.size();
                             for(unsigned int i=0; i<cell1Size; i++) {
-                                unsigned int atom1Index = cell1[i];
+                                const unsigned int atom1Index = cell1[i];
 
                                 float x = atoms.x[atom1Index];
                                 float y = atoms.y[atom1Index];
                                 float z = atoms.z[atom1Index];
 
                                 const unsigned int cell2Size = cell2.size();
+#ifdef MD_SIMD
 #pragma simd
+#endif
                                 for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
-                                    unsigned int atom2Index = cell2[j];
+                                    const unsigned int atom2Index = cell2[j];
                                     float dx = x - atoms.x[atom2Index];
                                     float dy = y - atoms.y[atom2Index];
                                     float dz = z - atoms.z[atom2Index];
@@ -77,9 +80,12 @@ void NeighborList::update()
 
                                     const float dr2 = dx*dx + dy*dy + dz*dz;
 
-                                    bool shouldNotAdd = dr2 > m_rShellSquared;
+                                    const bool shouldNotAdd = dr2 > m_rShellSquared;
                                     m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
                                     m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
+#ifdef MD_DEBUG
+                                    assert(m_neighbors[atom2Index][0] <= MAXNUMNEIGHBORS && "An atom got too many neighbors :/");
+#endif
                                 }
                             }
                         }}}

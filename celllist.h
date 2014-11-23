@@ -12,6 +12,9 @@ private:
     int m_numberOfCellsX;
     int m_numberOfCellsY;
     int m_numberOfCellsZ;
+    float m_oneOverLengthX;
+    float m_oneOverLengthY;
+    float m_oneOverLengthZ;
     vector<vector<unsigned int> > m_cells;
 
 public:

@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int args, char *argv[])
 {
-    int numTimeSteps = 1000;
+    int numTimeSteps = 10000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
     int numUnitCells = 8;
     float latticeConstant = 5.26;
@@ -70,7 +70,7 @@ int main(int args, char *argv[])
         }
 
         if( !(timestep % 100)) {
-            cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
+            cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
         }
         // movie->saveState(&system);
     }

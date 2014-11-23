@@ -46,7 +46,9 @@ void LennardJones::calculateForces(System *system)
         const unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
 
         const unsigned int numNeighbors = neighbors[0];
+#ifdef MD_SIMD
 #pragma simd reduction (+: fix, fiy, fiz)
+#endif
         for(unsigned int j=1; j<=numNeighbors; j++) {
             unsigned int neighborIndex = neighbors[j];
             float dx = x - atoms.x[neighborIndex];
@@ -109,7 +111,9 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
         float potentialEnergy = 0;
 
         const unsigned int numNeighbors = neighbors[0];
+#ifdef MD_SIMD
 #pragma simd reduction (+: fix, fiy, fiz, pressureVirial, potentialEnergy)
+#endif
         for(unsigned int j=1; j<=numNeighbors; j++) {
             unsigned int neighborIndex = neighbors[j];
             float dx = x - atoms.x[neighborIndex];

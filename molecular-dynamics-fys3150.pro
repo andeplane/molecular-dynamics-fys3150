@@ -13,6 +13,8 @@ QMAKE_CXX = icpc
 QMAKE_CXXFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
 QMAKE_CFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
 
+DEFINES += MD_SIMD
+#DEFINES += MD_DEBUG
 
 SOURCES += main.cpp \
     atom.cpp \
@@ -52,5 +54,6 @@ HEADERS += \
     modifiers/berendsenthermostat.h \
     math/hilbert.h \
     math/morton.h \
-    atoms.h
+    atoms.h \
+    config.h
 

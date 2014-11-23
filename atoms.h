@@ -1,6 +1,7 @@
 #ifndef ATOMS_H
 #define ATOMS_H
-#define MAXNUMATOMS 100000
+#include "config.h"
+
 #include "math/vec3.h"
 
 class Atoms
