@@ -5,7 +5,14 @@ CONFIG -= app_bundle
 INCLUDEPATH +=
 # QT += quick widgets
 CONFIG += c++11
-QMAKE_CXX = g++-4.9
+#QMAKE_CXX = g++-4.8
+
+QMAKE_LINK = icpc
+QMAKE_CC = icc
+QMAKE_CXX = icpc
+QMAKE_CXXFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
+QMAKE_CFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
+
 
 SOURCES += main.cpp \
     atom.cpp \
@@ -18,7 +25,6 @@ SOURCES += main.cpp \
     potentials/potential.cpp \
     potentials/lennardjones.cpp \
     statisticssampler.cpp \
-    integrators/eulercromer.cpp \
     unitconverter.cpp \
     celllist.cpp \
     neighborlist.cpp \
@@ -39,7 +45,6 @@ HEADERS += \
     potentials/potential.h \
     potentials/lennardjones.h \
     statisticssampler.h \
-    integrators/eulercromer.h \
     unitconverter.h \
     celllist.h \
     neighborlist.h \

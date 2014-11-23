@@ -1,11 +1,13 @@
 #include "atoms.h"
 #include "math/hilbert.h"
 #include <algorithm>
-#include <string>
+#include <cstring>
+
 #include <iostream>
 
 Atoms::Atoms() :
     numberOfAtoms(0),
+    numberOfGhostAtoms(0),
     numberOfComputedForces(0)
 {
     memset(cellIndex,0,MAXNUMATOMS*sizeof(int));

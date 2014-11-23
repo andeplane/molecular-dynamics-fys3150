@@ -18,12 +18,13 @@ private:
     Potential *m_potential;
     Integrator *m_integrator;
 
-    CellList m_cellList;
     NeighborList m_neighborList;
     float m_currentTime;
     int m_steps;
     bool m_initialized;
     bool m_shouldSample;
+    float m_rCut;
+    float m_rShell;
 public:
     System();
     ~System();
@@ -48,8 +49,8 @@ public:
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     float volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
-    CellList &cellList() { return m_cellList; }
     NeighborList &neighborList() { return m_neighborList; }
     void initialize(float cutoffRadius);
     void setShouldSample(bool shouldSample);
+    void createGhostAtoms();
 };

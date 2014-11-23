@@ -1,12 +1,13 @@
 #ifndef ATOMS_H
 #define ATOMS_H
-#define MAXNUMATOMS 50000
+#define MAXNUMATOMS 100000
 #include "math/vec3.h"
 
 class Atoms
 {
 public:
     unsigned int numberOfAtoms;
+    unsigned int numberOfGhostAtoms;
     float x[MAXNUMATOMS];
     float fx[MAXNUMATOMS];
     float y[MAXNUMATOMS];
@@ -27,6 +28,7 @@ public:
 
     Atoms();
     void sort();
+    unsigned int numberOfAtomsIncludingGhosts() { return numberOfAtoms + numberOfGhostAtoms; }
 };
 
 #endif // ATOMS_H

@@ -24,7 +24,7 @@ int main(int args, char *argv[])
     // float latticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
-    float temperature = 1000;
+    float temperature = 150;
     if(args>1) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);

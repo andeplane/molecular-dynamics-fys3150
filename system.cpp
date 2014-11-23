@@ -27,14 +27,15 @@ System::~System()
 }
 
 void System::initialize(float cutoffRadius) {
-    m_cellList.setup(this, cutoffRadius);
-    m_neighborList.setup(this, UnitConverter::lengthFromAngstroms(2.8*3.405));
+    m_rCut = cutoffRadius;
+    m_rShell = UnitConverter::lengthFromAngstroms(2.8*3.405);
+    m_neighborList.setup(this, m_rShell);
     m_initialized = true;
 }
 
 void System::applyPeriodicBoundaryConditions() {
     CPElapsedTimer::periodicBoundaryConditions().start();
-    #pragma simd
+#pragma simd
     for(int i=0; i<m_atoms.numberOfAtoms; i++) {
         m_atoms.x[i] += m_systemSize[0]*( (m_atoms.x[i] < 0) - (m_atoms.x[i] >= m_systemSize[0]));
         m_atoms.y[i] += m_systemSize[1]*( (m_atoms.y[i] < 0) - (m_atoms.y[i] >= m_systemSize[1]));
@@ -106,6 +107,67 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 void System::setShouldSample(bool shouldSample)
 {
     m_shouldSample = shouldSample;
+}
+
+void System::createGhostAtoms()
+{
+    m_atoms.numberOfGhostAtoms = 0; // Reset all ghosts
+
+    for(unsigned short dimension=0; dimension<3; dimension++) {
+        unsigned int newGhosts = m_atoms.numberOfGhostAtoms;
+
+        for(unsigned int i=0; i<m_atoms.numberOfAtoms+newGhosts; i++) {
+            bool shouldCopy = false;
+            unsigned int atomIndex = m_atoms.numberOfAtomsIncludingGhosts();
+
+            if(dimension==0) {
+                if(m_atoms.x[i] < m_rShell) {
+                    m_atoms.x[atomIndex] = m_atoms.x[i] + m_systemSize[0]; shouldCopy = true;
+                } else if (m_atoms.x[i] > m_systemSize[0] - m_rShell) {
+                    m_atoms.x[atomIndex] = m_atoms.x[i] - m_systemSize[0]; shouldCopy = true;
+                }
+
+                if(shouldCopy) {
+                    m_atoms.y[atomIndex] = m_atoms.y[i];
+                    m_atoms.z[atomIndex] = m_atoms.z[i];
+                }
+            } else if(dimension==1) {
+                if(m_atoms.y[i] < m_rShell) {
+                    m_atoms.y[atomIndex] = m_atoms.y[i] + m_systemSize[1]; shouldCopy = true;
+                } else if (m_atoms.y[i] > m_systemSize[1] - m_rShell) {
+                    m_atoms.y[atomIndex] = m_atoms.y[i] - m_systemSize[1]; shouldCopy = true;
+                }
+
+                if(shouldCopy) {
+                    m_atoms.x[atomIndex] = m_atoms.x[i];
+                    m_atoms.z[atomIndex] = m_atoms.z[i];
+                }
+            } else if(dimension==2) {
+                if(m_atoms.z[i] < m_rShell) {
+                    m_atoms.z[atomIndex] = m_atoms.z[i] + m_systemSize[2]; shouldCopy = true;
+                } else if (m_atoms.z[i] > m_systemSize[2] - m_rShell) {
+                    m_atoms.z[atomIndex] = m_atoms.z[i] - m_systemSize[2]; shouldCopy = true;
+                }
+
+                if(shouldCopy) {
+                    m_atoms.x[atomIndex] = m_atoms.x[i];
+                    m_atoms.y[atomIndex] = m_atoms.y[i];
+                }
+            }
+
+            if(shouldCopy) {
+                m_atoms.vx[atomIndex] = m_atoms.vx[i];
+                m_atoms.vy[atomIndex] = m_atoms.vy[i];
+                m_atoms.vz[atomIndex] = m_atoms.vz[i];
+
+                m_atoms.mass[atomIndex] = m_atoms.mass[i];
+                m_atoms.index[atomIndex] = atomIndex;
+                m_atoms.numberOfGhostAtoms++;
+            }
+        }
+    }
+
+    cout << "Created " << m_atoms.numberOfGhostAtoms << " ghost atoms. Now we have " << m_atoms.numberOfAtomsIncludingGhosts() << " atoms in total." << endl;
 }
 
 void System::calculateForces() {

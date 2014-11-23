@@ -36,7 +36,7 @@ void NeighborList::update()
     vec3 systemSize = m_system->systemSize();
     vec3 systemSizeHalf = m_system->systemSize()*0.5;
 
-    m_system->atoms().sort();
+    // m_system->atoms().sort();
     m_cellList.update();
 
     CPElapsedTimer::updateNeighborList().start();
