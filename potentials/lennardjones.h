@@ -15,5 +15,6 @@ public:
     LennardJones(float sigma, float epsilon, float cutoffRadius);
     ~LennardJones() {}
     virtual void calculateForces(System *system);
+    virtual void calculateForcesAndEnergyAndPressure(System *system);
     void calculateForcesBetweenAtoms(Atom *atom1, Atom *atom2, vec3 &deltaRVector, const vec3 &systemSize);
 };

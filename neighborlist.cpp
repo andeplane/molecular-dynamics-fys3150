@@ -68,6 +68,7 @@ void NeighborList::update()
                 float z = atoms.z[atom1Index];
 
                 const unsigned int cell2Size = cell2.size();
+#pragma simd
                 for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
                     unsigned int atom2Index = cell2[j];
                     float dx = x - atoms.x[atom2Index];
@@ -79,9 +80,10 @@ void NeighborList::update()
                     dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
 
                     const float dr2 = dx*dx + dy*dy + dz*dz;
-                    if(dr2 > m_rShellSquared) continue;
 
-                    m_neighbors[atom1Index][ ++m_neighbors[atom1Index][0] ] = atom2Index;
+                    bool shouldNotAdd = dr2 > m_rShellSquared;
+                    m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
+                    m_neighbors[atom2Index][0] -= shouldNotAdd; // Move neighborcounter back if we shouldn't add this
                 }
             }
         }}}

@@ -14,7 +14,8 @@ System::System() :
     m_integrator(0),
     m_currentTime(0),
     m_steps(0),
-    m_initialized(false)
+    m_initialized(false),
+    m_shouldSample(false)
 {
 
 }
@@ -108,12 +109,13 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
 
 void System::setShouldSample(bool shouldSample)
 {
-    m_potential->setShouldComputeEnergyAndPressureVirial(shouldSample);
+    m_shouldSample = shouldSample;
 }
 
 void System::calculateForces() {
     resetForcesOnAllAtoms();
-    m_potential->calculateForces(this);
+    if(m_shouldSample) m_potential->calculateForcesAndEnergyAndPressure(this);
+    else m_potential->calculateForces(this);
 }
 
 void System::step(float dt) {

@@ -23,6 +23,7 @@ private:
     float m_currentTime;
     int m_steps;
     bool m_initialized;
+    bool m_shouldSample;
 public:
     System();
     ~System();
