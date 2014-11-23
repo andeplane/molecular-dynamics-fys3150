@@ -28,7 +28,6 @@ void LennardJones::calculateForces(System *system)
     vec3 systemSizeHalf = system->systemSize()*0.5;
 
     if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
-        system->createGhostAtoms();
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 1;
     }

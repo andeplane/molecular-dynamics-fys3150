@@ -166,8 +166,6 @@ void System::createGhostAtoms()
             }
         }
     }
-
-    cout << "Created " << m_atoms.numberOfGhostAtoms << " ghost atoms. Now we have " << m_atoms.numberOfAtomsIncludingGhosts() << " atoms in total." << endl;
 }
 
 void System::calculateForces() {
