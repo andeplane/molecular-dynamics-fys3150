@@ -17,9 +17,9 @@ using namespace std;
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e6;
+    unsigned int numTimeSteps = 1e4;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 8;
+    int numUnitCells = 6;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;

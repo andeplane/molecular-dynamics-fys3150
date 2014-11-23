@@ -25,6 +25,7 @@ private:
     bool m_shouldSample;
     float m_rCut;
     float m_rShell;
+    void validate();
 public:
     System();
     ~System();
@@ -36,7 +37,6 @@ public:
     void step(float dt);
 
     // Setters and getters
-    // vector<Atom> &atoms() { return m_atoms; }
     Atoms &atoms() { return *m_atoms; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
@@ -53,4 +53,5 @@ public:
     void initialize(float cutoffRadius);
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();
+    void printStatus();
 };

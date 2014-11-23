@@ -22,6 +22,10 @@ public:
     void setup(System *system, float rCut);
     void clear();
     void update();
+    float lengthX() { return 1.0/m_oneOverLengthX; }
+    float lengthY() { return 1.0/m_oneOverLengthY; }
+    float lengthZ() { return 1.0/m_oneOverLengthZ; }
+
     int numberOfCellsX() { return m_numberOfCellsX; }
     int numberOfCellsY() { return m_numberOfCellsY; }
     int numberOfCellsZ() { return m_numberOfCellsZ; }

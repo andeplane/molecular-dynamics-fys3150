@@ -33,10 +33,15 @@ float StatisticsSampler::sampleKineticEnergy(System *system)
 {
     m_kineticEnergy = 0;
     Atoms &atoms = system->atoms();
+    // float kineticEnergy = 0;
+//#ifdef MD_SIMD
+//#pragma simd reduction(+: kineticEnergy)
+//#endif
     for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
         m_kineticEnergy += 0.5*atoms.mass[i]*(atoms.vx[i]*atoms.vx[i] + atoms.vy[i]*atoms.vy[i] + atoms.vz[i]*atoms.vz[i]);
     }
 
+    // m_kineticEnergy = kineticEnergy;
     return m_kineticEnergy;
 }
 

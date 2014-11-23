@@ -21,6 +21,7 @@ public:
     void setup(System *system, float rShell);
     void update();
     inline unsigned int *neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
+    CellList &cellList() { return m_cellList; }
 };
 
 #endif // NEIGHBORLIST_H

@@ -32,6 +32,26 @@ void System::initialize(float cutoffRadius) {
     m_rShell = UnitConverter::lengthFromAngstroms(2.8*3.405);
     m_neighborList.setup(this, m_rShell);
     m_initialized = true;
+    printStatus();
+    validate();
+
+}
+
+void System::validate() {
+    CellList &cellList = m_neighborList.cellList();
+    if(cellList.numberOfCellsX() < 3 || cellList.numberOfCellsY() < 3 || cellList.numberOfCellsZ() < 3) {
+        cout << "Error, system size too small to have at least 3 cells in each dimension, aborting." << endl;
+        cout << "Minimum system size: " << UnitConverter::lengthToAngstroms(3*m_rShell) << " Å" << endl;
+        exit(1);
+    }
+}
+
+void System::printStatus() {
+    cout << "System initialized with " << m_atoms->numberOfAtoms << " atoms." << endl;
+    cout << "System size: " << m_systemSize << endl;
+    CellList &cellList = m_neighborList.cellList();
+    cout << "Number of cells: " << cellList.numberOfCellsX() << ", " << cellList.numberOfCellsY() << ", " << cellList.numberOfCellsZ() << endl;
+    cout << "Cell size: " << UnitConverter::lengthToAngstroms(cellList.lengthX()) << " x " << UnitConverter::lengthToAngstroms(cellList.lengthY()) << " x " << UnitConverter::lengthToAngstroms(cellList.lengthZ()) << " Å^3" << endl;
 }
 
 void System::applyPeriodicBoundaryConditions() {
@@ -70,7 +90,10 @@ void System::removeMomentum() {
 }
 
 void System::resetForcesOnAllAtoms() {
-    for(int i=0; i<m_atoms->numberOfAtoms; i++) {
+#ifdef MD_SIMD
+#pragma simd
+#endif
+    for(unsigned int i=0; i<m_atoms->numberOfAtoms; i++) {
         m_atoms->fx[i] = 0;
         m_atoms->fy[i] = 0;
         m_atoms->fz[i] = 0;
