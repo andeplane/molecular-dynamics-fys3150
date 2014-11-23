@@ -47,6 +47,7 @@ void LennardJones::calculateForces(System *system)
                                 float fix = 0;
                                 float fiy = 0;
                                 float fiz = 0;
+#pragma simd reduction(+: fix, fiy, fiz)
                                 for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
                                     float dx = x - cell2.x[j];
                                     float dy = y - cell2.y[j];
@@ -110,7 +111,8 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
                         for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
                             const unsigned int cellIndex2 = cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
                             Cell &cell2 = cells[cellIndex2];
-                            for(unsigned int i=0; i<cell1.numberOfAtoms; i++) {
+                            const unsigned int cell1Size = cell1.numberOfAtoms;
+                            for(unsigned int i=0; i<cell1Size; i++) {
                                 float x = cell1.x[i];
                                 float y = cell1.y[i];
                                 float z = cell1.z[i];
@@ -119,7 +121,10 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
                                 float fiz = 0;
                                 float pressureVirial = 0;
                                 float potentialEnergy = 0;
-                                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
+                                const unsigned int cell2Size = cell2.numberOfAtoms;
+
+#pragma simd reduction(+: fix, fiy, fiz, pressureVirial, potentialEnergy)
+                                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
                                     float dx = x - cell2.x[j];
                                     float dy = y - cell2.y[j];
                                     float dz = z - cell2.z[j];

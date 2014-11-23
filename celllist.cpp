@@ -1,9 +1,10 @@
-#include "celllist.h"
 #include "system.h"
+#include "celllist.h"
 #include <iostream>
 #include "cpelapsedtimer.h"
 #include <cassert>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
