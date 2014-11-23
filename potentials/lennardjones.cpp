@@ -60,9 +60,8 @@ void LennardJones::calculateForces(System *system)
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
-            const float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
-
-            const float force = -m_24epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
+            const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
+            const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1.0f)*oneOverDr2*(dr2 < m_rCutSquared);
 
             fix -= dx*force;
             fiy -= dy*force;
@@ -123,9 +122,8 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
-            const float oneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2;
-
-            const float force = -m_24epsilon*m_sigma6*oneOverDr6*(2*m_sigma6*oneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
+            const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
+            const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
 
             fix -= dx*force;
             fiy -= dy*force;
@@ -136,7 +134,7 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             atoms.fz[neighborIndex] += dz*force;
 
             pressureVirial += force*sqrt(dr2)*dr2;
-            potentialEnergy += (4*m_epsilon*m_sigma6*oneOverDr6*(m_sigma6*oneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+            potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
 
         atoms.fx[i] += fix;

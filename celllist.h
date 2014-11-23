@@ -23,14 +23,15 @@ public:
     int numberOfCellsY() { return m_numberOfCellsY; }
     int numberOfCellsZ() { return m_numberOfCellsZ; }
 
-    void threeDimensionalIndices(unsigned int &index, unsigned int &i, unsigned int &j, unsigned int &k) {
-//        k = index % m_numberOfCellsZ;
-//        j = index /
+    void index3d(unsigned int &index, unsigned int &i, unsigned int &j, unsigned int &k) {
+        k = (index / (m_numberOfCellsX*m_numberOfCellsY));
+        j = (index / m_numberOfCellsX) % m_numberOfCellsY;
+        i = index % m_numberOfCellsX;
     }
 
     unsigned int indexf(float x, float y, float z);
-    unsigned int index(unsigned int cx, unsigned int cy, unsigned int cz) { return cx*m_numberOfCellsY*m_numberOfCellsZ + cy*m_numberOfCellsZ + cz; }
-    unsigned int indexPeriodic(int cx, int cy, int cz) { return ( (cx+m_numberOfCellsX) % m_numberOfCellsX)*m_numberOfCellsY*m_numberOfCellsZ + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsZ + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ); }
+    unsigned int index(unsigned int cx, unsigned int cy, unsigned int cz) { return cx + cy*m_numberOfCellsX + cz*m_numberOfCellsY*m_numberOfCellsX; }
+    unsigned int indexPeriodic(int cx, int cy, int cz) { return ( (cx+m_numberOfCellsX) % m_numberOfCellsX) + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsX + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ)*m_numberOfCellsX*m_numberOfCellsY; }
     vector<unsigned int> &operator[](int index) { return m_cells[index]; }
     vector<vector<unsigned int> > &cells();
 };
