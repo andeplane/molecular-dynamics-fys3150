@@ -17,9 +17,9 @@ using namespace std;
 
 int main(int args, char *argv[])
 {
-    int numTimeSteps = 1000;
+    unsigned int numTimeSteps = 1e6;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 10;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
@@ -53,7 +53,7 @@ int main(int args, char *argv[])
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
-        bool shouldSample = !(timestep % 100) || thermostatEnabled;
+        bool shouldSample = !(timestep % 1000) || thermostatEnabled;
         system.setShouldSample(shouldSample);
         system.step(dt);
 
@@ -69,7 +69,7 @@ int main(int args, char *argv[])
             CPElapsedTimer::thermostat().stop();
         }
 
-        if( !(timestep % 100)) {
+        if( !(timestep % 1000)) {
             cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
         }
         // movie->saveState(&system);
@@ -102,6 +102,9 @@ int main(int args, char *argv[])
     cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
     int pairsPerSecond = system.atoms().numberOfComputedForces / (1000*CPElapsedTimer::totalTime());
     int bytesPerSecond = pairsPerSecond*6*sizeof(float);
+    float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
+    float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
+    cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
     cout << pairsPerSecond << " pairs computed per second (" << bytesPerSecond/1000000. << " megabytes / sec)" << endl;
 
     movie->close();

@@ -36,9 +36,9 @@ void LennardJones::calculateForces(System *system)
 
     Atoms &atoms = system->atoms();
     for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
-        float x = atoms.x[i];
-        float y = atoms.y[i];
-        float z = atoms.z[i];
+        const float x = atoms.x[i];
+        const float y = atoms.y[i];
+        const float z = atoms.z[i];
         float fix = 0;
         float fiy = 0;
         float fiz = 0;
@@ -50,14 +50,23 @@ void LennardJones::calculateForces(System *system)
 #pragma simd reduction (+: fix, fiy, fiz)
 #endif
         for(unsigned int j=1; j<=numNeighbors; j++) {
-            unsigned int neighborIndex = neighbors[j];
+            const unsigned int neighborIndex = neighbors[j];
             float dx = x - atoms.x[neighborIndex];
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+            if(dx < -systemSizeHalf[0]) dx += systemSize[0];
+            else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
+            if(dy < -systemSizeHalf[1]) dy += systemSize[1];
+            else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
+            if(dz < -systemSizeHalf[2]) dz += systemSize[2];
+            else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
+#else
             dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
             dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
             dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+#endif
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
@@ -120,9 +129,18 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+            if(dx < -systemSizeHalf[0]) dx += systemSize[0];
+            else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
+            if(dy < -systemSizeHalf[1]) dy += systemSize[1];
+            else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
+            if(dz < -systemSizeHalf[2]) dz += systemSize[2];
+            else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
+#else
             dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
             dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
             dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+#endif
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;

@@ -10,8 +10,14 @@ CONFIG += c++11
 QMAKE_LINK = icpc
 QMAKE_CC = icc
 QMAKE_CXX = icpc
-QMAKE_CXXFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
-QMAKE_CFLAGS += -xCORE-AVX-I -ipo -no-prec-div -ansi-alias -g
+QMAKE_CXXFLAGS += -xCORE-AVX-I -O3 -ipo -g -falign-functions=16
+QMAKE_CFLAGS += -xCORE-AVX-I -O3 -ipo -g -falign-functions=16
+
+#QMAKE_CXXFLAGS += -prof-gen
+#QMAKE_CFLAGS += -prof-gen
+
+QMAKE_CXXFLAGS += -prof-use
+QMAKE_CFLAGS += -prof-use
 
 DEFINES += MD_SIMD
 #DEFINES += MD_DEBUG
