@@ -9,6 +9,5 @@ private:
     bool m_firstStep;
 public:
     VelocityVerlet();
-    ~VelocityVerlet();
     virtual void integrate(System *system, float dt);
 };

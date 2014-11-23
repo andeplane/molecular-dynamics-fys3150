@@ -22,6 +22,7 @@ public:
 
     float mass[MAXNUMATOMS];
     int   index[MAXNUMATOMS];
+    int   cellIndex[MAXNUMATOMS];
     unsigned int numberOfAtoms;
 };
 

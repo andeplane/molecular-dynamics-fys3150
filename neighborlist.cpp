@@ -42,10 +42,16 @@ void NeighborList::update()
     CPElapsedTimer::updateNeighborList().start();
     clear();
 
-//    for(int i=0; i<m_system->atoms().size(); i++) {
-//        Atom *atom = m_system->atoms()[i];
-//        atom->resetNeighbors();
+//    Atoms &atoms = m_system->atoms();
+//    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
+//        float x = atoms.x[i];
+//        float y = atoms.y[i];
+//        float z = atoms.z[i];
+
 //    }
+
+//    return;
+
     Atoms &atoms = m_system->atoms();
     for(int cx=0; cx<m_cellList.numberOfCellsX(); cx++) {
     for(int cy=0; cy<m_cellList.numberOfCellsY(); cy++) {
