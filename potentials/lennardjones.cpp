@@ -159,6 +159,7 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
 
+        atoms.numberOfComputedForces += numNeighbors;
         atoms.fx[i] += fix;
         atoms.fy[i] += fiy;
         atoms.fz[i] += fiz;
