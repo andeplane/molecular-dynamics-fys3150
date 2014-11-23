@@ -107,7 +107,6 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
                     float boltzmannConstant = 1.0; // In atomic units, the boltzmann constant equals 1
                     float standardDeviation = sqrt(boltzmannConstant*temperature/mass);
                     velocity.randomGaussian(0, standardDeviation);
-                    cout << "Will add atom at " << x << ", " << y << ", " << z << endl;
                     m_cellList.addAtom(vec3(x,y,z), velocity, mass, numberOfAtoms);
                     numberOfAtoms++;
                 }

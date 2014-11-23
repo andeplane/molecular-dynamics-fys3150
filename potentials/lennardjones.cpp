@@ -21,149 +21,144 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 
 void LennardJones::calculateForces(System *system)
 {
-//    m_potentialEnergy = 0;
-//    m_pressureVirial = 0;
-//    vec3 systemSize = system->systemSize();
-//    vec3 systemSizeHalf = system->systemSize()*0.5;
+    m_potentialEnergy = 0;
+    m_pressureVirial = 0;
+    vec3 systemSize = system->systemSize();
+    vec3 systemSizeHalf = system->systemSize()*0.5;
 
-//    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
-//        system->neighborList().update();
-//        m_timeSinceLastNeighborListUpdate = 1;
-//    }
+    CPElapsedTimer::calculateForces().start();
+    CellList &cellList = system->cellList();
+    vector<Cell> &cells = cellList.cells();
 
-//    CPElapsedTimer::calculateForces().start();
+    for(int cx=0; cx<cellList.numberOfCellsX(); cx++) {
+        for(int cy=0; cy<cellList.numberOfCellsY(); cy++) {
+            for(int cz=0; cz<cellList.numberOfCellsZ(); cz++) {
+                const unsigned int cellIndex1 = cellList.index(cx, cy, cz);
+                Cell &cell1 = cells[cellIndex1];
+                for(int dx=0; dx<=1; dx++) {
+                    for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
+                        for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
+                            const unsigned int cellIndex2 = cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
+                            Cell &cell2 = cells[cellIndex2];
+                            for(unsigned int i=0; i<cell1.numberOfAtoms; i++) {
+                                float x = cell1.x[i];
+                                float y = cell1.y[i];
+                                float z = cell1.z[i];
+                                float fix = 0;
+                                float fiy = 0;
+                                float fiz = 0;
+                                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
+                                    float dx = x - cell2.x[j];
+                                    float dy = y - cell2.y[j];
+                                    float dz = z - cell2.z[j];
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+                                    if(dx < -systemSizeHalf[0]) dx += systemSize[0];
+                                    else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
+                                    if(dy < -systemSizeHalf[1]) dy += systemSize[1];
+                                    else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
+                                    if(dz < -systemSizeHalf[2]) dz += systemSize[2];
+                                    else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
+#else
+                                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
+                                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
+                                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+#endif
 
-//    Atoms &atoms = system->atoms();
-//    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
-//        const float x = atoms.x[i];
-//        const float y = atoms.y[i];
-//        const float z = atoms.z[i];
-//        float fix = 0;
-//        float fiy = 0;
-//        float fiz = 0;
+                                    const float dr2 = dx*dx + dy*dy + dz*dz;
+                                    const float oneOverDr2 = 1.0f/dr2;
+                                    const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
+                                    const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1.0f)*oneOverDr2*(dr2 < m_rCutSquared);
 
-//        const unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
+                                    fix -= dx*force;
+                                    fiy -= dy*force;
+                                    fiz -= dz*force;
 
-//        const unsigned int numNeighbors = neighbors[0];
-//#ifdef MD_SIMD
-//#pragma simd reduction (+: fix, fiy, fiz)
-//#endif
-//        for(unsigned int j=1; j<=numNeighbors; j++) {
-//            const unsigned int neighborIndex = neighbors[j];
-//            float dx = x - atoms.x[neighborIndex];
-//            float dy = y - atoms.y[neighborIndex];
-//            float dz = z - atoms.z[neighborIndex];
+                                    cell2.fx[j] += dx*force;
+                                    cell2.fy[j] += dy*force;
+                                    cell2.fz[j] += dz*force;
+                                }
+                                cell1.fx[i] += fix;
+                                cell1.fy[i] += fiy;
+                                cell1.fz[i] += fiz;
 
-//#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
-//            if(dx < -systemSizeHalf[0]) dx += systemSize[0];
-//            else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
-//            if(dy < -systemSizeHalf[1]) dy += systemSize[1];
-//            else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
-//            if(dz < -systemSizeHalf[2]) dz += systemSize[2];
-//            else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
-//#else
-//            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-//            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-//            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-//#endif
+                            }
 
-//            const float dr2 = dx*dx + dy*dy + dz*dz;
-//            const float oneOverDr2 = 1.0f/dr2;
-//            const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
-//            const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1.0f)*oneOverDr2*(dr2 < m_rCutSquared);
-
-//            fix -= dx*force;
-//            fiy -= dy*force;
-//            fiz -= dz*force;
-
-//            atoms.fx[neighborIndex] += dx*force;
-//            atoms.fy[neighborIndex] += dy*force;
-//            atoms.fz[neighborIndex] += dz*force;
-//        }
-
-//        atoms.numberOfComputedForces += numNeighbors;
-//        atoms.fx[i] += fix;
-//        atoms.fy[i] += fiy;
-//        atoms.fz[i] += fiz;
-//    }
-
-//    CPElapsedTimer::calculateForces().stop();
+                        }}}
+            }}}
+    CPElapsedTimer::calculateForces().stop();
 }
 
 void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 {
-//    m_potentialEnergy = 0;
-//    m_pressureVirial = 0;
-//    vec3 systemSize = system->systemSize();
-//    vec3 systemSizeHalf = system->systemSize()*0.5;
 
-//    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
-//        system->neighborList().update();
-//        m_timeSinceLastNeighborListUpdate = 1;
-//    }
+    m_potentialEnergy = 0;
+    m_pressureVirial = 0;
+    vec3 systemSize = system->systemSize();
+    vec3 systemSizeHalf = system->systemSize()*0.5;
 
-//    CPElapsedTimer::calculateForces().start();
+    CPElapsedTimer::calculateForces().start();
+    CellList &cellList = system->cellList();
+    vector<Cell> &cells = cellList.cells();
 
-//    Atoms &atoms = system->atoms();
+    for(int cx=0; cx<cellList.numberOfCellsX(); cx++) {
+        for(int cy=0; cy<cellList.numberOfCellsY(); cy++) {
+            for(int cz=0; cz<cellList.numberOfCellsZ(); cz++) {
+                const unsigned int cellIndex1 = cellList.index(cx, cy, cz);
+                Cell &cell1 = cells[cellIndex1];
+                for(int dx=0; dx<=1; dx++) {
+                    for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
+                        for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
+                            const unsigned int cellIndex2 = cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
+                            Cell &cell2 = cells[cellIndex2];
+                            for(unsigned int i=0; i<cell1.numberOfAtoms; i++) {
+                                float x = cell1.x[i];
+                                float y = cell1.y[i];
+                                float z = cell1.z[i];
+                                float fix = 0;
+                                float fiy = 0;
+                                float fiz = 0;
+                                float pressureVirial = 0;
+                                float potentialEnergy = 0;
+                                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
+                                    float dx = x - cell2.x[j];
+                                    float dy = y - cell2.y[j];
+                                    float dz = z - cell2.z[j];
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+                                    if(dx < -systemSizeHalf[0]) dx += systemSize[0];
+                                    else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
+                                    if(dy < -systemSizeHalf[1]) dy += systemSize[1];
+                                    else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
+                                    if(dz < -systemSizeHalf[2]) dz += systemSize[2];
+                                    else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
+#else
+                                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
+                                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
+                                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+#endif
 
-//    for(unsigned i=0; i<atoms.numberOfAtoms; i++) {
-//        float x = atoms.x[i];
-//        float y = atoms.y[i];
-//        float z = atoms.z[i];
-//        float fix = 0;
-//        float fiy = 0;
-//        float fiz = 0;
+                                    const float dr2 = dx*dx + dy*dy + dz*dz;
+                                    const float oneOverDr2 = 1.0f/dr2;
+                                    const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
+                                    const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1.0f)*oneOverDr2*(dr2 < m_rCutSquared);
 
-//        unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
-//        float pressureVirial = 0;
-//        float potentialEnergy = 0;
+                                    fix -= dx*force;
+                                    fiy -= dy*force;
+                                    fiz -= dz*force;
 
-//        const unsigned int numNeighbors = neighbors[0];
-//#ifdef MD_SIMD
-//#pragma simd reduction (+: fix, fiy, fiz, pressureVirial, potentialEnergy)
-//#endif
-//        for(unsigned int j=1; j<=numNeighbors; j++) {
-//            unsigned int neighborIndex = neighbors[j];
-//            float dx = x - atoms.x[neighborIndex];
-//            float dy = y - atoms.y[neighborIndex];
-//            float dz = z - atoms.z[neighborIndex];
+                                    cell2.fx[j] += dx*force;
+                                    cell2.fy[j] += dy*force;
+                                    cell2.fz[j] += dz*force;
+                                    pressureVirial += force*sqrt(dr2)*dr2;
+                                    potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+                                }
+                                cell1.fx[i] += fix;
+                                cell1.fy[i] += fiy;
+                                cell1.fz[i] += fiz;
+                                m_pressureVirial += pressureVirial;
+                                m_potentialEnergy += potentialEnergy;
+                            }
 
-//#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
-//            if(dx < -systemSizeHalf[0]) dx += systemSize[0];
-//            else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
-//            if(dy < -systemSizeHalf[1]) dy += systemSize[1];
-//            else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
-//            if(dz < -systemSizeHalf[2]) dz += systemSize[2];
-//            else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
-//#else
-//            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-//            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-//            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-//#endif
-
-//            const float dr2 = dx*dx + dy*dy + dz*dz;
-//            const float oneOverDr2 = 1.0f/dr2;
-//            const float sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
-//            const float force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1)*oneOverDr2*(dr2 < m_rCutSquared);
-
-//            fix -= dx*force;
-//            fiy -= dy*force;
-//            fiz -= dz*force;
-
-//            atoms.fx[neighborIndex] += dx*force;
-//            atoms.fy[neighborIndex] += dy*force;
-//            atoms.fz[neighborIndex] += dz*force;
-
-//            pressureVirial += force*sqrt(dr2)*dr2;
-//            potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
-//        }
-
-//        atoms.fx[i] += fix;
-//        atoms.fy[i] += fiy;
-//        atoms.fz[i] += fiz;
-//        m_pressureVirial += pressureVirial;
-//        m_potentialEnergy += potentialEnergy;
-//    }
-
-//    CPElapsedTimer::calculateForces().stop();
+                        }}}
+            }}}
+    CPElapsedTimer::calculateForces().stop();
 }
