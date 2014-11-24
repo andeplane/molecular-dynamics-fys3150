@@ -1,5 +1,5 @@
-#include "celllist.h"
 #include "system.h"
+#include "celllist.h"
 #include <iostream>
 #include "cpelapsedtimer.h"
 #include <cassert>
@@ -7,6 +7,7 @@
 #include <map>
 #include <utility>
 #include <functional>
+#include <cstring>
 
 using namespace std;
 
@@ -130,6 +131,11 @@ void CellList::update() {
         }
     }
     CPElapsedTimer::updateCellList().stop();
+}
+
+float CellList::averageNumberOfAtomsPerCell()
+{
+    return float(m_system->numberOfAtoms) / m_cells.size();
 }
 
 Cell::Cell() :

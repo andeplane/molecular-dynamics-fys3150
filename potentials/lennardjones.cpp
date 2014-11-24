@@ -87,6 +87,7 @@ void LennardJones::calculateForces(System *system)
                     cell2.fx[j] += dx*force;
                     cell2.fy[j] += dy*force;
                     cell2.fz[j] += dz*force;
+                    m_numPairsComputed++;
                 }
                 cell1.fx[i] += fix;
                 cell1.fy[i] += fiy;
@@ -171,6 +172,7 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 
                     pressureVirial += force*sqrt(dr2)*dr2;
                     potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+                    m_numPairsComputed++;
                 }
                 cell1.fx[i] += fix;
                 cell1.fy[i] += fiy;

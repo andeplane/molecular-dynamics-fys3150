@@ -17,6 +17,7 @@ using namespace std;
 int main(int args, char *argv[])
 {
     unsigned int numTimeSteps = 1e2;
+
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
     int numUnitCells = 8;
     float latticeConstant = 5.26;
@@ -103,6 +104,9 @@ int main(int args, char *argv[])
     float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
     float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
     cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
+    float numPairsPerSecond = system.potential()->numPairsComputed() / (1000*CPElapsedTimer::totalTime());
+    cout << numPairsPerSecond << " pairs computed per second (" << system.potential()->numPairsComputed()/1e6 << " mega pairs total)" << endl;
+    cout << "With an average of " << system.cellList().averageNumberOfAtomsPerCell() << " atoms per cell." << endl;
     // cout << pairsPerSecond << " pairs computed per second (" << bytesPerSecond/1000000. << " megabytes / sec)" << endl;
 
     movie->close();

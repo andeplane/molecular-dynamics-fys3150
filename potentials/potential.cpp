@@ -1,7 +1,9 @@
 #include <potentials/potential.h>
 
 Potential::Potential() :
-    m_potentialEnergy(0)
+    m_potentialEnergy(0),
+    m_pressureVirial(0),
+    m_numPairsComputed(0)
 {
     
 }

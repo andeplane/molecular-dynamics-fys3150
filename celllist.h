@@ -78,6 +78,7 @@ public:
     void addAtom(vec3 position, vec3 velocity, float mass, unsigned int atomIndex);
     void forEachAtom(std::function<void(Cell &, unsigned int)> action);
     void update();
+    float averageNumberOfAtomsPerCell();
     vector<vector<short> > &neighborIndicesList() { return m_neighborIndicesList; }
 };
 

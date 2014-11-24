@@ -8,6 +8,7 @@ class Potential
 protected:
     float m_potentialEnergy;
     float m_pressureVirial;
+    unsigned int m_numPairsComputed;
 public:
     Potential();
     virtual ~Potential() {}
@@ -15,4 +16,5 @@ public:
     virtual void calculateForcesAndEnergyAndPressure(System *system) = 0;
     float potentialEnergy();
     float pressureVirial();
+    unsigned int numPairsComputed() { return m_numPairsComputed; }
 };

@@ -10,7 +10,7 @@
 #endif
 
 #ifndef CELLSIZE
-#define CELLSIZE 2.5
+#define CELLSIZE 5.26
 #endif
 
 #ifndef MINIMUMIMAGECONVENTIONTYPE_BRANCH
