@@ -58,6 +58,18 @@ void CellList::setup(System *system)
     m_oneOverLengthZ = 1.0 / (system->systemSize().z()/m_numberOfCellsZ);
 
     m_cells.resize(m_numberOfCellsX*m_numberOfCellsY*m_numberOfCellsZ);
+    for(unsigned short i=0; i<m_numberOfCellsX; i++) {
+        for(unsigned short j=0; j<m_numberOfCellsY; j++) {
+            for(unsigned short k=0; k<m_numberOfCellsZ; k++) {
+                unsigned int cellIndex = index(i,j,k);
+                m_cells[cellIndex].index3d[0] = i;
+                m_cells[cellIndex].index3d[1] = j;
+                m_cells[cellIndex].index3d[2] = k;
+                m_cells[cellIndex].index = cellIndex;
+            }
+        }
+    }
+
     buildNeighborIndicesList();
 }
 
@@ -69,7 +81,6 @@ void CellList::setup(System *system)
 
 void CellList::buildNeighborIndicesList()
 {
-    return;
     map<pair<short, pair<short, short> >,bool> cellPairMap;
 
     short numberOfCellsXHalf = (m_numberOfCellsX-1)/2;
@@ -87,7 +98,7 @@ void CellList::buildNeighborIndicesList()
                 float dr2 = dxx*dxx + dyy*dyy + dzz*dzz;
                 if(dr2 < m_rCut*m_rCut) {
                     cellPairMap[make_tuple_with_pair(dx,dy,dz)] = true;
-                    m_cellNeighborIndicesList.push_back({dx, dy, dz});
+                    m_neighborIndicesList.push_back({dx, dy, dz});
                 }
             }
         }
@@ -102,10 +113,16 @@ void CellList::update() {
         Cell &oldCell = m_cells[cellIndex];
         for(int atomIndex=0; atomIndex<oldCell.numberOfAtoms; atomIndex++) {
             unsigned int newCellIndex = indexf(oldCell.x[atomIndex], oldCell.y[atomIndex], oldCell.z[atomIndex]);
+#ifdef MD_DEBUG
+            if(cellIndex<0 || cellIndex >= m_cells.size()) {
+                cout << "Atom " << oldCell.atomIndex[atomIndex] << " at [" << oldCell.x[atomIndex] << ", " << oldCell.y[atomIndex] << ", " << oldCell.z[atomIndex] << "] moved from cell " << cellIndex << " to " << newCellIndex << " which doesn't exist" << endl;
+                exit(1);
+            }
+#endif
             if(cellIndex != newCellIndex) {
                 // Our atom has moved into another cell
                 Cell &newCell = m_cells[newCellIndex];
-                // cout << "Atom " << oldCell.index[atomIndex] << " at [" << oldCell.x[atomIndex] << ", " << oldCell.y[atomIndex] << ", " << oldCell.z[atomIndex] << "] moved from cell " << cellIndex << " to " << newCellIndex << " which has " << newCell.numberOfAtoms << " atoms." << endl;
+                // cout << "Atom " << oldCell.atomIndex[atomIndex] << " at [" << oldCell.x[atomIndex] << ", " << oldCell.y[atomIndex] << ", " << oldCell.z[atomIndex] << "] moved from cell " << cellIndex << " to " << newCellIndex << " which has " << newCell.numberOfAtoms << " atoms." << endl;
                 newCell.addAtomFromCell(oldCell, atomIndex);
                 oldCell.removeAtom(atomIndex);
                 atomIndex--; // Don't worry if atomIndex is 0, it will wrap around and become UNSIGNED_INT_MAX and then back to zero
@@ -118,12 +135,12 @@ void CellList::update() {
 Cell::Cell() :
     numberOfAtoms(0)
 {
-    memset(index,0,MAXNUMATOMSPERCELL*sizeof(int));
+    memset(atomIndex,0,MAXNUMATOMSPERCELL*sizeof(int));
 }
 
 void Cell::addAtomFromCell(Cell &cell, unsigned int i)
 {
-    addAtom(cell.x[i], cell.y[i], cell.z[i], cell.vx[i], cell.vy[i], cell.vz[i], cell.mass[i], cell.index[i]);
+    addAtom(cell.x[i], cell.y[i], cell.z[i], cell.vx[i], cell.vy[i], cell.vz[i], cell.mass[i], cell.atomIndex[i]);
 }
 
 void Cell::addAtom(vec3 position, vec3 velocity, float mass, unsigned int atomIndex)
@@ -143,7 +160,7 @@ void Cell::addAtom(float x, float y, float z, float vx, float vy, float vz, floa
     this->vz[numberOfAtoms] = vz;
 
     this->mass[numberOfAtoms] = mass;
-    this->index[numberOfAtoms] = atomIndex;
+    this->atomIndex[numberOfAtoms] = atomIndex;
     numberOfAtoms++;
 }
 
@@ -159,7 +176,7 @@ void Cell::removeAtom(unsigned int i)
         vy[i] = vy[lastAtomIndex];
         vz[i] = vz[lastAtomIndex];
         mass[i] = mass[lastAtomIndex];
-        index[i] = index[lastAtomIndex];
+        atomIndex[i] = atomIndex[lastAtomIndex];
     }
 
     numberOfAtoms--;

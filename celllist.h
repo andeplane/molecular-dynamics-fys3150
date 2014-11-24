@@ -16,6 +16,8 @@ private:
 public:
     Cell();
     unsigned int numberOfAtoms;
+    unsigned short index;
+    short index3d[3];
     float x[MAXNUMATOMSPERCELL];
     float fx[MAXNUMATOMSPERCELL];
     float y[MAXNUMATOMSPERCELL];
@@ -28,7 +30,7 @@ public:
     float vz[MAXNUMATOMSPERCELL];
 
     float mass[MAXNUMATOMSPERCELL];
-    int   index[MAXNUMATOMSPERCELL];
+    int   atomIndex[MAXNUMATOMSPERCELL];
 
     void addAtom(vec3 position, vec3 velocity, float mass, unsigned int atomIndex);
     void removeAtom(unsigned int i);
@@ -48,7 +50,7 @@ private:
     float m_oneOverLengthZ;
     float m_rCut;
     vector<Cell> m_cells;
-    vector<vector<short> > m_cellNeighborIndicesList;
+    vector<vector<short> > m_neighborIndicesList;
 
 public:
     CellList();
@@ -76,6 +78,7 @@ public:
     void addAtom(vec3 position, vec3 velocity, float mass, unsigned int atomIndex);
     void forEachAtom(std::function<void(Cell &, unsigned int)> action);
     void update();
+    vector<vector<short> > &neighborIndicesList() { return m_neighborIndicesList; }
 };
 
 #endif // CELLLIST_H

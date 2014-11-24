@@ -16,9 +16,9 @@ using namespace std;
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e3;
+    unsigned int numTimeSteps = 1e2;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 10;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
@@ -53,7 +53,7 @@ int main(int args, char *argv[])
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
-        bool shouldSample = !(timestep % 100) || thermostatEnabled;
+        bool shouldSample = !(timestep % 10) || thermostatEnabled;
         system.setShouldSample(shouldSample);
         system.step(dt);
 
@@ -69,7 +69,7 @@ int main(int args, char *argv[])
             CPElapsedTimer::thermostat().stop();
         }
 
-        if( !(timestep % 100)) {
+        if( !(timestep % 10)) {
             cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.numberOfAtoms <<  endl;
         }
         // movie->saveState(&system);
