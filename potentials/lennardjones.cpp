@@ -45,6 +45,9 @@ void LennardJones::calculateForces(System *system)
                 float fix = 0;
                 float fiy = 0;
                 float fiz = 0;
+#ifdef MD_SIMD
+#pragma simd reduction(+:fix, fiy, fiz)
+#endif
                 for(unsigned int j=(neighbor[0]==0 && neighbor[1]==0 && neighbor[2]==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
                     float dx = x - cell2.x[j];
                     float dy = y - cell2.y[j];
@@ -87,11 +90,11 @@ void LennardJones::calculateForces(System *system)
                     cell2.fx[j] += dx*force;
                     cell2.fy[j] += dy*force;
                     cell2.fz[j] += dz*force;
-                    m_numPairsComputed++;
                 }
                 cell1.fx[i] += fix;
                 cell1.fy[i] += fiy;
                 cell1.fz[i] += fiz;
+                m_numPairsComputed += cell2.numberOfAtoms;
 
             }
         }
@@ -127,6 +130,10 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
                 float fiz = 0;
                 float pressureVirial = 0;
                 float potentialEnergy = 0;
+
+#ifdef MD_SIMD
+#pragma simd reduction(+:fix, fiy, fiz, pressureVirial, potentialEnergy)
+#endif
                 for(unsigned int j=(neighbor[0]==0 && neighbor[1]==0 && neighbor[2]==0 ? i+1 : 0); j<cell2.numberOfAtoms; j++) {
                     float dx = x - cell2.x[j];
                     float dy = y - cell2.y[j];
@@ -172,13 +179,13 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 
                     pressureVirial += force*sqrt(dr2)*dr2;
                     potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
-                    m_numPairsComputed++;
                 }
                 cell1.fx[i] += fix;
                 cell1.fy[i] += fiy;
                 cell1.fz[i] += fiz;
                 m_pressureVirial += pressureVirial;
                 m_potentialEnergy += potentialEnergy;
+                m_numPairsComputed+=cell2.numberOfAtoms;
 
             }
         }

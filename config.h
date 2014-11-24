@@ -1,16 +1,16 @@
 #pragma once
 
 #ifndef MD_DEBUG
-#define MD_DEBUG
+// #define MD_DEBUG
 #endif
 
 #ifndef MAXNUMATOMSPERCELL
 // Should have length of 4N for simple SIMD
-#define MAXNUMATOMSPERCELL 16
+#define MAXNUMATOMSPERCELL 32
 #endif
 
 #ifndef CELLSIZE
-#define CELLSIZE 5.26
+#define CELLSIZE 2.5
 #endif
 
 #ifndef MINIMUMIMAGECONVENTIONTYPE_BRANCH
