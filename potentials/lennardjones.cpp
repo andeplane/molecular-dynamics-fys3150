@@ -21,6 +21,9 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 
 void LennardJones::calculateForces(System *system)
 {
+#ifdef DISABLEFORCES
+    return;
+#endif
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
     vec3 systemSize = system->systemSize();
@@ -90,7 +93,9 @@ void LennardJones::calculateForces(System *system)
 
 void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 {
-
+#ifdef DISABLEFORCES
+    return;
+#endif
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
     vec3 systemSize = system->systemSize();

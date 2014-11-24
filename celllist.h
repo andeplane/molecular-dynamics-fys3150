@@ -16,21 +16,19 @@ private:
 public:
     Cell();
     unsigned int numberOfAtoms;
-    float x[MAXNUMATOMS];
-    float fx[MAXNUMATOMS];
-    float y[MAXNUMATOMS];
-    float fy[MAXNUMATOMS];
-    float z[MAXNUMATOMS];
-    float fz[MAXNUMATOMS];
+    float x[MAXNUMATOMSPERCELL];
+    float fx[MAXNUMATOMSPERCELL];
+    float y[MAXNUMATOMSPERCELL];
+    float fy[MAXNUMATOMSPERCELL];
+    float z[MAXNUMATOMSPERCELL];
+    float fz[MAXNUMATOMSPERCELL];
 
-    int   cellIndex[MAXNUMATOMS];
+    float vx[MAXNUMATOMSPERCELL];
+    float vy[MAXNUMATOMSPERCELL];
+    float vz[MAXNUMATOMSPERCELL];
 
-    float vx[MAXNUMATOMS];
-    float vy[MAXNUMATOMS];
-    float vz[MAXNUMATOMS];
-
-    float mass[MAXNUMATOMS];
-    int   index[MAXNUMATOMS];
+    float mass[MAXNUMATOMSPERCELL];
+    int   index[MAXNUMATOMSPERCELL];
 
     void addAtom(vec3 position, vec3 velocity, float mass, unsigned int atomIndex);
     void removeAtom(unsigned int i);
@@ -48,11 +46,14 @@ private:
     float m_oneOverLengthX;
     float m_oneOverLengthY;
     float m_oneOverLengthZ;
+    float m_rCut;
     vector<Cell> m_cells;
+    vector<vector<short> > m_cellNeighborIndicesList;
 
 public:
     CellList();
-    void setup(System *system, float rCut);
+    void setup(System *system);
+    void buildNeighborIndicesList();
     float lengthX() { return 1.0/m_oneOverLengthX; }
     float lengthY() { return 1.0/m_oneOverLengthY; }
     float lengthZ() { return 1.0/m_oneOverLengthZ; }

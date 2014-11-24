@@ -37,7 +37,6 @@ public:
     clock_t        m_startedAt;
     CPTimingObject m_calculateForces;
     CPTimingObject m_updateCellList;
-    CPTimingObject m_updateNeighborList;
     CPTimingObject m_move;
     CPTimingObject m_halfKick;
     CPTimingObject m_periodicBoundaryConditions;
@@ -48,7 +47,6 @@ public:
 
     static CPTimingObject &calculateForces() { return CPElapsedTimer::getInstance().m_calculateForces; }
     static CPTimingObject &updateCellList() { return CPElapsedTimer::getInstance().m_updateCellList; }
-    static CPTimingObject &updateNeighborList() { return CPElapsedTimer::getInstance().m_updateNeighborList; }
     static CPTimingObject &move() { return CPElapsedTimer::getInstance().m_move; }
     static CPTimingObject &halfKick() { return CPElapsedTimer::getInstance().m_halfKick; }
     static CPTimingObject &periodicBoundaryConditions() { return CPElapsedTimer::getInstance().m_periodicBoundaryConditions; }

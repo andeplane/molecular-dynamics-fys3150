@@ -60,6 +60,7 @@ void System::applyPeriodicBoundaryConditions() {
     });
 
     CPElapsedTimer::periodicBoundaryConditions().stop();
+    m_cellList.update();
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention
 }
 
@@ -88,7 +89,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
     float sideLength = numberOfUnitCellsEachDimension*latticeConstant;
     setSystemSize(vec3(sideLength, sideLength, sideLength));
 
-    m_cellList.setup(this, m_rCut);
+    m_cellList.setup(this);
     printStatus();
     float xCell[4] = {0, 0.5, 0.5, 0};
     float yCell[4] = {0, 0.5, 0, 0.5};

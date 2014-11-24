@@ -47,5 +47,6 @@ public:
     void createGhostAtoms();
     void printStatus();
     void setCutoffRadius(float rCut) { m_rCut = rCut; }
+    float cutoffRadius() { return m_rCut; }
     CellList &cellList() { return m_cellList; }
 };

@@ -1,11 +1,12 @@
 #pragma once
 
-#ifndef MAXNUMATOMS
-#define MAXNUMATOMS 10000
+#ifndef MAXNUMATOMSPERCELL
+// Should have length of 4N for simple SIMD
+#define MAXNUMATOMSPERCELL 32
 #endif
 
-#ifndef MAXNUMNEIGHBORS
-#define MAXNUMNEIGHBORS 500
+#ifndef CELLSIZE
+#define CELLSIZE 5.26
 #endif
 
 #ifndef MINIMUMIMAGECONVENTIONTYPE_BRANCH
