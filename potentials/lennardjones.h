@@ -11,6 +11,7 @@ private:
     float m_rCutSquared;
     float m_potentialEnergyAtRcut;
     int   m_timeSinceLastNeighborListUpdate;
+    void calculateForcesAllPairs(System *system);
 public:
     LennardJones(float sigma, float epsilon, float cutoffRadius);
     ~LennardJones() {}
