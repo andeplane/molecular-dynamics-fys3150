@@ -71,8 +71,10 @@ void LennardJones::calculateForcesAllPairs(System *system) {
 
 void LennardJones::calculateForces(System *system)
 {
-//    calculateForcesAllPairs(system);
-//    return;
+#ifdef BENCHMARK
+    calculateForcesAllPairs(system);
+    return;
+#endif
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
     vec3 systemSize = system->systemSize();
@@ -144,6 +146,10 @@ void LennardJones::calculateForces(System *system)
 
 void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 {
+#ifdef BENCHMARK
+    calculateForcesAllPairs(system);
+    return;
+#endif
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
     vec3 systemSize = system->systemSize();

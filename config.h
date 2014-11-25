@@ -5,7 +5,11 @@
 #endif
 
 #ifndef MAXNUMNEIGHBORS
-#define MAXNUMNEIGHBORS 500
+#define MAXNUMNEIGHBORS 100
+#endif
+
+#ifndef BENCHMARK
+// #define BENCHMARK
 #endif
 
 #ifndef MINIMUMIMAGECONVENTIONTYPE_BRANCH

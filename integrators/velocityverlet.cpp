@@ -15,13 +15,14 @@ void VelocityVerlet::halfKick(System *system, const float dt)
 {
     CPElapsedTimer::halfKick().start();
     Atoms &atoms = system->atoms();
+    const float dtHalf = dt*0.5;
 #ifdef MD_SIMD
 #pragma simd
 #endif
     for(int i=0; i<system->atoms().numberOfAtoms; i++) {
-        atoms.vx[i] += atoms.fx[i]*0.5*dt/atoms.mass[i];
-        atoms.vy[i] += atoms.fy[i]*0.5*dt/atoms.mass[i];
-        atoms.vz[i] += atoms.fz[i]*0.5*dt/atoms.mass[i];
+        atoms.vx[i] += atoms.fx[i]*dtHalf*atoms.inverseMass[i];
+        atoms.vy[i] += atoms.fy[i]*dtHalf*atoms.inverseMass[i];
+        atoms.vz[i] += atoms.fz[i]*dtHalf*atoms.inverseMass[i];
     }
     CPElapsedTimer::halfKick().stop();
 }

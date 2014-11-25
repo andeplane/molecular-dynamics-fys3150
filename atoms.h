@@ -22,7 +22,7 @@ public:
     float vy[MAXNUMATOMS];
     float vz[MAXNUMATOMS];
 
-    float mass[MAXNUMATOMS];
+    float inverseMass[MAXNUMATOMS];
     int   index[MAXNUMATOMS];
 
     unsigned long numberOfComputedForces;

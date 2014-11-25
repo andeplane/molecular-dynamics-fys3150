@@ -83,9 +83,9 @@ void System::removeMomentum() {
     
     momentum /= m_atoms->numberOfAtoms;
     for(int i=0; i<m_atoms->numberOfAtoms; i++) {
-        m_atoms->vx[i] -= momentum[0]/m_atoms->mass[i];
-        m_atoms->vy[i] -= momentum[1]/m_atoms->mass[i];
-        m_atoms->vz[i] -= momentum[2]/m_atoms->mass[i];
+        m_atoms->vx[i] -= momentum[0]*m_atoms->inverseMass[i];
+        m_atoms->vy[i] -= momentum[1]*m_atoms->inverseMass[i];
+        m_atoms->vz[i] -= momentum[2]*m_atoms->inverseMass[i];
     }
 }
 
@@ -112,7 +112,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
             for(int k=0; k< numberOfUnitCellsEachDimension; k++) {
                 for(int l=0; l<4; l++) {
                     int atomIndex = m_atoms->numberOfAtoms;
-                    m_atoms->mass[atomIndex] = UnitConverter::massFromSI(6.63352088e-26);
+                    m_atoms->inverseMass[atomIndex] = 1.0/UnitConverter::massFromSI(6.63352088e-26);
                     float x = (i+xCell[l])*latticeConstant;
                     float y = (j+yCell[l])*latticeConstant;
                     float z = (k+zCell[l])*latticeConstant;
@@ -122,7 +122,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
                     
                     vec3 velocity;
                     float boltzmannConstant = 1.0; // In atomic units, the boltzmann constant equals 1
-                    float standardDeviation = sqrt(boltzmannConstant*temperature/m_atoms->mass[atomIndex]);
+                    float standardDeviation = sqrt(boltzmannConstant*temperature*m_atoms->inverseMass[atomIndex]);
                     velocity.randomGaussian(0, standardDeviation);
                     m_atoms->vx[atomIndex] = velocity[0];
                     m_atoms->vy[atomIndex] = velocity[1];

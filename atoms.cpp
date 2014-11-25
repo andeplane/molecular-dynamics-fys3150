@@ -32,7 +32,7 @@ void Atoms::sort()
             std::swap(fy[j], fy[j-1]);
             std::swap(fz[j], fz[j-1]);
 
-            std::swap(mass[j], mass[j-1]);
+            std::swap(inverseMass[j], inverseMass[j-1]);
             std::swap(index[j], index[j-1]);
             std::swap(cellIndex[j], cellIndex[j-1]);
 

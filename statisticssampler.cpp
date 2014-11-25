@@ -38,7 +38,7 @@ float StatisticsSampler::sampleKineticEnergy(System *system)
 //#pragma simd reduction(+: kineticEnergy)
 //#endif
     for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
-        m_kineticEnergy += 0.5*atoms.mass[i]*(atoms.vx[i]*atoms.vx[i] + atoms.vy[i]*atoms.vy[i] + atoms.vz[i]*atoms.vz[i]);
+        m_kineticEnergy += 0.5/atoms.inverseMass[i]*(atoms.vx[i]*atoms.vx[i] + atoms.vy[i]*atoms.vy[i] + atoms.vz[i]*atoms.vz[i]);
     }
 
     // m_kineticEnergy = kineticEnergy;
@@ -87,9 +87,9 @@ vec3 StatisticsSampler::sampleMomentum(System *system)
     m_momentum.setToZero();
     Atoms &atoms = system->atoms();
     for(int i=0; i<system->atoms().numberOfAtoms; i++) {
-        m_momentum[0] += atoms.vx[i]*atoms.mass[i];
-        m_momentum[1] += atoms.vy[i]*atoms.mass[i];
-        m_momentum[2] += atoms.vz[i]*atoms.mass[i];
+        m_momentum[0] += atoms.vx[i]/atoms.inverseMass[i];
+        m_momentum[1] += atoms.vy[i]/atoms.inverseMass[i];
+        m_momentum[2] += atoms.vz[i]/atoms.inverseMass[i];
     }
     return m_momentum;
 }

@@ -15,11 +15,18 @@
 
 using namespace std;
 
+unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
+    unsigned long flops = system->atoms().numberOfComputedForces*45 + system->neighborList().numNeighborPairs()*22; // Forces and neighbor list builds
+    flops += system->atoms().numberOfAtoms*numTimesteps*(9 + 6 + 9); // Velocity verlet
+    flops += system->atoms().numberOfAtoms*numTimesteps*(18); // Periodic boundary conditions
+    return flops;
+}
+
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 20;
+    unsigned int numTimeSteps = 1000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 20;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
