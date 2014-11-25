@@ -78,7 +78,7 @@ void System::applyPeriodicBoundaryConditions() {
 
 void System::removeMomentum() {
     // Initially, when the atoms are given random velocities, there is a non-zero net momentum. We don't want any drift in the system, so we need to remove it.
-    StatisticsSampler sampler;
+    StatisticsSampler sampler(0);
     vec3 momentum = sampler.sampleMomentum(this);
     
     momentum /= m_atoms->numberOfAtoms;

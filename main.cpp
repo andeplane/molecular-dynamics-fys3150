@@ -24,7 +24,7 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1000;
+    unsigned int numTimeSteps = 1e3;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
     int numUnitCells = 8;
     float latticeConstant = 5.26;
@@ -45,7 +45,8 @@ int main(int args, char *argv[])
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
 
     System system;
-    StatisticsSampler statisticsSampler;
+    IO fileHandler; // To write the state to file
+    StatisticsSampler statisticsSampler(&fileHandler);
     BerendsenThermostat thermostat(UnitConverter::temperatureFromSI(temperature), 0.01);
 
     system.createFCCLattice(numUnitCells, UnitConverter::lengthFromAngstroms(latticeConstant), UnitConverter::temperatureFromSI(temperature));
@@ -53,9 +54,6 @@ int main(int args, char *argv[])
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);
     system.removeMomentum();
-
-    IO *movie = new IO(); // To write the state to file
-    movie->open("movie.xyz");
 
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
@@ -122,8 +120,6 @@ int main(int args, char *argv[])
     cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
     cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
     cout << "Flops: " << flopsPerSecond/1e9 << " Gflops / sec." << endl;
-
-    movie->close();
 
     return 0;
 }

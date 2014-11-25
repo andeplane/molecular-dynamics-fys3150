@@ -79,3 +79,5 @@ public:
     static void initializeAtomicUnits();
     static void initializeMDUnits();
 };
+
+typedef UnitConverter UC;

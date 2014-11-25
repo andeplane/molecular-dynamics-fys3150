@@ -6,13 +6,14 @@ using std::ofstream;
 class IO
 {
 private:
-    ofstream file;
+    ofstream m_movieFile;
+    ofstream m_statisticsFile;
 public:
     IO();
     ~IO();
 
     void saveState(System *system);
-    void open(char *filename);
     void close();
 
+    void writeStatistics(float time, float kineticEnergy, float potentialEnergy, float pressure, float temperature);
 };

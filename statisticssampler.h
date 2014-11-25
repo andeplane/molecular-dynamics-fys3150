@@ -1,9 +1,10 @@
 #pragma once
-#include <system.h>
-
+#include "system.h"
+#include "io.h"
 class StatisticsSampler
 {
 private:
+    IO   *m_fileHandler;
     vec3  m_momentum;
     float m_kineticEnergy;
     float m_potentialEnergy;
@@ -11,7 +12,7 @@ private:
     float m_pressure;
     float m_density;
 public:
-    StatisticsSampler();
+    StatisticsSampler(IO *fileHandler);
     ~StatisticsSampler();
     void  sample(System *system);
     float sampleKineticEnergy(System *system);

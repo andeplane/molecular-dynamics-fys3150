@@ -3,11 +3,12 @@
 #include "cpelapsedtimer.h"
 #include "potentials/lennardjones.h"
 
-StatisticsSampler::StatisticsSampler() :
+StatisticsSampler::StatisticsSampler(IO *fileHandler) :
     m_kineticEnergy(0),
     m_potentialEnergy(0),
     m_temperature(0),
-    m_pressure(0)
+    m_pressure(0),
+    m_fileHandler(fileHandler)
 {
 
 }
@@ -26,6 +27,10 @@ void StatisticsSampler::sample(System *system)
     sampleTemperature(system);
     sampleDensity(system);
     samplePressure(system);
+
+    if(m_fileHandler) {
+        m_fileHandler->writeStatistics(system->currentTime(), m_kineticEnergy, m_potentialEnergy, m_pressure, m_temperature);
+    }
     CPElapsedTimer::sampling().stop();
 }
 
