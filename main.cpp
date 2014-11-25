@@ -17,9 +17,9 @@ using namespace std;
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e3;
+    unsigned int numTimeSteps = 1000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 10;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
@@ -100,13 +100,20 @@ int main(int args, char *argv[])
          << "      Sampling          : " << CPElapsedTimer::sampling().elapsedTime() << " s ( " << 100*samplingFraction << "%)" <<  endl;
     cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
     cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
-    int pairsPerSecond = system.atoms().numberOfComputedForces / (1000*CPElapsedTimer::totalTime());
-    int bytesPerSecond = pairsPerSecond*6*sizeof(float);
+    cout << "Average number of neighbors per atom: " << system.neighborList().averageNumNeighbors() << endl;
+    int pairsPerSecond = system.atoms().numberOfComputedForces / CPElapsedTimer::totalTime();
+    int neighborPairsPerSecond = system.neighborList().numNeighborPairs() / CPElapsedTimer::totalTime();
+    float flops = system.atoms().numberOfComputedForces*45 + system.neighborList().numNeighborPairs()*22;
+    float flopsPerSecond = flops / CPElapsedTimer::totalTime();
+
+    unsigned long bytesPerSecond = (pairsPerSecond + neighborPairsPerSecond)*12*sizeof(float);
     float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
     float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
     cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
-    cout << pairsPerSecond << " pairs computed per second (" << system.atoms().numberOfComputedForces/1e6 << " mega pairs total)" << endl;
-    cout << "This gives " << bytesPerSecond/1000000. << " megabytes / sec" << endl;
+    cout << pairsPerSecond/1e6 << " mega pairs computed per second (" << system.atoms().numberOfComputedForces/1e6 << " mega pairs total)" << endl;
+    cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
+    cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
+    cout << "Flops: " << flopsPerSecond/1e9 << " Gflops / sec." << endl;
 
     movie->close();
 

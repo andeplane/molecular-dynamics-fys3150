@@ -14,6 +14,7 @@ private:
     CellList  m_cellList;
     System   *m_system;
     float     m_rShellSquared;
+    unsigned int m_numNeighborPairs;
 
     void clear();
 public:
@@ -22,6 +23,8 @@ public:
     void update();
     inline unsigned int *neighborsForAtomWithIndex(int index) { return m_neighbors[index]; }
     CellList &cellList() { return m_cellList; }
+    unsigned int numNeighborPairs() { return m_numNeighborPairs; }
+    float averageNumNeighbors();
 };
 
 #endif // NEIGHBORLIST_H

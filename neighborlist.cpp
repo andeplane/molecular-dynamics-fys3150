@@ -11,7 +11,8 @@ using namespace std;
 
 NeighborList::NeighborList() :
     m_system(0),
-    m_rShellSquared(-1)
+    m_rShellSquared(-1),
+    m_numNeighborPairs(0)
 {
     m_neighbors = new unsigned int*[MAXNUMATOMS];
     for(int i=0; i<MAXNUMATOMS; i++) {
@@ -87,9 +88,21 @@ void NeighborList::update()
                                     assert(m_neighbors[atom2Index][0] <= MAXNUMNEIGHBORS && "An atom got too many neighbors :/");
 #endif
                                 }
+                                bool sameCell = dx==0 && dy==0 && dz==0;
+                                m_numNeighborPairs += cell2Size*(1.0 - 0.5*sameCell);
                             }
                         }}}
             }}}
 
     CPElapsedTimer::updateNeighborList().stop();
+}
+
+float NeighborList::averageNumNeighbors()
+{
+    unsigned int numNeighbors = 0;
+    for(unsigned int i=0; i<m_system->atoms().numberOfAtoms; i++) {
+        numNeighbors += m_neighbors[i][0];
+    }
+
+    return float(numNeighbors)/m_system->atoms().numberOfAtoms;
 }
