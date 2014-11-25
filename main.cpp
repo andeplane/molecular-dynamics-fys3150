@@ -108,15 +108,16 @@ int main(int args, char *argv[])
     cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
     cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
     cout << "Average number of neighbors per atom: " << system.neighborList().averageNumNeighbors() << endl;
-    int pairsPerSecond = system.atoms().numberOfComputedForces / CPElapsedTimer::totalTime();
-    int neighborPairsPerSecond = system.neighborList().numNeighborPairs() / CPElapsedTimer::totalTime();
-    float flops = system.atoms().numberOfComputedForces*45 + system.neighborList().numNeighborPairs()*22;
-    float flopsPerSecond = flops / CPElapsedTimer::totalTime();
-
-    unsigned long bytesPerSecond = (pairsPerSecond + neighborPairsPerSecond)*12*sizeof(float);
     float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
     float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
     cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
+
+    // Performance numbers
+    int pairsPerSecond = system.atoms().numberOfComputedForces / CPElapsedTimer::totalTime();
+    int neighborPairsPerSecond = system.neighborList().numNeighborPairs() / CPElapsedTimer::totalTime();
+    unsigned long flops = calculateFlops(&system, numTimeSteps);
+    float flopsPerSecond = flops / CPElapsedTimer::totalTime();
+    unsigned long bytesPerSecond = (pairsPerSecond*12 + neighborPairsPerSecond*6)*sizeof(float);
     cout << pairsPerSecond/1e6 << " mega pairs computed per second (" << system.atoms().numberOfComputedForces/1e6 << " mega pairs total)" << endl;
     cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
     cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
