@@ -33,6 +33,17 @@ void IO::saveState(System *system)
 //    CPElapsedTimer::disk().stop();
 }
 
+void IO::writePerformance(unsigned int timestep) {
+    if(!m_performanceFile.is_open()) {
+        m_performanceFile.open("performance.txt");
+
+        m_performanceFile << "Timestep     Runtime [s]     DeltaT [s]" << endl;
+    }
+
+    m_performanceFile.precision(12);
+    m_performanceFile << timestep << "     " << CPElapsedTimer::totalTime() << "      " << CPElapsedTimer::ping() << endl;
+}
+
 void IO::writeStatistics(float time, float kineticEnergy, float potentialEnergy, float pressure, float temperature) {
     if(!m_statisticsFile.is_open()) {
         m_statisticsFile.open("statistics.txt");

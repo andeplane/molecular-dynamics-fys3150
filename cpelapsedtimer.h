@@ -35,6 +35,7 @@ public:
     }
 
     clock_t        m_startedAt;
+    clock_t        m_lastPing;
     CPTimingObject m_calculateForces;
     CPTimingObject m_updateCellList;
     CPTimingObject m_updateNeighborList;
@@ -58,6 +59,7 @@ public:
     static CPTimingObject &thermostat() { return CPElapsedTimer::getInstance().m_thermostat; }
 
     static double totalTime() { return double(clock() - CPElapsedTimer::getInstance().m_startedAt)/ CLOCKS_PER_SEC; }
+    static double ping();
 };
 
 #endif // CPELAPSEDTIMER_H

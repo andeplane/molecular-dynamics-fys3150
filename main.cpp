@@ -24,7 +24,7 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e3;
+    unsigned int numTimeSteps = 1e7;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
     int numUnitCells = 8;
     float latticeConstant = 5.26;
@@ -58,7 +58,7 @@ int main(int args, char *argv[])
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
-        bool shouldSample = !(timestep % 100) || thermostatEnabled;
+        bool shouldSample = !(timestep % 1000) || thermostatEnabled;
         system.setShouldSample(shouldSample);
         system.step(dt);
 
@@ -74,8 +74,9 @@ int main(int args, char *argv[])
             CPElapsedTimer::thermostat().stop();
         }
 
-        if( !(timestep % 100)) {
+        if( !(timestep % 1000)) {
             cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
+            fileHandler.writePerformance(timestep);
         }
         // movie->saveState(&system);
     }
