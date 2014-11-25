@@ -53,5 +53,6 @@ public:
     void initialize(float cutoffRadius);
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();
+    float rCut() { return m_rCut; }
     void printStatus();
 };

@@ -4,11 +4,30 @@
 
 #include "math/vec3.h"
 
+class MiniAtoms
+{
+public:
+    unsigned int numberOfAtoms;
+    unsigned int originalAtom[MAXNUMATOMS];
+    float dx[MAXNUMATOMS];
+    float dy[MAXNUMATOMS];
+    float dz[MAXNUMATOMS];
+    float ddx[MAXNUMATOMS];
+    float ddy[MAXNUMATOMS];
+    float ddz[MAXNUMATOMS];
+    float dr2[MAXNUMATOMS];
+    float dr2i[MAXNUMATOMS];
+    float dr6i[MAXNUMATOMS];
+
+    unsigned long numberOfComputedForces;
+
+    MiniAtoms();
+};
+
 class Atoms
 {
 public:
     unsigned int numberOfAtoms;
-    unsigned int numberOfGhostAtoms;
     float x[MAXNUMATOMS];
     float fx[MAXNUMATOMS];
     float y[MAXNUMATOMS];
@@ -28,8 +47,6 @@ public:
     unsigned long numberOfComputedForces;
 
     Atoms();
-    void sort();
-    unsigned int numberOfAtomsIncludingGhosts() { return numberOfAtoms + numberOfGhostAtoms; }
 };
 
 #endif // ATOMS_H
