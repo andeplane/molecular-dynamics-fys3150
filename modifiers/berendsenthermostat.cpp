@@ -1,7 +1,6 @@
 #include "berendsenthermostat.h"
 #include "statisticssampler.h"
 #include "system.h"
-#include "atom.h"
 #include <cmath>
 
 BerendsenThermostat::BerendsenThermostat(float temperature, float relaxationFactor) :

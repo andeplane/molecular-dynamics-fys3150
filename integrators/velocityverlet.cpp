@@ -1,6 +1,5 @@
 #include <integrators/velocityverlet.h>
 #include <system.h>
-#include <atom.h>
 #include <iostream>
 #include "cpelapsedtimer.h"
 using namespace std;

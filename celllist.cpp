@@ -1,5 +1,4 @@
 #include "celllist.h"
-#include "atom.h"
 #include "system.h"
 #include <iostream>
 #include "cpelapsedtimer.h"

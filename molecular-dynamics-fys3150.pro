@@ -23,7 +23,6 @@ DEFINES += MD_SIMD
 #DEFINES += MD_DEBUG
 
 SOURCES += main.cpp \
-    atom.cpp \
     system.cpp \
     integrators/integrator.cpp \
     integrators/velocityverlet.cpp \
@@ -43,7 +42,6 @@ SOURCES += main.cpp \
     atoms.cpp
 
 HEADERS += \
-    atom.h \
     system.h \
     integrators/integrator.h \
     integrators/velocityverlet.h \
