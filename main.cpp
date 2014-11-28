@@ -53,6 +53,7 @@ int main(int args, char *argv[])
     system.setIntegrator(new VelocityVerlet());
     system.initialize(rCut);
     system.removeMomentum();
+    system.atoms().sort();
 
     int measureEvery = 1000;
 
