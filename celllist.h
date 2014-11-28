@@ -16,6 +16,7 @@ private:
     float m_oneOverLengthY;
     float m_oneOverLengthZ;
     vector<vector<unsigned int> > m_cells;
+    vector<vector<vector<unsigned int>*> > m_neighbors;
 
 public:
     CellList();
@@ -39,6 +40,8 @@ public:
     unsigned int indexf(float x, float y, float z);
     unsigned int index(unsigned int cx, unsigned int cy, unsigned int cz) { return cx + cy*m_numberOfCellsX + cz*m_numberOfCellsY*m_numberOfCellsX; }
     unsigned int indexPeriodic(int cx, int cy, int cz) { return ( (cx+m_numberOfCellsX) % m_numberOfCellsX) + ( (cy+m_numberOfCellsY) % m_numberOfCellsY)*m_numberOfCellsX + ( (cz+m_numberOfCellsZ) % m_numberOfCellsZ)*m_numberOfCellsX*m_numberOfCellsY; }
+    vector<vector<unsigned int> *> &getNeighbors(unsigned int cx, unsigned int cy, unsigned int cz) { return m_neighbors[index(cx,cy,cz)]; }
+    vector<vector<unsigned int> *> &getNeighbors(unsigned int cellIndex) { return m_neighbors[cellIndex]; }
     vector<unsigned int> &operator[](int index) { return m_cells[index]; }
     vector<vector<unsigned int> > &cells();
 };

@@ -46,6 +46,26 @@ void CellList::setup(System *system, float rCut)
     m_oneOverLengthZ = 1.0 / (system->systemSize().z()/m_numberOfCellsZ);
 
     m_cells.resize(m_numberOfCellsX*m_numberOfCellsY*m_numberOfCellsZ);
+    m_neighbors.resize(m_cells.size());
+
+    for(int cx=0; cx<numberOfCellsX(); cx++) {
+        for(int cy=0; cy<numberOfCellsY(); cy++) {
+            for(int cz=0; cz<numberOfCellsZ(); cz++) {
+                int cellIndex1 = index(cx, cy, cz);
+
+                for(int dx=0; dx<=1; dx++) {
+                    for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
+                        for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
+                            int cellIndex2 = indexPeriodic(cx+dx, cy+dy, cz+dz);
+                            vector<unsigned int> *cell2 = &m_cells[cellIndex2];
+                            m_neighbors[cellIndex1].push_back(cell2);
+                        }
+                    }
+                }
+                assert(m_neighbors[cellIndex1].size() == 14 && "Balle");
+            }
+        }
+    }
 }
 
 void CellList::clear()

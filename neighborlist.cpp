@@ -45,55 +45,47 @@ void NeighborList::update()
     clear();
 
     Atoms &atoms = m_system->atoms();
-    for(int cx=0; cx<m_cellList.numberOfCellsX(); cx++) {
-        for(int cy=0; cy<m_cellList.numberOfCellsY(); cy++) {
-            for(int cz=0; cz<m_cellList.numberOfCellsZ(); cz++) {
-                int cellIndex1 = m_cellList.index(cx, cy, cz);
-                const vector<unsigned int> &cell1 = m_cellList.cells()[cellIndex1];
+    const unsigned int cellSize = m_cellList.cells().size();
+    for(unsigned int cellIndex1=0; cellIndex1<cellSize; cellIndex1++) {
+        const vector<unsigned int> &cell1 = m_cellList.cells()[cellIndex1];
+        vector<vector<unsigned int> *> &neighbors = m_cellList.getNeighbors(cellIndex1);
+        for(auto cell2Pointer : neighbors) {
+            vector<unsigned int> &cell2 = *cell2Pointer;
+            const unsigned int cell1Size = cell1.size();
+            for(unsigned int i=0; i<cell1Size; i++) {
+                const unsigned int atom1Index = cell1[i];
 
-                for(int dx=0; dx<=1; dx++) {
-                    for(int dy=(dx==0 ? 0 : -1); dy<=1; dy++) {
-                        for(int dz=(dx==0 && dy==0 ? 0 : -1); dz<=1; dz++) {
-                            int cellIndex2 = m_cellList.indexPeriodic(cx+dx, cy+dy, cz+dz);
-                            const vector<unsigned int> &cell2 = m_cellList.cells()[cellIndex2];
-
-                            const unsigned int cell1Size = cell1.size();
-                            for(unsigned int i=0; i<cell1Size; i++) {
-                                const unsigned int atom1Index = cell1[i];
-
-                                float x = atoms.x[atom1Index];
-                                float y = atoms.y[atom1Index];
-                                float z = atoms.z[atom1Index];
-
-                                const unsigned int cell2Size = cell2.size();
+                float x = atoms.x[atom1Index];
+                float y = atoms.y[atom1Index];
+                float z = atoms.z[atom1Index];
+                const bool sameCell = &cell1==&cell2;
+                const unsigned int cell2Size = cell2.size();
 #ifdef MD_SIMD
 #pragma simd
 #endif
-                                for(unsigned int j=(dx==0 && dy==0 && dz==0 ? i+1 : 0); j<cell2Size; j++) {
-                                    const unsigned int atom2Index = cell2[j];
-                                    float dx = x - atoms.x[atom2Index];
-                                    float dy = y - atoms.y[atom2Index];
-                                    float dz = z - atoms.z[atom2Index];
+                for(unsigned int j=(sameCell ? i+1 : 0); j<cell2Size; j++) {
+                    const unsigned int atom2Index = cell2[j];
+                    float dx = x - atoms.x[atom2Index];
+                    float dy = y - atoms.y[atom2Index];
+                    float dz = z - atoms.z[atom2Index];
 
-                                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-                                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-                                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
+                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
+                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
 
-                                    const float dr2 = dx*dx + dy*dy + dz*dz;
+                    const float dr2 = dx*dx + dy*dy + dz*dz;
 
-                                    const bool shouldNotAdd = dr2 > m_rShellSquared;
-                                    m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
-                                    m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
+                    const bool shouldNotAdd = dr2 > m_rShellSquared;
+                    m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
+                    m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
 #ifdef MD_DEBUG
-                                    assert(m_neighbors[atom2Index][0] <= MAXNUMNEIGHBORS && "An atom got too many neighbors :/");
+                    assert(m_neighbors[atom2Index][0] <= MAXNUMNEIGHBORS && "An atom got too many neighbors :/");
 #endif
-                                }
-                                bool sameCell = dx==0 && dy==0 && dz==0;
-                                m_numNeighborPairs += cell2Size*(1.0 - 0.5*sameCell);
-                            }
-                        }}}
-            }}}
-
+                }
+                m_numNeighborPairs += cell2Size*(1.0 - 0.5*sameCell);
+            }
+        }
+    }
     CPElapsedTimer::updateNeighborList().stop();
 }
 
