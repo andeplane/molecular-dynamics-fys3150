@@ -24,14 +24,14 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e7;
+    unsigned int numTimeSteps = 1e8;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 8;
+    int numUnitCells = 6;
     float latticeConstant = 5.26;
     // float latticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
-    float temperature = 150;
+    float temperature = 1000;
     if(args>1) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);
@@ -55,10 +55,12 @@ int main(int args, char *argv[])
     system.initialize(rCut);
     system.removeMomentum();
 
+    int measureEvery = 1000;
+
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
-        bool shouldSample = !(timestep % 1000) || thermostatEnabled;
+        bool shouldSample = !(timestep % measureEvery) || thermostatEnabled;
         system.setShouldSample(shouldSample);
         system.step(dt);
 
@@ -74,7 +76,7 @@ int main(int args, char *argv[])
             CPElapsedTimer::thermostat().stop();
         }
 
-        if( !(timestep % 1000)) {
+        if( !(timestep % measureEvery)) {
             cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
             fileHandler.writePerformance(timestep);
         }

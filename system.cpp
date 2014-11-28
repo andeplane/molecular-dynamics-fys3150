@@ -38,6 +38,9 @@ void System::initialize(float cutoffRadius) {
 }
 
 void System::validate() {
+#ifdef BENCHMARK
+    return;
+#endif
     CellList &cellList = m_neighborList.cellList();
     if(cellList.numberOfCellsX() < 3 || cellList.numberOfCellsY() < 3 || cellList.numberOfCellsZ() < 3) {
         cout << "Error, system size too small to have at least 3 cells in each dimension, aborting." << endl;

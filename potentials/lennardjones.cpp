@@ -21,6 +21,7 @@ LennardJones::LennardJones(float sigma, float epsilon, float cutoffRadius) :
 }
 
 void LennardJones::calculateForcesAllPairs(System *system) {
+    CPElapsedTimer::calculateForces().start();
     m_potentialEnergy = 0;
     m_pressureVirial = 0;
 
@@ -36,7 +37,8 @@ void LennardJones::calculateForcesAllPairs(System *system) {
         float fix = 0;
         float fiy = 0;
         float fiz = 0;
-#pragma simd reduction(+: fix, fiy, fiz)
+        float potentialEnergy = 0;
+#pragma simd reduction(+: fix, fiy, fiz, potentialEnergy)
         for(unsigned int j=i+1; j<numAtoms; j++) {
             float dx = x - atoms.x[j];
             float dy = y - atoms.y[j];
@@ -59,14 +61,17 @@ void LennardJones::calculateForcesAllPairs(System *system) {
             atoms.fz[j] += dz*force;
 
             // m_pressureVirial += force*sqrt(dr2)*dr2;
-            // m_potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
+            potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
 
         atoms.fx[i] += fix;
         atoms.fy[i] += fiy;
         atoms.fz[i] += fiz;
+        m_potentialEnergy += potentialEnergy;
         atoms.numberOfComputedForces += numAtoms-i-1;
     }
+
+    CPElapsedTimer::calculateForces().stop();
 }
 
 void LennardJones::calculateForces(System *system)
@@ -80,7 +85,7 @@ void LennardJones::calculateForces(System *system)
     vec3 systemSize = system->systemSize();
     vec3 systemSizeHalf = system->systemSize()*0.5;
 
-    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
+    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > BUILDNEIGHBORLIST) {
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 1;
     }
@@ -155,7 +160,7 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
     vec3 systemSize = system->systemSize();
     vec3 systemSizeHalf = system->systemSize()*0.5;
 
-    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > 20) {
+    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > BUILDNEIGHBORLIST) {
         system->neighborList().update();
         m_timeSinceLastNeighborListUpdate = 1;
     }

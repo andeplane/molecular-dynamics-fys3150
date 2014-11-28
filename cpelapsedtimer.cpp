@@ -3,7 +3,7 @@
 CPElapsedTimer::CPElapsedTimer()
 {
     m_startedAt = clock();
-    m_lastPing = m_startedAt;
+    m_lastPing = 0;
 }
 
 double CPElapsedTimer::ping()
