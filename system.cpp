@@ -215,7 +215,7 @@ void System::calculateForces() {
     else m_potential->calculateForces(this);
 }
 
-void System::step(float dt) {
+void System::step(double dt) {
     if(!m_initialized) {
         cout << "System not initialized, aborting. Remember to call initialize()." << endl;
         exit(1);

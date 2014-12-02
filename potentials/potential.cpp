@@ -6,12 +6,12 @@ Potential::Potential() :
     
 }
 
-float Potential::potentialEnergy()
+MDDataType_t Potential::potentialEnergy()
 {
     return m_potentialEnergy;
 }
 
-float Potential::pressureVirial()
+MDDataType_t Potential::pressureVirial()
 {
     return m_pressureVirial;
 }

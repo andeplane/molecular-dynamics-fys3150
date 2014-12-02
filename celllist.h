@@ -20,7 +20,7 @@ private:
 
 public:
     CellList();
-    void setup(System *system, float rCut);
+    void setup(System *system, MDDataType_t rCut);
     void clear();
     void update();
     MDDataType_t lengthX() { return 1.0/m_oneOverLengthX; }

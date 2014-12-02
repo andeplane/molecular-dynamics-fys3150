@@ -33,7 +33,7 @@ public:
     void applyPeriodicBoundaryConditions();
     void removeMomentum();
     void calculateForces();
-    void step(MDDataType_t dt);
+    void step(double dt);
 
     // Setters and getters
     Atoms &atoms() { return *m_atoms; }

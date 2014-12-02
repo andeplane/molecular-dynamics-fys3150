@@ -94,7 +94,7 @@ void NeighborList::update()
     CPElapsedTimer::updateNeighborList().stop();
 }
 
-float NeighborList::averageNumNeighbors()
+MDDataType_t NeighborList::averageNumNeighbors()
 {
     unsigned int numNeighbors = 0;
     for(unsigned int i=0; i<m_system->atoms().numberOfAtoms; i++) {

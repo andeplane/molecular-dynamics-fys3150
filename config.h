@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef SINGLEPRECISION
-#define SINGLEPRECISION
+//#define SINGLEPRECISION
 #endif
 
 #ifdef SINGLEPRECISION
