@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef SINGLEPRECISION
-//#define SINGLEPRECISION
+// #define SINGLEPRECISION
 #endif
 
 #ifdef SINGLEPRECISION
@@ -19,7 +19,7 @@ typedef double MDDataType_t;
 #endif
 
 #ifndef BENCHMARK
-//#define BENCHMARK
+// #define BENCHMARK
 #endif
 
 #ifndef BUILDNEIGHBORLIST

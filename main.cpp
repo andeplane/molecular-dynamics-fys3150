@@ -117,7 +117,7 @@ int main(int args, char *argv[])
     int neighborPairsPerSecond = system.neighborList().numNeighborPairs() / CPElapsedTimer::totalTime();
     unsigned long flops = calculateFlops(&system, numTimeSteps);
     float flopsPerSecond = flops / CPElapsedTimer::totalTime();
-    unsigned long bytesPerSecond = (pairsPerSecond*12 + neighborPairsPerSecond*6)*sizeof(float);
+    unsigned long bytesPerSecond = (pairsPerSecond*12 + neighborPairsPerSecond*6)*sizeof(MDDataType_t);
     cout << pairsPerSecond/1e6 << " mega pairs computed per second (" << system.atoms().numberOfComputedForces/1e6 << " mega pairs total)" << endl;
     cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
     cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
