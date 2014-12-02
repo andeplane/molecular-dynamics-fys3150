@@ -6,10 +6,10 @@ class StatisticsSampler;
 class BerendsenThermostat
 {
 private:
-    float m_temperature;
-    float m_relaxationFactor;
+    double m_temperature;
+    double m_relaxationFactor;
 public:
-    BerendsenThermostat(float temperature, float relaxationFactor);
+    BerendsenThermostat(double temperature, double relaxationFactor);
     void apply(System *system, StatisticsSampler *sampler);
 };
 

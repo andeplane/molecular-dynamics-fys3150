@@ -3,7 +3,7 @@
 #include "system.h"
 #include <cmath>
 
-BerendsenThermostat::BerendsenThermostat(float temperature, float relaxationFactor) :
+BerendsenThermostat::BerendsenThermostat(double temperature, double relaxationFactor) :
     m_temperature(temperature),
     m_relaxationFactor(relaxationFactor)
 {
@@ -11,7 +11,7 @@ BerendsenThermostat::BerendsenThermostat(float temperature, float relaxationFact
 
 void BerendsenThermostat::apply(System *system, StatisticsSampler *sampler)
 {
-    float scaleFactor = sqrt(1 + m_relaxationFactor*(sampler->temperature()/m_temperature - 1));
+    MDDataType_t scaleFactor = sqrt(1 + m_relaxationFactor*(sampler->temperature()/m_temperature - 1));
     Atoms &atoms = system->atoms();
     for(int i=0; i<atoms.numberOfAtoms; i++) {
         atoms.vx[i] *= scaleFactor;

@@ -10,11 +10,11 @@ VelocityVerlet::VelocityVerlet() :
 
 }
 
-void VelocityVerlet::halfKick(System *system, const float dt)
+void VelocityVerlet::halfKick(System *system, const MDDataType_t dt)
 {
     CPElapsedTimer::halfKick().start();
     Atoms &atoms = system->atoms();
-    const float dtHalf = dt*0.5;
+    const MDDataType_t dtHalf = dt*0.5;
 #ifdef MD_SIMD
 #pragma simd
 #endif
@@ -26,7 +26,7 @@ void VelocityVerlet::halfKick(System *system, const float dt)
     CPElapsedTimer::halfKick().stop();
 }
 
-void VelocityVerlet::move(System *system, const float dt)
+void VelocityVerlet::move(System *system, const MDDataType_t dt)
 {
     CPElapsedTimer::move().start();
     Atoms &atoms = system->atoms();
@@ -41,7 +41,7 @@ void VelocityVerlet::move(System *system, const float dt)
     CPElapsedTimer::move().stop();
 }
 
-void VelocityVerlet::integrate(System *system, float dt)
+void VelocityVerlet::integrate(System *system, MDDataType_t dt)
 {
     if(m_firstStep) {
         system->calculateForces();

@@ -12,19 +12,18 @@ class System
 {
 private:
     vec3 m_systemSize;
-    // vector<Atom> m_atoms;
     Atoms *m_atoms;
     MiniAtoms *m_miniAtoms;
     Potential *m_potential;
     Integrator *m_integrator;
 
     NeighborList m_neighborList;
-    float m_currentTime;
+    double m_currentTime;
     int m_steps;
     bool m_initialized;
     bool m_shouldSample;
-    float m_rCut;
-    float m_rShell;
+    MDDataType_t m_rCut;
+    MDDataType_t m_rShell;
     void validate();
 public:
     System();
@@ -34,7 +33,7 @@ public:
     void applyPeriodicBoundaryConditions();
     void removeMomentum();
     void calculateForces();
-    void step(float dt);
+    void step(MDDataType_t dt);
 
     // Setters and getters
     Atoms &atoms() { return *m_atoms; }
@@ -43,15 +42,15 @@ public:
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
-    float currentTime() { return m_currentTime; }
+    double currentTime() { return m_currentTime; }
     void setCurrentTime(float currentTime) { m_currentTime = currentTime; }
     Integrator *integrator() { return m_integrator; }
     void setIntegrator(Integrator *integrator) { m_integrator = integrator; }
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
-    float volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
+    double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
     NeighborList &neighborList() { return m_neighborList; }
-    void initialize(float cutoffRadius);
+    void initialize(MDDataType_t cutoffRadius);
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();
     void printStatus();

@@ -1,4 +1,5 @@
 #pragma once
+#include "config.h"
 
 class System;
 class Integrator
@@ -6,5 +7,5 @@ class Integrator
 public:
     Integrator();
     virtual ~Integrator() { }
-    virtual void integrate(System* system, float timestep) = 0;
+    virtual void integrate(System* system, MDDataType_t timestep) = 0;
 };

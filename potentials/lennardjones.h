@@ -4,16 +4,16 @@
 class LennardJones : public Potential
 {
 private:
-    float m_sigma;
-    float m_sigma6;
-    float m_epsilon;
-    float m_24epsilon;
-    float m_rCutSquared;
-    float m_potentialEnergyAtRcut;
+    MDDataType_t m_sigma;
+    MDDataType_t m_sigma6;
+    MDDataType_t m_epsilon;
+    MDDataType_t m_24epsilon;
+    MDDataType_t m_rCutSquared;
+    MDDataType_t m_potentialEnergyAtRcut;
     int   m_timeSinceLastNeighborListUpdate;
     void calculateForcesAllPairs(System *system);
 public:
-    LennardJones(float sigma, float epsilon, float cutoffRadius);
+    LennardJones(MDDataType_t sigma, MDDataType_t epsilon, MDDataType_t cutoffRadius);
     ~LennardJones() {}
     virtual void calculateForces(System *system);
     virtual void calculateForcesAndEnergyAndPressure(System *system);

@@ -43,7 +43,7 @@ void IO::writePerformance(unsigned int timestep) {
     m_performanceFile << timestep << "     " << CPElapsedTimer::totalTime() << "      " << CPElapsedTimer::ping() << endl;
 }
 
-void IO::writeStatistics(float time, float kineticEnergy, float potentialEnergy, float pressure, float temperature) {
+void IO::writeStatistics(float time, double kineticEnergy, double potentialEnergy, double pressure, double temperature) {
     if(!m_statisticsFile.is_open()) {
         m_statisticsFile.open("statistics.txt");
         m_statisticsFile << "Time [ps]              Kinetic energy [eV]    Potential energy [eV]   Total energy [eV]       Pressure [GPa]         Temperature [K]" << endl;

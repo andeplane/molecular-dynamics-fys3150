@@ -34,11 +34,11 @@ void StatisticsSampler::sample(System *system)
     CPElapsedTimer::sampling().stop();
 }
 
-float StatisticsSampler::sampleKineticEnergy(System *system)
+double StatisticsSampler::sampleKineticEnergy(System *system)
 {
     m_kineticEnergy = 0;
     Atoms &atoms = system->atoms();
-    // float kineticEnergy = 0;
+    // double kineticEnergy = 0;
 //#ifdef MD_SIMD
 //#pragma simd reduction(+: kineticEnergy)
 //#endif
@@ -50,29 +50,29 @@ float StatisticsSampler::sampleKineticEnergy(System *system)
     return m_kineticEnergy;
 }
 
-float StatisticsSampler::samplePotentialEnergy(System *system)
+double StatisticsSampler::samplePotentialEnergy(System *system)
 {
     m_potentialEnergy = system->potential()->potentialEnergy();
     return m_potentialEnergy;
 }
 
-float StatisticsSampler::sampleTemperature(System *system)
+double StatisticsSampler::sampleTemperature(System *system)
 {
     m_temperature = 2.0*m_kineticEnergy/(3*system->atoms().numberOfAtoms);
     return m_temperature;
 }
 
-float StatisticsSampler::sampleDensity(System *system)
+double StatisticsSampler::sampleDensity(System *system)
 {
     m_density = system->atoms().numberOfAtoms / system->volume();
     return m_density;
 }
 
-float StatisticsSampler::samplePressure(System *system)
+double StatisticsSampler::samplePressure(System *system)
 {
-    float idealGasPressure = m_density*m_temperature;
-    float virialPressure = ((LennardJones*)system->potential())->pressureVirial();
-//    float virialPressure = 0;
+    double idealGasPressure = m_density*m_temperature;
+    double virialPressure = ((LennardJones*)system->potential())->pressureVirial();
+//    double virialPressure = 0;
 //    for(int i=0; i<system->atoms().size(); i++) {
 //        Atom *atom = system->atoms()[i];
 //        virialPressure += atom->position.dot(atom->force);
@@ -82,7 +82,7 @@ float StatisticsSampler::samplePressure(System *system)
     return m_pressure;
 }
 
-float StatisticsSampler::totalEnergy()
+double StatisticsSampler::totalEnergy()
 {
     return m_potentialEnergy + m_kineticEnergy;
 }

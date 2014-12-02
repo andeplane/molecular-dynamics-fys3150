@@ -57,9 +57,9 @@ void NeighborList::update()
             for(unsigned int i=0; i<cell1Size; i++) {
                 const unsigned int atom1Index = cell1[i];
 
-                float x = miniAtoms.x[atom1Index];
-                float y = miniAtoms.y[atom1Index];
-                float z = miniAtoms.z[atom1Index];
+                MDDataType_t x = miniAtoms.x[atom1Index];
+                MDDataType_t y = miniAtoms.y[atom1Index];
+                MDDataType_t z = miniAtoms.z[atom1Index];
                 const bool sameCell = &cell1==&cell2;
                 const unsigned int cell2Size = cell2.size();
 #ifdef MD_SIMD
@@ -67,9 +67,9 @@ void NeighborList::update()
 #endif
                 for(unsigned int j=(sameCell ? i+1 : 0); j<cell2Size; j++) {
                     const unsigned int atom2Index = cell2[j];
-                    float dx = x - miniAtoms.x[atom2Index];
-                    float dy = y - miniAtoms.y[atom2Index];
-                    float dz = z - miniAtoms.z[atom2Index];
+                    MDDataType_t dx = x - miniAtoms.x[atom2Index];
+                    MDDataType_t dy = y - miniAtoms.y[atom2Index];
+                    MDDataType_t dz = z - miniAtoms.z[atom2Index];
 
                     if(dx < -systemSizeHalf[0]) dx += systemSize[0];
                     else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
@@ -78,7 +78,7 @@ void NeighborList::update()
                     if(dz < -systemSizeHalf[2]) dz += systemSize[2];
                     else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
 
-                    const float dr2 = dx*dx + dy*dy + dz*dz;
+                    const MDDataType_t dr2 = dx*dx + dy*dy + dz*dz;
 
                     const bool shouldNotAdd = dr2 > m_rShellSquared;
                     m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
@@ -101,5 +101,5 @@ float NeighborList::averageNumNeighbors()
         numNeighbors += m_neighbors[i][0];
     }
 
-    return float(numNeighbors)/m_system->atoms().numberOfAtoms;
+    return MDDataType_t(numNeighbors)/m_system->atoms().numberOfAtoms;
 }

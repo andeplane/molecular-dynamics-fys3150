@@ -6,11 +6,11 @@
 
 using namespace std;
 
-unsigned int CellList::indexf(float x, float y, float z)
+unsigned int CellList::indexf(MDDataType_t x, MDDataType_t y, MDDataType_t z)
 {
-    unsigned int cx = double(x)*m_oneOverLengthX;
-    unsigned int cy = double(y)*m_oneOverLengthY;
-    unsigned int cz = double(z)*m_oneOverLengthZ;
+    unsigned int cx = x*m_oneOverLengthX;
+    unsigned int cy = y*m_oneOverLengthY;
+    unsigned int cz = z*m_oneOverLengthZ;
 
     return index(cx, cy, cz);
 }
@@ -32,7 +32,7 @@ CellList::CellList() :
 
 }
 
-void CellList::setup(System *system, float rCut)
+void CellList::setup(System *system, MDDataType_t rCut)
 {
     m_system = system;
 

@@ -1,5 +1,15 @@
 #pragma once
 
+#ifndef SINGLEPRECISION
+#define SINGLEPRECISION
+#endif
+
+#ifdef SINGLEPRECISION
+typedef float MDDataType_t;
+#else
+typedef double MDDataType_t;
+#endif
+
 #ifndef MAXNUMATOMS
 #define MAXNUMATOMS 10000
 #endif

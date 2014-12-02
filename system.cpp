@@ -28,7 +28,7 @@ System::~System()
     delete m_integrator;
 }
 
-void System::initialize(float cutoffRadius) {
+void System::initialize(MDDataType_t cutoffRadius) {
     m_rCut = cutoffRadius;
     m_rShell = UnitConverter::lengthFromAngstroms(2.8*3.405);
     m_neighborList.setup(this, m_rShell);
@@ -64,11 +64,12 @@ void System::applyPeriodicBoundaryConditions() {
 #pragma simd
 #endif
     for(unsigned int i=0; i<m_atoms->numberOfAtoms; i++) {
+#ifdef SINGLEPRECISION
         // Fixes the bug where the position is slightly negative, but due to float precision, both tests (<0) and >=size) pass
         if(m_atoms->x[i] < 0 && m_atoms->x[i] > -1e-6) m_atoms->x[i] = 0;
         if(m_atoms->y[i] < 0 && m_atoms->y[i] > -1e-6) m_atoms->y[i] = 0;
         if(m_atoms->z[i] < 0 && m_atoms->z[i] > -1e-6) m_atoms->z[i] = 0;
-
+#endif
         if(m_atoms->x[i] < 0) m_atoms->x[i] += m_systemSize[0];
         if(m_atoms->x[i] >= m_systemSize[0]) m_atoms->x[i] -= m_systemSize[0];
         if(m_atoms->y[i] < 0) m_atoms->y[i] += m_systemSize[1];
@@ -105,9 +106,9 @@ void System::resetForcesOnAllAtoms() {
 }
 
 void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeConstant, float temperature) {
-    float xCell[4] = {0, 0.5, 0.5, 0};
-    float yCell[4] = {0, 0.5, 0, 0.5};
-    float zCell[4] = {0, 0, 0.5, 0.5};
+    MDDataType_t xCell[4] = {0, 0.5, 0.5, 0};
+    MDDataType_t yCell[4] = {0, 0.5, 0, 0.5};
+    MDDataType_t zCell[4] = {0, 0, 0.5, 0.5};
     int numAtoms = 4*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension*numberOfUnitCellsEachDimension;
     assert(MAXNUMATOMS >= numAtoms && "Too many atoms, increase MAXNUMATOMS in atoms.h");
 
@@ -117,16 +118,16 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
                 for(int l=0; l<4; l++) {
                     int atomIndex = m_atoms->numberOfAtoms;
                     m_atoms->inverseMass[atomIndex] = 1.0/UnitConverter::massFromSI(6.63352088e-26);
-                    float x = (i+xCell[l])*latticeConstant;
-                    float y = (j+yCell[l])*latticeConstant;
-                    float z = (k+zCell[l])*latticeConstant;
+                    MDDataType_t x = (i+xCell[l])*latticeConstant;
+                    MDDataType_t y = (j+yCell[l])*latticeConstant;
+                    MDDataType_t z = (k+zCell[l])*latticeConstant;
                     m_atoms->x[atomIndex] = x;
                     m_atoms->y[atomIndex] = y;
                     m_atoms->z[atomIndex] = z;
                     
                     vec3 velocity;
-                    float boltzmannConstant = 1.0; // In atomic units, the boltzmann constant equals 1
-                    float standardDeviation = sqrt(boltzmannConstant*temperature*m_atoms->inverseMass[atomIndex]);
+                    MDDataType_t boltzmannConstant = 1.0; // In atomic units, the boltzmann constant equals 1
+                    MDDataType_t standardDeviation = sqrt(boltzmannConstant*temperature*m_atoms->inverseMass[atomIndex]);
                     velocity.randomGaussian(0, standardDeviation);
                     m_atoms->vx[atomIndex] = velocity[0];
                     m_atoms->vy[atomIndex] = velocity[1];
