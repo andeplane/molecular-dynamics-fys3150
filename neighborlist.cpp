@@ -71,18 +71,12 @@ void NeighborList::update()
                     float dy = y - miniAtoms.y[atom2Index];
                     float dz = z - miniAtoms.z[atom2Index];
 
-#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH1
                     if(dx < -systemSizeHalf[0]) dx += systemSize[0];
                     else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
                     if(dy < -systemSizeHalf[1]) dy += systemSize[1];
                     else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
                     if(dz < -systemSizeHalf[2]) dz += systemSize[2];
                     else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
-#else
-                    dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-                    dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-                    dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-#endif
 
                     const float dr2 = dx*dx + dy*dy + dz*dz;
 

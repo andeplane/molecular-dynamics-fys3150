@@ -113,18 +113,12 @@ void LennardJones::calculateForces(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
-#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH2
             if(dx < -systemSizeHalf[0]) dx += systemSize[0];
             else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
             if(dy < -systemSizeHalf[1]) dy += systemSize[1];
             else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
             if(dz < -systemSizeHalf[2]) dz += systemSize[2];
             else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
-#else
-            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-#endif
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
@@ -191,18 +185,12 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
-#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH3
             if(dx < -systemSizeHalf[0]) dx += systemSize[0];
             else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
             if(dy < -systemSizeHalf[1]) dy += systemSize[1];
             else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
             if(dz < -systemSizeHalf[2]) dz += systemSize[2];
             else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
-#else
-            dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
-            dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
-            dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
-#endif
 
             const float dr2 = dx*dx + dy*dy + dz*dz;
             const float oneOverDr2 = 1.0f/dr2;
