@@ -113,7 +113,7 @@ void LennardJones::calculateForces(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
-#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH2
             if(dx < -systemSizeHalf[0]) dx += systemSize[0];
             else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
             if(dy < -systemSizeHalf[1]) dy += systemSize[1];
@@ -191,7 +191,7 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             float dy = y - atoms.y[neighborIndex];
             float dz = z - atoms.z[neighborIndex];
 
-#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH3
             if(dx < -systemSizeHalf[0]) dx += systemSize[0];
             else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
             if(dy < -systemSizeHalf[1]) dy += systemSize[1];

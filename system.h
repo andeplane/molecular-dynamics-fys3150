@@ -14,6 +14,7 @@ private:
     vec3 m_systemSize;
     // vector<Atom> m_atoms;
     Atoms *m_atoms;
+    MiniAtoms *m_miniAtoms;
     Potential *m_potential;
     Integrator *m_integrator;
 
@@ -37,6 +38,7 @@ public:
 
     // Setters and getters
     Atoms &atoms() { return *m_atoms; }
+    MiniAtoms &miniAtoms() { return *m_miniAtoms; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }

@@ -18,6 +18,7 @@ System::System() :
     m_initialized(false),
     m_shouldSample(false)
 {
+    m_miniAtoms = new MiniAtoms();
     m_atoms = new Atoms();
 }
 

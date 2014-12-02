@@ -1,5 +1,6 @@
 #include "neighborlist.h"
 #include "celllist.h"
+#include "config.h"
 #include "math/vec3.h"
 #include "system.h"
 #include "cpelapsedtimer.h"
@@ -44,6 +45,8 @@ void NeighborList::update()
     clear();
 
     Atoms &atoms = m_system->atoms();
+    MiniAtoms &miniAtoms = m_system->miniAtoms();
+    miniAtoms.update(atoms);
     const unsigned int cellSize = m_cellList.cells().size();
     for(unsigned int cellIndex1=0; cellIndex1<cellSize; cellIndex1++) {
         const vector<unsigned int> &cell1 = m_cellList.cells()[cellIndex1];
@@ -54,9 +57,9 @@ void NeighborList::update()
             for(unsigned int i=0; i<cell1Size; i++) {
                 const unsigned int atom1Index = cell1[i];
 
-                float x = atoms.x[atom1Index];
-                float y = atoms.y[atom1Index];
-                float z = atoms.z[atom1Index];
+                float x = miniAtoms.x[atom1Index];
+                float y = miniAtoms.y[atom1Index];
+                float z = miniAtoms.z[atom1Index];
                 const bool sameCell = &cell1==&cell2;
                 const unsigned int cell2Size = cell2.size();
 #ifdef MD_SIMD
@@ -64,13 +67,22 @@ void NeighborList::update()
 #endif
                 for(unsigned int j=(sameCell ? i+1 : 0); j<cell2Size; j++) {
                     const unsigned int atom2Index = cell2[j];
-                    float dx = x - atoms.x[atom2Index];
-                    float dy = y - atoms.y[atom2Index];
-                    float dz = z - atoms.z[atom2Index];
+                    float dx = x - miniAtoms.x[atom2Index];
+                    float dy = y - miniAtoms.y[atom2Index];
+                    float dz = z - miniAtoms.z[atom2Index];
 
+#ifdef MINIMUMIMAGECONVENTIONTYPE_BRANCH1
+                    if(dx < -systemSizeHalf[0]) dx += systemSize[0];
+                    else if(dx > systemSizeHalf[0]) dx -= systemSize[0];
+                    if(dy < -systemSizeHalf[1]) dy += systemSize[1];
+                    else if(dy > systemSizeHalf[1]) dy -= systemSize[1];
+                    if(dz < -systemSizeHalf[2]) dz += systemSize[2];
+                    else if(dz > systemSizeHalf[2]) dz -= systemSize[2];
+#else
                     dx += systemSize[0]*( (dx < -systemSizeHalf[0] ) - (dx > systemSizeHalf[0]));
                     dy += systemSize[1]*( (dy < -systemSizeHalf[1] ) - (dy > systemSizeHalf[1]));
                     dz += systemSize[2]*( (dz < -systemSizeHalf[2] ) - (dz > systemSizeHalf[2]));
+#endif
 
                     const float dr2 = dx*dx + dy*dy + dz*dz;
 

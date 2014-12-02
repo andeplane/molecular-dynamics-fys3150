@@ -23,11 +23,11 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e8;
+    unsigned int numTimeSteps = 1e3;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 6;
+    int numUnitCells = 8;
     float latticeConstant = 5.26;
-    // float latticeConstant = 5.885;
+    // float l./mol atticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
     float temperature = 1000;

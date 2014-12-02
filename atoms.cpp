@@ -40,3 +40,17 @@ void Atoms::sort()
         }//end of while loop
     }//end of for loop
 }
+
+
+void MiniAtoms::update(Atoms &atoms)
+{
+    memcpy(x,atoms.x,sizeof(x));
+    memcpy(y,atoms.y,sizeof(y));
+    memcpy(z,atoms.z,sizeof(z));
+}
+
+MiniAtoms::MiniAtoms() :
+    numberOfAtoms(0)
+{
+
+}
