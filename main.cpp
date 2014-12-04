@@ -15,7 +15,7 @@
 using namespace std;
 
 unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
-    unsigned long flops = system->atoms().numberOfComputedForces*45 + system->neighborList().numNeighborPairs()*22; // Forces and neighbor list builds
+    unsigned long flops = system->atoms().numberOfComputedForces*45 + system->neighborList().totalComparedNeighborPairs()*22; // Forces and neighbor list builds
     flops += system->atoms().numberOfAtoms*numTimesteps*(9 + 6 + 9); // Velocity verlet
     flops += system->atoms().numberOfAtoms*numTimesteps*(18); // Periodic boundary conditions
     return flops;
@@ -114,7 +114,7 @@ int main(int args, char *argv[])
 
     // Performance numbers
     int pairsPerSecond = system.atoms().numberOfComputedForces / CPElapsedTimer::totalTime();
-    int neighborPairsPerSecond = system.neighborList().numNeighborPairs() / CPElapsedTimer::totalTime();
+    int neighborPairsPerSecond = system.neighborList().totalComparedNeighborPairs() / CPElapsedTimer::totalTime();
     unsigned long flops = calculateFlops(&system, numTimeSteps);
     float flopsPerSecond = flops / CPElapsedTimer::totalTime();
     unsigned long bytesPerSecond = (pairsPerSecond*12 + neighborPairsPerSecond*6)*sizeof(MDDataType_t);
@@ -122,6 +122,7 @@ int main(int args, char *argv[])
     cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
     cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
     cout << "Flops: " << flopsPerSecond/1e9 << " Gflops / sec." << endl;
+    cout << "Built neighborlist every " << (numTimeSteps/system.neighborList().numUpdated()) << " timestep" << endl;
 
     return 0;
 }

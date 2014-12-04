@@ -85,10 +85,14 @@ void LennardJones::calculateForces(System *system)
     vec3 systemSize = system->systemSize();
     vec3 systemSizeHalf = system->systemSize()*0.5;
 
-    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > BUILDNEIGHBORLIST) {
-        system->neighborList().update();
-        m_timeSinceLastNeighborListUpdate = 1;
+    NeighborList &neighborList = system->neighborList();
+    const MDDataType_t rShellSquared = neighborList.rShellSquared();
+
+    if (neighborList.currentNeighborPairRatio() < 0.99) {
+        neighborList.update();
     }
+
+    neighborList.numCurrentNeighborPairs() = 0;
 
     CPElapsedTimer::calculateForces().start();
 
@@ -104,8 +108,9 @@ void LennardJones::calculateForces(System *system)
         const unsigned int *neighbors = system->neighborList().neighborsForAtomWithIndex(i);
 
         const unsigned int numNeighbors = neighbors[0];
+        unsigned int numCurrentNeighbors = 0;
 #ifdef MD_SIMD
-#pragma simd reduction (+: fix, fiy, fiz)
+#pragma simd reduction (+: fix, fiy, fiz, numCurrentNeighbors)
 #endif
         for(unsigned int j=1; j<=numNeighbors; j++) {
             const unsigned int neighborIndex = neighbors[j];
@@ -124,6 +129,7 @@ void LennardJones::calculateForces(System *system)
             const MDDataType_t oneOverDr2 = 1.0f/dr2;
             const MDDataType_t sigma6OneOverDr6 = oneOverDr2*oneOverDr2*oneOverDr2*m_sigma6;
             const MDDataType_t force = -m_24epsilon*sigma6OneOverDr6*(2*sigma6OneOverDr6 - 1.0f)*oneOverDr2*(dr2 < m_rCutSquared);
+            numCurrentNeighbors += (dr2 < rShellSquared);
 
             fix -= dx*force;
             fiy -= dy*force;
@@ -134,6 +140,7 @@ void LennardJones::calculateForces(System *system)
             atoms.fz[neighborIndex] += dz*force;
         }
 
+        neighborList.numCurrentNeighborPairs() += numCurrentNeighbors;
         atoms.numberOfComputedForces += numNeighbors;
         atoms.fx[i] += fix;
         atoms.fy[i] += fiy;

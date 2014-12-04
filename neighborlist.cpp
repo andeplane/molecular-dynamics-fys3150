@@ -12,7 +12,10 @@ using namespace std;
 NeighborList::NeighborList() :
     m_system(0),
     m_rShellSquared(-1),
-    m_numNeighborPairs(0)
+    m_numUpdated(0),
+    m_totalComparedNeighborPairs(0),
+    m_numInitialNeighborPairs(0),
+    m_numCurrentNeighborPairs(0)
 {
     m_neighbors = new unsigned int*[MAXNUMATOMS];
     for(int i=0; i<MAXNUMATOMS; i++) {
@@ -37,6 +40,7 @@ void NeighborList::update()
 {
     vec3 systemSize = m_system->systemSize();
     vec3 systemSizeHalf = m_system->systemSize()*0.5;
+    m_numInitialNeighborPairs = 0;
 
     // m_system->atoms().sort();
     m_cellList.update();
@@ -62,6 +66,7 @@ void NeighborList::update()
                 MDDataType_t z = miniAtoms.z[atom1Index];
                 const bool sameCell = &cell1==&cell2;
                 const unsigned int cell2Size = cell2.size();
+                unsigned int pairCount = 0;
 #ifdef MD_SIMD
 #pragma simd
 #endif
@@ -81,16 +86,19 @@ void NeighborList::update()
                     const MDDataType_t dr2 = dx*dx + dy*dy + dz*dz;
 
                     const bool shouldNotAdd = dr2 > m_rShellSquared;
+                    pairCount += !shouldNotAdd;
                     m_neighbors[atom2Index][ ++m_neighbors[atom2Index][0] ] = atom1Index;
                     m_neighbors[atom2Index][0] -= shouldNotAdd; // Decrease neighborcounter if we shouldn't add this
 #ifdef MD_DEBUG
                     assert(m_neighbors[atom2Index][0] <= MAXNUMNEIGHBORS && "An atom got too many neighbors :/");
 #endif
                 }
-                m_numNeighborPairs += cell2Size*(1.0 - 0.5*sameCell);
+                m_numInitialNeighborPairs += pairCount;
+                m_totalComparedNeighborPairs += cell2Size*(1.0 - 0.5*sameCell);
             }
         }
     }
+    m_numUpdated++;
     CPElapsedTimer::updateNeighborList().stop();
 }
 
