@@ -32,10 +32,10 @@ void System::initialize(MDDataType_t cutoffRadius) {
     m_rCut = cutoffRadius;
     m_rShell = m_rCut * 1.12;
     m_neighborList.setup(this, m_rShell);
-    m_initialized = true;
     printStatus();
     validate();
-
+    m_neighborList.update();
+    m_initialized = true;
 }
 
 void System::validate() {

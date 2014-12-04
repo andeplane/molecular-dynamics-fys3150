@@ -11,7 +11,6 @@ LennardJones::LennardJones(MDDataType_t sigma, MDDataType_t epsilon, MDDataType_
     m_epsilon(epsilon),
     m_24epsilon(24*epsilon),
     m_rCutSquared(cutoffRadius*cutoffRadius),
-    m_timeSinceLastNeighborListUpdate(0),
     m_potentialEnergyAtRcut(0)
 {
     MDDataType_t oneOverDrCut2 = 1.0/m_rCutSquared;
@@ -161,10 +160,13 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
     vec3 systemSize = system->systemSize();
     vec3 systemSizeHalf = system->systemSize()*0.5;
 
-    if(!m_timeSinceLastNeighborListUpdate || m_timeSinceLastNeighborListUpdate++ > BUILDNEIGHBORLIST) {
-        system->neighborList().update();
-        m_timeSinceLastNeighborListUpdate = 1;
+    NeighborList &neighborList = system->neighborList();
+    const MDDataType_t rShellSquared = neighborList.rShellSquared();
+    if (neighborList.currentNeighborPairRatio() < 0.99) {
+        neighborList.update();
     }
+
+    neighborList.numCurrentNeighborPairs() = 0;
 
     CPElapsedTimer::calculateForces().start();
 
@@ -183,8 +185,9 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
         MDDataType_t potentialEnergy = 0;
 
         const unsigned int numNeighbors = neighbors[0];
+        unsigned int numCurrentNeighbors = 0;
 #ifdef MD_SIMD
-#pragma simd reduction (+: fix, fiy, fiz, pressureVirial, potentialEnergy)
+#pragma simd reduction (+: fix, fiy, fiz, pressureVirial, potentialEnergy, numCurrentNeighbors)
 #endif
         for(unsigned int j=1; j<=numNeighbors; j++) {
             unsigned int neighborIndex = neighbors[j];
@@ -212,10 +215,12 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
             atoms.fy[neighborIndex] += dy*force;
             atoms.fz[neighborIndex] += dz*force;
 
+            numCurrentNeighbors += (dr2 < rShellSquared);
             pressureVirial += force*sqrt(dr2)*dr2;
             potentialEnergy += (4*m_epsilon*sigma6OneOverDr6*(sigma6OneOverDr6 - 1.0f) - m_potentialEnergyAtRcut)*(dr2 < m_rCutSquared);
         }
 
+        neighborList.numCurrentNeighborPairs() += numCurrentNeighbors;
         atoms.numberOfComputedForces += numNeighbors;
         atoms.fx[i] += fix;
         atoms.fy[i] += fiy;

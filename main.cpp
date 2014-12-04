@@ -24,7 +24,7 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 int main(int args, char *argv[])
 {
     unsigned int numTimeSteps = 1e4;
-    double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
+    double dt = UnitConverter::timeFromSI(1e-15); // You should try different values for dt as well.
     int numUnitCells = 8;
     float latticeConstant = 5.26;
     // float l./mol atticeConstant = 5.885;
