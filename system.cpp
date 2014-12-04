@@ -30,7 +30,7 @@ System::~System()
 
 void System::initialize(MDDataType_t cutoffRadius) {
     m_rCut = cutoffRadius;
-    m_rShell = UnitConverter::lengthFromAngstroms(2.8*3.405);
+    m_rShell = m_rCut * 1.12;
     m_neighborList.setup(this, m_rShell);
     m_initialized = true;
     printStatus();

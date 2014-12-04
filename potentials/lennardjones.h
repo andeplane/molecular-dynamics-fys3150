@@ -10,7 +10,6 @@ private:
     MDDataType_t m_24epsilon;
     MDDataType_t m_rCutSquared;
     MDDataType_t m_potentialEnergyAtRcut;
-    int   m_timeSinceLastNeighborListUpdate;
     void calculateForcesAllPairs(System *system);
 public:
     LennardJones(MDDataType_t sigma, MDDataType_t epsilon, MDDataType_t cutoffRadius);
