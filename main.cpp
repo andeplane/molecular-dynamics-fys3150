@@ -54,7 +54,7 @@ int main(int args, char *argv[])
     system.initialize(rCut);
     system.removeMomentum();
 
-    int measureEvery = 1000;
+    int measureEvery = 100;
 
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;

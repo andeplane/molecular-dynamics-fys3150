@@ -122,8 +122,8 @@ MDDataType_t NeighborList::averageNumNeighbors()
 bool NeighborList::shouldUpdate()
 {
     Atoms &atoms = m_system->atoms();
-    MDDataType_t deltaRSquared = sqrt(m_rShellSquared) - m_system->rCut(); // linear diff
-    deltaRSquared *= deltaRSquared; // square it
+    MDDataType_t deltaRHalfSquared = (sqrt(m_rShellSquared) - m_system->rCut())/2.0; // linear diff
+    deltaRHalfSquared *= deltaRHalfSquared; // square it
 
     for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
         MDDataType_t dx = xInitial[i] - atoms.x[i];
@@ -131,7 +131,7 @@ bool NeighborList::shouldUpdate()
         MDDataType_t dz = zInitial[i] - atoms.z[i];
 
         MDDataType_t dr2 = dx*dx + dy*dy + dz*dz;
-        if(dr2 > deltaRSquared) return true;
+        if(dr2 > deltaRHalfSquared) return true;
     }
 
     return false;

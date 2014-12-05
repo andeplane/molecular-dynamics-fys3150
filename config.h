@@ -15,7 +15,7 @@ typedef double MDDataType_t;
 #endif
 
 #ifndef MAXNUMATOMS
-#define MAXNUMATOMS 10000
+#define MAXNUMATOMS 200000
 #endif
 
 #ifndef MAXNUMNEIGHBORS
