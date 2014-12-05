@@ -22,6 +22,10 @@ private:
 
     void clear();
 public:
+    MDDataType_t xInitial[MAXNUMATOMS];
+    MDDataType_t yInitial[MAXNUMATOMS];
+    MDDataType_t zInitial[MAXNUMATOMS];
+
     NeighborList();
     void setup(System *system, float rShell);
     void update();
@@ -35,6 +39,7 @@ public:
 
     float currentNeighborPairRatio() { return (float)m_numCurrentNeighborPairs / (float)m_numInitialNeighborPairs; }
     unsigned int &numCurrentNeighborPairs() { return m_numCurrentNeighborPairs; }
+    bool shouldUpdate();
 };
 
 #endif // NEIGHBORLIST_H

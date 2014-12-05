@@ -70,12 +70,27 @@ void System::applyPeriodicBoundaryConditions() {
         if(m_atoms->y[i] < 0 && m_atoms->y[i] > -1e-6) m_atoms->y[i] = 0;
         if(m_atoms->z[i] < 0 && m_atoms->z[i] > -1e-6) m_atoms->z[i] = 0;
 #endif
-        if(m_atoms->x[i] < 0) m_atoms->x[i] += m_systemSize[0];
-        if(m_atoms->x[i] >= m_systemSize[0]) m_atoms->x[i] -= m_systemSize[0];
-        if(m_atoms->y[i] < 0) m_atoms->y[i] += m_systemSize[1];
-        if(m_atoms->y[i] >= m_systemSize[1]) m_atoms->y[i] -= m_systemSize[1];
-        if(m_atoms->z[i] < 0) m_atoms->z[i] += m_systemSize[2];
-        if(m_atoms->z[i] >= m_systemSize[2]) m_atoms->z[i] -= m_systemSize[2];
+        if(m_atoms->x[i] < 0) {
+            m_atoms->x[i] += m_systemSize[0];
+            m_neighborList.xInitial[i] += m_systemSize[0];
+        } else if(m_atoms->x[i] >= m_systemSize[0]) {
+            m_atoms->x[i] -= m_systemSize[0];
+            m_neighborList.xInitial[i] -= m_systemSize[0];
+        }
+        if(m_atoms->y[i] < 0) {
+            m_atoms->y[i] += m_systemSize[1];
+            m_neighborList.yInitial[i] += m_systemSize[1];
+        } else if(m_atoms->y[i] >= m_systemSize[1]) {
+            m_atoms->y[i] -= m_systemSize[1];
+            m_neighborList.yInitial[i] -= m_systemSize[1];
+        }
+        if(m_atoms->z[i] < 0) {
+            m_atoms->z[i] += m_systemSize[2];
+            m_neighborList.zInitial[i] += m_systemSize[2];
+        } else if(m_atoms->z[i] >= m_systemSize[2]) {
+            m_atoms->z[i] -= m_systemSize[2];
+            m_neighborList.zInitial[i] -= m_systemSize[2];
+        }
     }
     CPElapsedTimer::periodicBoundaryConditions().stop();
     // Read here: http://en.wikipedia.org/wiki/Periodic_boundary_conditions#Practical_implementation:_continuity_and_the_minimum_image_convention

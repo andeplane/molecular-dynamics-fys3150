@@ -54,4 +54,5 @@ public:
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();
     void printStatus();
+    MDDataType_t rCut() { return m_rCut; }
 };

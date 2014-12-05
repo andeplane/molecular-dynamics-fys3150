@@ -10,6 +10,10 @@ typedef float MDDataType_t;
 typedef double MDDataType_t;
 #endif
 
+#ifndef CORRECTNEIGHBORLISTUPDATE
+#define CORRECTNEIGHBORLISTUPDATE
+#endif
+
 #ifndef MAXNUMATOMS
 #define MAXNUMATOMS 10000
 #endif

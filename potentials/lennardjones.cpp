@@ -87,7 +87,11 @@ void LennardJones::calculateForces(System *system)
     NeighborList &neighborList = system->neighborList();
     const MDDataType_t rShellSquared = neighborList.rShellSquared();
 
+#ifdef CORRECTNEIGHBORLISTUPDATE
+    if(neighborList.shouldUpdate()) {
+#else
     if (neighborList.currentNeighborPairRatio() < 0.99) {
+#endif
         neighborList.update();
     }
 
@@ -162,7 +166,12 @@ void LennardJones::calculateForcesAndEnergyAndPressure(System *system)
 
     NeighborList &neighborList = system->neighborList();
     const MDDataType_t rShellSquared = neighborList.rShellSquared();
+#ifdef CORRECTNEIGHBORLISTUPDATE
+    if(neighborList.shouldUpdate()) {
+#else
     if (neighborList.currentNeighborPairRatio() < 0.99) {
+#endif
+
         neighborList.update();
     }
 

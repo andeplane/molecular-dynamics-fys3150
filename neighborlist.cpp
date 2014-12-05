@@ -6,6 +6,7 @@
 #include "cpelapsedtimer.h"
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include <cassert>
 using namespace std;
 
@@ -64,11 +65,17 @@ void NeighborList::update()
                 MDDataType_t x = miniAtoms.x[atom1Index];
                 MDDataType_t y = miniAtoms.y[atom1Index];
                 MDDataType_t z = miniAtoms.z[atom1Index];
+
+                // Store initial positions to calculate displacements
+                xInitial[atom1Index] = x;
+                yInitial[atom1Index] = y;
+                zInitial[atom1Index] = z;
+
                 const bool sameCell = &cell1==&cell2;
                 const unsigned int cell2Size = cell2.size();
                 unsigned int pairCount = 0;
 #ifdef MD_SIMD
-#pragma simd
+#pragma simd reduction(+: pairCount)
 #endif
                 for(unsigned int j=(sameCell ? i+1 : 0); j<cell2Size; j++) {
                     const unsigned int atom2Index = cell2[j];
@@ -110,4 +117,22 @@ MDDataType_t NeighborList::averageNumNeighbors()
     }
 
     return MDDataType_t(numNeighbors)/m_system->atoms().numberOfAtoms;
+}
+
+bool NeighborList::shouldUpdate()
+{
+    Atoms &atoms = m_system->atoms();
+    MDDataType_t deltaRSquared = sqrt(m_rShellSquared) - m_system->rCut(); // linear diff
+    deltaRSquared *= deltaRSquared; // square it
+
+    for(unsigned int i=0; i<atoms.numberOfAtoms; i++) {
+        MDDataType_t dx = xInitial[i] - atoms.x[i];
+        MDDataType_t dy = yInitial[i] - atoms.y[i];
+        MDDataType_t dz = zInitial[i] - atoms.z[i];
+
+        MDDataType_t dr2 = dx*dx + dy*dy + dz*dz;
+        if(dr2 > deltaRSquared) return true;
+    }
+
+    return false;
 }
