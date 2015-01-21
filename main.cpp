@@ -23,14 +23,14 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
 
 int main(int args, char *argv[])
 {
-    unsigned int numTimeSteps = 1e4;
-    double dt = UnitConverter::timeFromSI(1e-15); // You should try different values for dt as well.
-    int numUnitCells = 8;
+    unsigned int numTimeSteps = 5500;
+    double dt = UnitConverter::timeFromSI(3e-15); // You should try different values for dt as well.
+    int numUnitCells = 30;
     float latticeConstant = 5.26;
     // float l./mol atticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
-    float temperature = 150;
+    float temperature = 800;
     if(args>1) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);
@@ -78,6 +78,12 @@ int main(int args, char *argv[])
         if( !(timestep % measureEvery)) {
             cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
             fileHandler.writePerformance(timestep);
+        }
+
+        if( (timestep % 50) == 0 && timestep > 1000) {
+            cout << "Saving timestep" << endl;
+            fileHandler.savePositionsBinary(&system);
+            fileHandler.savePositionsXYZ(&system);
         }
         // movie->saveState(&system);
     }

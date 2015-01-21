@@ -17,7 +17,7 @@ private:
     Potential *m_potential;
     Integrator *m_integrator;
 
-    NeighborList m_neighborList;
+    NeighborList *m_neighborList;
     double m_currentTime;
     int m_steps;
     bool m_initialized;
@@ -49,7 +49,7 @@ public:
     int steps() { return m_steps; }
     void setSteps(int steps) { m_steps = steps; }
     double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
-    NeighborList &neighborList() { return m_neighborList; }
+    NeighborList &neighborList() { return *m_neighborList; }
     void initialize(MDDataType_t cutoffRadius);
     void setShouldSample(bool shouldSample);
     void createGhostAtoms();

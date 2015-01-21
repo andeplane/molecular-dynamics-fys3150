@@ -20,6 +20,7 @@ System::System() :
 {
     m_miniAtoms = new MiniAtoms();
     m_atoms = new Atoms();
+    m_neighborList = new NeighborList();
 }
 
 System::~System()
@@ -31,10 +32,10 @@ System::~System()
 void System::initialize(MDDataType_t cutoffRadius) {
     m_rCut = cutoffRadius;
     m_rShell = m_rCut * 1.12;
-    m_neighborList.setup(this, m_rShell);
+    m_neighborList->setup(this, m_rShell);
     printStatus();
     validate();
-    m_neighborList.update();
+    m_neighborList->update();
     m_initialized = true;
 }
 
@@ -42,7 +43,7 @@ void System::validate() {
 #ifdef BENCHMARK
     return;
 #endif
-    CellList &cellList = m_neighborList.cellList();
+    CellList &cellList = m_neighborList->cellList();
     if(cellList.numberOfCellsX() < 3 || cellList.numberOfCellsY() < 3 || cellList.numberOfCellsZ() < 3) {
         cout << "Error, system size too small to have at least 3 cells in each dimension, aborting." << endl;
         cout << "Minimum system size: " << UnitConverter::lengthToAngstroms(3*m_rShell) << " Å" << endl;
@@ -53,7 +54,7 @@ void System::validate() {
 void System::printStatus() {
     cout << "System initialized with " << m_atoms->numberOfAtoms << " atoms." << endl;
     cout << "System size: " << m_systemSize << endl;
-    CellList &cellList = m_neighborList.cellList();
+    CellList &cellList = m_neighborList->cellList();
     cout << "Number of cells: " << cellList.numberOfCellsX() << ", " << cellList.numberOfCellsY() << ", " << cellList.numberOfCellsZ() << endl;
     cout << "Cell size: " << UnitConverter::lengthToAngstroms(cellList.lengthX()) << " x " << UnitConverter::lengthToAngstroms(cellList.lengthY()) << " x " << UnitConverter::lengthToAngstroms(cellList.lengthZ()) << " Å^3" << endl;
 }
@@ -72,24 +73,24 @@ void System::applyPeriodicBoundaryConditions() {
 #endif
         if(m_atoms->x[i] < 0) {
             m_atoms->x[i] += m_systemSize[0];
-            m_neighborList.xInitial[i] += m_systemSize[0];
+            m_neighborList->xInitial[i] += m_systemSize[0];
         } else if(m_atoms->x[i] >= m_systemSize[0]) {
             m_atoms->x[i] -= m_systemSize[0];
-            m_neighborList.xInitial[i] -= m_systemSize[0];
+            m_neighborList->xInitial[i] -= m_systemSize[0];
         }
         if(m_atoms->y[i] < 0) {
             m_atoms->y[i] += m_systemSize[1];
-            m_neighborList.yInitial[i] += m_systemSize[1];
+            m_neighborList->yInitial[i] += m_systemSize[1];
         } else if(m_atoms->y[i] >= m_systemSize[1]) {
             m_atoms->y[i] -= m_systemSize[1];
-            m_neighborList.yInitial[i] -= m_systemSize[1];
+            m_neighborList->yInitial[i] -= m_systemSize[1];
         }
         if(m_atoms->z[i] < 0) {
             m_atoms->z[i] += m_systemSize[2];
-            m_neighborList.zInitial[i] += m_systemSize[2];
+            m_neighborList->zInitial[i] += m_systemSize[2];
         } else if(m_atoms->z[i] >= m_systemSize[2]) {
             m_atoms->z[i] -= m_systemSize[2];
-            m_neighborList.zInitial[i] -= m_systemSize[2];
+            m_neighborList->zInitial[i] -= m_systemSize[2];
         }
     }
     CPElapsedTimer::periodicBoundaryConditions().stop();
