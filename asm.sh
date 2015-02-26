@@ -1,0 +1,1 @@
+emcc -s TOTAL_MEMORY=128000000 -std=c++11 -I. *.cpp potentials/*.cpp math/*.cpp modifiers/*.cpp integrators/*.cpp -o main.html
