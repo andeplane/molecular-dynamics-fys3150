@@ -38,6 +38,12 @@ void System::initialize(MDDataType_t cutoffRadius) {
     m_initialized = true;
 }
 
+
+bool System::initialized() const
+{
+    return m_initialized;
+}
+
 void System::validate() {
 #ifdef BENCHMARK
     return;

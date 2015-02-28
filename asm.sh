@@ -1,1 +1,1 @@
-emcc -s TOTAL_MEMORY=128000000 -std=c++11 -I. *.cpp potentials/*.cpp math/*.cpp modifiers/*.cpp integrators/*.cpp -o main.html
+emcc -s TOTAL_MEMORY=128000000 -s EXPORTED_FUNCTIONS="['_step', '_initialize', '_setMeasureEvery', '_x', '_y', '_z', '_numberOfAtoms', '_systemSize']" -std=c++11 -O2 -I. *.cpp potentials/*.cpp math/*.cpp modifiers/*.cpp integrators/*.cpp -o main.js

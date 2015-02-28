@@ -38,7 +38,7 @@ public:
     // Setters and getters
     Atoms &atoms() { return *m_atoms; }
     MiniAtoms &miniAtoms() { return *m_miniAtoms; }
-    vec3 systemSize() { return m_systemSize; }
+    vec3 &systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
@@ -55,4 +55,5 @@ public:
     void createGhostAtoms();
     void printStatus();
     MDDataType_t rCut() { return m_rCut; }
+    bool initialized() const;
 };

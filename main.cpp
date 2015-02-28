@@ -21,108 +21,74 @@ unsigned long calculateFlops(System *system, unsigned int numTimesteps) {
     return flops;
 }
 
-int main(int args, char *argv[])
-{
-    unsigned int numTimeSteps = 1e3;
-    double dt = UnitConverter::timeFromSI(1e-15); // You should try different values for dt as well.
-    int numUnitCells = 8;
-    float latticeConstant = 5.26;
-    // float l./mol atticeConstant = 5.885;
-    bool loadState = false;
-    bool thermostatEnabled = false;
-    float temperature = 150;
-    if(args>1) {
-        dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
-        numTimeSteps = atoi(argv[2]);
-        numUnitCells = atoi(argv[3]);
-        latticeConstant = atof(argv[4]);
-        loadState = atoi(argv[5]);
-        thermostatEnabled = atoi(argv[6]);
-        temperature = atof(argv[7]);
-    }
+System mdSystem;
+IO fileHandler; // To write the state to file
+StatisticsSampler statisticsSampler(&fileHandler);
+double dt = UnitConverter::timeFromSI(5e-15);
+unsigned int timestep = 0;
+unsigned int measureEvery = 1;
+extern "C" {
 
+double *x() {
+    return mdSystem.atoms().x;
+}
+
+double *y() {
+    return mdSystem.atoms().y;
+}
+
+double *z() {
+    return mdSystem.atoms().z;
+}
+
+int numberOfAtoms() {
+    return mdSystem.atoms().numberOfAtoms;
+}
+
+double *systemSize() {
+    return &mdSystem.systemSize()[0];
+}
+
+void setMeasureEvery(unsigned int val) {
+    measureEvery = val;
+}
+
+void initialize(int numUnitCells = 8, float temperature = 150) {
+    float latticeConstant = 5.26;
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
 
-    System system;
-    IO fileHandler; // To write the state to file
-    StatisticsSampler statisticsSampler(&fileHandler);
-    BerendsenThermostat thermostat(UnitConverter::temperatureFromSI(temperature), 0.01);
+    mdSystem.createFCCLattice(numUnitCells, UnitConverter::lengthFromAngstroms(latticeConstant), UnitConverter::temperatureFromSI(temperature));
+    mdSystem.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
+    mdSystem.setIntegrator(new VelocityVerlet());
+    mdSystem.initialize(rCut);
+    mdSystem.removeMomentum();
+}
 
-    system.createFCCLattice(numUnitCells, UnitConverter::lengthFromAngstroms(latticeConstant), UnitConverter::temperatureFromSI(temperature));
-    system.setPotential(new LennardJones(UnitConverter::lengthFromAngstroms(3.405), 1.0, rCut)); // You must insert correct parameters here
-    system.setIntegrator(new VelocityVerlet());
-    system.initialize(rCut);
-    system.removeMomentum();
+void step(int timesteps = 1) {
+    if(!mdSystem.initialized()) {
+        initialize();
+    }
 
-    int measureEvery = 100;
-
-    CPElapsedTimer::timeEvolution().start();
-    cout << "Will run " << numTimeSteps << " timesteps." << endl;
-    for(int timestep=0; timestep<numTimeSteps; timestep++) {
-        bool shouldSample = !(timestep % measureEvery) || thermostatEnabled;
-        system.setShouldSample(shouldSample);
-        system.step(dt);
+    for(unsigned int i=0; i<timesteps; i++) {
+        bool shouldSample = !(timestep % measureEvery);
+        mdSystem.setShouldSample(shouldSample);
+        mdSystem.step(dt);
 
         if(shouldSample) {
-            CPElapsedTimer::sampling().start();
-            statisticsSampler.sample(&system);
-            CPElapsedTimer::sampling().stop();
+            statisticsSampler.sample(&mdSystem);
         }
 
-        if(thermostatEnabled) {
-            CPElapsedTimer::thermostat().start();
-            thermostat.apply(&system, &statisticsSampler);
-            CPElapsedTimer::thermostat().stop();
+        if( shouldSample) {
+            cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(mdSystem.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/mdSystem.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/mdSystem.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/mdSystem.atoms().numberOfAtoms <<  endl;
         }
 
-        if( !(timestep % measureEvery)) {
-            cout << "Step " << timestep << " t= " << UnitConverter::timeToSI(system.currentTime())*1e12 << " ps   Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().numberOfAtoms << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().numberOfAtoms << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().numberOfAtoms <<  endl;
-            fileHandler.writePerformance(timestep);
-        }
-        // movie->saveState(&system);
+        timestep++;
     }
-    CPElapsedTimer::timeEvolution().stop();
+}
+}
 
-
-    float calculateForcesFraction = CPElapsedTimer::calculateForces().elapsedTime() / CPElapsedTimer::totalTime();
-    float halfKickFraction = CPElapsedTimer::halfKick().elapsedTime() / CPElapsedTimer::totalTime();
-    float moveFraction = CPElapsedTimer::move().elapsedTime() / CPElapsedTimer::totalTime();
-    float updateNeighborListFraction = CPElapsedTimer::updateNeighborList().elapsedTime() / CPElapsedTimer::totalTime();
-    float updateCellListFraction = CPElapsedTimer::updateCellList().elapsedTime() / CPElapsedTimer::totalTime();
-    float periodicBoundaryConditionsFraction = CPElapsedTimer::periodicBoundaryConditions().elapsedTime() / CPElapsedTimer::totalTime();
-    float samplingFraction = CPElapsedTimer::sampling().elapsedTime() / CPElapsedTimer::totalTime();
-    float timeEvolutionFraction = CPElapsedTimer::timeEvolution().elapsedTime() / CPElapsedTimer::totalTime();
-    float thermostatFraction = CPElapsedTimer::thermostat().elapsedTime() / CPElapsedTimer::totalTime();
-
-    cout << endl << "Program finished after " << CPElapsedTimer::totalTime() << " seconds. Time analysis:" << endl;
-    cout << fixed
-         << "      Time evolution    : " << CPElapsedTimer::timeEvolution().elapsedTime() << " s ( " << 100*timeEvolutionFraction << "%)" <<  endl
-         << "      Force calculation : " << CPElapsedTimer::calculateForces().elapsedTime() << " s ( " << 100*calculateForcesFraction << "%)" <<  endl
-         << "      Thermostat        : " << CPElapsedTimer::thermostat().elapsedTime() << " s ( " << 100*thermostatFraction << "%)" <<  endl
-         << "      Moving            : " << CPElapsedTimer::move().elapsedTime() << " s ( " << 100*moveFraction << "%)" <<  endl
-         << "      Half kick         : " << CPElapsedTimer::halfKick().elapsedTime() << " s ( " << 100*halfKickFraction << "%)" <<  endl
-         << "      Update neighbors  : " << CPElapsedTimer::updateNeighborList().elapsedTime() << " s ( " << 100*updateNeighborListFraction << "%)" <<  endl
-         << "      Update cells      : " << CPElapsedTimer::updateCellList().elapsedTime() << " s ( " << 100*updateCellListFraction << "%)" <<  endl
-         << "      Periodic boundary : " << CPElapsedTimer::periodicBoundaryConditions().elapsedTime() << " s ( " << 100*periodicBoundaryConditionsFraction << "%)" <<  endl
-         << "      Sampling          : " << CPElapsedTimer::sampling().elapsedTime() << " s ( " << 100*samplingFraction << "%)" <<  endl;
-    cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
-    cout << system.atoms().numberOfAtoms*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
-    cout << "Average number of neighbors per atom: " << system.neighborList().averageNumNeighbors() << endl;
-    float totalTimePerDay = dt*numTimeSteps/CPElapsedTimer::totalTime() * 86400;
-    float nanoSecondsPerDay = UnitConverter::timeToSI(totalTimePerDay)*1e9;
-    cout << "Estimated " << nanoSecondsPerDay << " ns simulated time per day" << endl;
-
-    // Performance numbers
-    int pairsPerSecond = system.atoms().numberOfComputedForces / CPElapsedTimer::totalTime();
-    int neighborPairsPerSecond = system.neighborList().totalComparedNeighborPairs() / CPElapsedTimer::totalTime();
-    unsigned long flops = calculateFlops(&system, numTimeSteps);
-    float flopsPerSecond = flops / CPElapsedTimer::totalTime();
-    unsigned long bytesPerSecond = (pairsPerSecond*12 + neighborPairsPerSecond*6)*sizeof(MDDataType_t);
-    cout << pairsPerSecond/1e6 << " mega pairs computed per second (" << system.atoms().numberOfComputedForces/1e6 << " mega pairs total)" << endl;
-    cout << neighborPairsPerSecond/1e6 << " mega neighbor pairs computed per second (" << neighborPairsPerSecond/1e6 << " mega pairs total)" << endl;
-    cout << "Memory read speed: " << bytesPerSecond/1e9 << " gigabytes / sec." << endl;
-    cout << "Flops: " << flopsPerSecond/1e9 << " Gflops / sec." << endl;
-    cout << "Built neighborlist every " << (numTimeSteps/system.neighborList().numUpdated()) << " timestep" << endl;
+int main(int args, char *argv[])
+{
 
     return 0;
 }
