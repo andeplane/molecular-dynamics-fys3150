@@ -1,7 +1,7 @@
-#include <integrators/velocityverlet.h>
-#include <system.h>
+#include "velocityverlet.h"
+#include "../system.h"
+#include "../cpelapsedtimer.h"
 #include <iostream>
-#include "cpelapsedtimer.h"
 using namespace std;
 
 VelocityVerlet::VelocityVerlet() :

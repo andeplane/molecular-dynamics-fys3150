@@ -3,9 +3,9 @@
 #include "math/hilbert.h"
 #include <algorithm>
 #include <cstring>
-
+#include <vector>
 #include <iostream>
-
+#include <numeric> // iota
 Atoms::Atoms() :
     numberOfAtoms(0),
     numberOfGhostAtoms(0),
@@ -17,6 +17,8 @@ Atoms::Atoms() :
 
 void Atoms::sort()
 {
+    return;
+
     std::vector<unsigned int> idx(numberOfAtoms);
     std::iota(idx.begin(), idx.end(), 0);
     std::sort(idx.begin(), idx.end(), [&](int i, int j) {
