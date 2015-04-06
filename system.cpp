@@ -4,8 +4,7 @@
 #include "statisticssampler.h"
 #include "unitconverter.h"
 #include "cpelapsedtimer.h"
-#include <stdlib.h>
-
+#include <iostream>
 using namespace std;
 
 System::System() :

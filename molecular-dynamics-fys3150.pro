@@ -1,12 +1,13 @@
 TEMPLATE = app
-CONFIG += console
-CONFIG -= app_bundle
+#CONFIG += console
+#CONFIG -= app_bundle
+CONFIG += c++11
 #CONFIG -= qt
 INCLUDEPATH +=
 # QT += quick widgets
 #CONFIG += c++11
-QMAKE_CXX = g++-4.9
-CXX = g++-4.9
+#QMAKE_CXX = g++-4.9
+#CXX = g++-4.9
 SOURCES += main.cpp \
     atom.cpp \
     system.cpp \

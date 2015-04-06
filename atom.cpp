@@ -1,6 +1,6 @@
 #include <cmath>
 #include <atom.h>
-#include <math/random.h>
+#include "math/random.h"
 #include <iostream>
 #include <cassert>
 

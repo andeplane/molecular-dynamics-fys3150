@@ -1,6 +1,6 @@
 #include <cmath>
-#include <math/vec3.h>
-#include <math/random.h>
+#include "vec3.h"
+#include "random.h"
 vec3::vec3()
 {
     setToZero();

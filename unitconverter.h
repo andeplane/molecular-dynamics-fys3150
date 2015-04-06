@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <math/vec3.h>
+#include "math/vec3.h"
 
 using std::vector;
 

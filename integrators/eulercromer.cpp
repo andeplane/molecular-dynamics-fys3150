@@ -1,5 +1,5 @@
-#include <integrators/eulercromer.h>
-#include <system.h>
+#include "eulercromer.h"
+#include "../system.h"
 
 void EulerCromer::integrate(System *system, float timestep)
 {
