@@ -1,5 +1,5 @@
 #pragma once
-#include <integrators/integrator.h>
+#include "integrators/integrator.h"
 
 class System;
 class EulerCromer : public Integrator
@@ -7,5 +7,5 @@ class EulerCromer : public Integrator
 public:
     EulerCromer() {}
     ~EulerCromer() {}
-    virtual void integrate(System* system, float timestep);
+    virtual void integrate(System* system, double timestep);
 };

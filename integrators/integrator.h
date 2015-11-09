@@ -6,5 +6,5 @@ class Integrator
 public:
     Integrator();
     virtual ~Integrator() { }
-    virtual void integrate(System* system, float timestep) = 0;
+    virtual void integrate(System* system, double timestep) = 0;
 };

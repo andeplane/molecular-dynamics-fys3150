@@ -12,7 +12,7 @@ public:
     ~IO();
 
     void saveState(System *system);
-    void open(char *filename);
+    void open(const char *filename);
     void close();
 
 };

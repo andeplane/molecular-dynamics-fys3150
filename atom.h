@@ -1,6 +1,5 @@
 #pragma once
-#include <math/vec3.h>
-using CompPhys::vec3;
+#include "math/vec3.h"
 
 class Atom
 {
@@ -11,11 +10,10 @@ public:
     vec3 velocity;
     vec3 force;
 
-    Atom(float mass);
-    ~Atom();
+    Atom(double mass);
     void resetForce();
-    void resetVelocityMaxwellian(float temperature);
+    void resetVelocityMaxwellian(double temperature);
 
-    inline float mass() { return m_mass; }
-    inline void setMass(float mass) { m_mass = mass; }
+    double mass() { return m_mass; }
+    void setMass(double mass) { m_mass = mass; }
 };

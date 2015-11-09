@@ -1,13 +1,12 @@
+#include "math/random.h"
+#include "potentials/lennardjones.h"
+#include "integrators/eulercromer.h"
+#include "system.h"
+#include "statisticssampler.h"
+#include "atom.h"
+#include "io.h"
+#include "unitconverter.h"
 #include <iostream>
-#include <math/random.h>
-
-#include <potentials/lennardjones.h>
-#include <integrators/eulercromer.h>
-#include <system.h>
-#include <statisticssampler.h>
-#include <atom.h>
-#include <io.h>
-#include <unitconverter.h>
 
 using namespace std;
 
@@ -27,12 +26,12 @@ int main()
     system.createFCCLattice(5, UnitConverter::lengthFromAngstroms(5.26), UnitConverter::temperatureFromSI(300));
     system.setPotential(new LennardJones(1.0, 1.0)); // You must insert correct parameters here
     system.setIntegrator(new EulerCromer());
-    system.removeMomentum();
+    system.removeTotalMomentum();
 
     StatisticsSampler *statisticsSampler = new StatisticsSampler(); //
 
     IO *movie = new IO(); // To write the state to file
-    movie->open("movie.xyz");
+    // movie->open("movie.xyz");
 
     for(int timestep=0; timestep<1000; timestep++) {
         system.step(dt);

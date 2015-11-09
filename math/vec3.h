@@ -1,56 +1,107 @@
-#pragma once
+#ifndef VEC3_H
+#define VEC3_H
+#include <string>
+#include <vector>
 #include <iostream>
-namespace CompPhys {
+using std::string;
+
 class vec3
 {
-private:
-    float m_vec[3];
 public:
-    vec3(); // Create a zero vector
-    vec3(float x, float y, float z);
-    bool operator==(vec3 rhs);
-    vec3 operator+(vec3 rhs);
-    vec3 operator+=(vec3 rhs);
-    vec3 operator-(vec3 rhs);
-    vec3 operator-=(vec3 rhs);
-    vec3 operator*(vec3 rhs);
-    vec3 operator*=(vec3 rhs);
-    vec3 operator/(vec3 rhs);
-    vec3 operator/=(vec3 rhs);
-    vec3 operator+(float scalar);
-    vec3 operator+=(float scalar);
-    vec3 operator-(float scalar);
-    vec3 operator-=(float scalar);
-    vec3 operator*(float scalar);
-    vec3 operator*=(float scalar);
-    vec3 operator/(float scalar);
-    vec3 operator/=(float scalar);
-    vec3 operator-();
-    void add(vec3 &rhs) {
-        m_vec[0] += rhs.x();
-        m_vec[1] += rhs.y();
-        m_vec[2] += rhs.z();
-    }
-    void addAndMultiply(vec3 &rhs, float scalar) {
-        m_vec[0] += rhs.x()*scalar;
-        m_vec[1] += rhs.y()*scalar;
-        m_vec[2] += rhs.z()*scalar;
-    }
-    vec3 cross(vec3 &rhs);
-    float dot(vec3 &rhs);
-    float length();
-    float lengthSquared();
-    void normalize();
-    void setToZero();
-    void randomGaussian(float mean, float standardDeviation);
-    void randomUniform(float min, float max);
-    void set(float x, float y, float z);
-    inline float x() const { return m_vec[0]; }
-    inline float y() const { return m_vec[1]; }
-    inline float z() const { return m_vec[2]; }
-    inline float &operator[](int index) { return m_vec[index]; }
-    inline float operator[](int index) const { return m_vec[index]; }
-private:
-    friend std::ostream& operator<<(std::ostream&stream, vec3 &vec);
+    double components[3];
+
+    vec3();
+    vec3(vec3 const&copy);
+    vec3(double x, double y, double z);
+
+    void print();
+    void print(string name);
+    vec3 cross(vec3 aVector);
+    double lengthSquared();
+    double length();
+    double x() const { return components[0]; }
+    double y() const { return components[1]; }
+    double z() const { return components[2]; }
+    void setX(double x) { components[0] = x; }
+    void setY(double y) { components[1] = y; }
+    void setZ(double z) { components[2] = z; }
+    void set(double x, double y, double z);
+    void setToZero() { components[0] = 0; components[1] = 0; components[2] = 0; }
+    double &operator()(int index) { return components[index]; } // Allows access like myVector(0)
+    double &operator[](int index) { return components[index]; } // Allows access like myVector[0]
+    void randomGaussian(double mean, double standardDeviation);
+    vec3 &operator+=(double rhs); // Componentwise addition with scalar
+    vec3 &operator+=(vec3 rhs);   // Componentwise addition with vector
+    vec3 &operator*=(double rhs); // Componentwise multiplication with scalar
+    vec3 &operator*=(vec3 rhs);   // Componentwise multiplicationwith vector
+    vec3 &operator-=(double rhs); // Componentwise subtraction with scalar
+    vec3 &operator-=(vec3 rhs);   // Componentwise subtraction with vector
+    vec3 &operator/=(double rhs); // Componentwise division with scalar
+    vec3 &operator/=(vec3 rhs);   // Componentwise division with vector
+    friend std::ostream& operator<<(std::ostream& os, const vec3& myVector); // Allows cout << myVector << endl;
 };
+
+inline vec3 operator+(vec3 lhs, double rhs) {
+    lhs += rhs;
+    return lhs;
 }
+
+inline vec3 operator+(double lhs, vec3 rhs) {
+    rhs += lhs;
+    return rhs;
+}
+
+inline vec3 operator+(vec3 lhs, vec3 rhs) {
+    lhs += rhs;
+    return lhs;
+}
+
+
+inline vec3 operator-(vec3 lhs, double rhs) {
+    lhs -= rhs;
+    return lhs;
+}
+
+inline vec3 operator-(double lhs, vec3 rhs) {
+    rhs -= lhs;
+    return rhs;
+}
+
+inline vec3 operator-(vec3 lhs, vec3 rhs) {
+    lhs -= rhs;
+    return lhs;
+}
+
+
+inline vec3 operator*(vec3 lhs, double rhs) {
+    lhs *= rhs;
+    return lhs;
+}
+
+inline vec3 operator*(double lhs, vec3 rhs) {
+    rhs *= lhs;
+    return rhs;
+}
+
+inline vec3 operator*(vec3 lhs, vec3 rhs) {
+    lhs *= rhs;
+    return lhs;
+}
+
+
+inline vec3 operator/(vec3 lhs, double rhs) {
+    lhs /= rhs;
+    return lhs;
+}
+
+inline vec3 operator/(double lhs, vec3 rhs) {
+    rhs /= lhs;
+    return rhs;
+}
+
+inline vec3 operator/(vec3 lhs, vec3 rhs) {
+    lhs /= rhs;
+    return lhs;
+}
+
+#endif // VEC3_H

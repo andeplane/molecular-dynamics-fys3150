@@ -1,4 +1,4 @@
-#include <integrators/integrator.h>
+#include "integrator.h"
 
 Integrator::Integrator()
 {

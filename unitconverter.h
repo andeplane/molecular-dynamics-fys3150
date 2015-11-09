@@ -1,49 +1,48 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <math/vec3.h>
+#include "math/vec3.h"
 
 using std::vector;
-using CompPhys::vec3;
 
-enum Units {SIUnits = 0, AtomicUnits, MDUnits};
+enum Units {SIUnits = 0, MDUnits = 1};
 
 class UnitConverter
 {
 public:
-    static float m0;
-    static float q0;
-    static float hbar0;
-    static float electricConstant0;
-    static float a0;
-    static float a0_angstrom;
-    static float E0;
-    static float E0ev;
-    static float kb;
-    static float t0;
-    static float F0;
-    static float T0;
-    static float P0;
-    static float v0;
-    static float visc0;
-    static float diff0;
+    static double m0;
+    static double q0;
+    static double hbar0;
+    static double electricConstant0;
+    static double a0;
+    static double a0_angstrom;
+    static double E0;
+    static double E0ev;
+    static double kb;
+    static double t0;
+    static double F0;
+    static double T0;
+    static double P0;
+    static double v0;
+    static double visc0;
+    static double diff0;
     static std::string currentUnits;
 
     static void makeSureInitialized();
     static void initialize(Units type);
     static bool initialized;
 
-    static float pressureToSI(float P);
-    static float pressureFromSI(float P);
+    static double pressureToSI(double P);
+    static double pressureFromSI(double P);
 
-    static float temperatureToSI(float T);
-    static float temperatureFromSI(float T);
+    static double temperatureToSI(double T);
+    static double temperatureFromSI(double T);
 
-    static float massToSI(float m);
-    static float massFromSI(float m);
+    static double massToSI(double m);
+    static double massFromSI(double m);
 
-    static float lengthToSI(float L);
-    static float lengthFromSI(float L);
+    static double lengthToSI(double L);
+    static double lengthFromSI(double L);
     static vec3 lengthToSI(vec3 position);
     static vec3 lengthFromSI(vec3 position);
 
@@ -53,30 +52,29 @@ public:
     static vec3 lengthToAngstroms(vec3 position);
     static vec3 lengthFromAngstroms(vec3 position);
 
-    static float lengthToAngstroms(float L);
-    static float lengthFromAngstroms(float L);
+    static double lengthToAngstroms(double L);
+    static double lengthFromAngstroms(double L);
 
-    static float forceToSI(float F);
-    static float forceFromSI(float F);
+    static double forceToSI(double F);
+    static double forceFromSI(double F);
 
-    static float energyToSI(float E);
-    static float energyFromSI(float E);
+    static double energyToSI(double E);
+    static double energyFromSI(double E);
 
-    static float timeToSI(float t);
-    static float timeFromSI(float t);
+    static double timeToSI(double t);
+    static double timeFromSI(double t);
 
-    static float velocityToSI(float v);
-    static float velocityFromSI(float v);
+    static double velocityToSI(double v);
+    static double velocityFromSI(double v);
 
-    static float diffusionToSI(float d);
-    static float diffusionFromSI(float d);
+    static double diffusionToSI(double d);
+    static double diffusionFromSI(double d);
 
-    static float energyToEv(float E);
-    static float energyFromEv(float E);
+    static double energyToEv(double E);
+    static double energyFromEv(double E);
 
-    static float degreesToRadians(float v);
-    static float radiansToDegrees(float v);
+    static double degreesToRadians(double v);
+    static double radiansToDegrees(double v);
 
-    static void initializeAtomicUnits();
     static void initializeMDUnits();
 };

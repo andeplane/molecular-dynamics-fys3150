@@ -1,4 +1,4 @@
-#include <potentials/lennardjones.h>
+#include "lennardjones.h"
 
 LennardJones::LennardJones(double sigma, double epsilon) :
     m_sigma(sigma),

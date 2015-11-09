@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <system.h>
+#include "../system.h"
 
 class Potential
 {
 protected:
-    double m_potentialEnergy;
+    double m_potentialEnergy = 0;
 public:
     Potential();
     virtual ~Potential() {}

@@ -1,6 +1,6 @@
 #pragma once
-#include <system.h>
 
+class System;
 class StatisticsSampler
 {
 private:
@@ -12,7 +12,6 @@ private:
     float m_density;
 public:
     StatisticsSampler();
-    ~StatisticsSampler();
     void sample(System *system);
     float sampleKineticEnergy(System *system);
     float samplePotentialEnergy(System *system);

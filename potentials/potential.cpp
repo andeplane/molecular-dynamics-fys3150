@@ -1,7 +1,6 @@
-#include <potentials/potential.h>
+#include "potential.h"
 
-Potential::Potential() :
-    m_potentialEnergy(0)
+Potential::Potential()
 {
 
 }
