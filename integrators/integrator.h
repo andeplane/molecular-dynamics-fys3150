@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INTEGRATOR_H
+#define INTEGRATOR_H
 
 class System;
 class Integrator
@@ -8,3 +9,5 @@ public:
     virtual ~Integrator() { }
     virtual void integrate(System* system, double timestep) = 0;
 };
+
+#endif

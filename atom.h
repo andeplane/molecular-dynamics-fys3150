@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ATOM_H
+#define ATOM_H
 #include "math/vec3.h"
 
 class Atom
@@ -17,3 +18,4 @@ public:
     double mass() { return m_mass; }
     void setMass(double mass) { m_mass = mass; }
 };
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STATISTICSSAMPLER_H
+#define STATISTICSSAMPLER_H
 
 class System;
 class StatisticsSampler
@@ -19,3 +20,4 @@ public:
     float sampleDensity(System *system);
     vec3 sampleMomentum(System *system);
 };
+#endif

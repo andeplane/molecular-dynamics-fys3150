@@ -1,4 +1,6 @@
-#pragma once
+#ifndef POTENTIAL_H
+#define POTENTIAL_H
+
 #include <string>
 #include <vector>
 #include "../system.h"
@@ -14,3 +16,4 @@ public:
     double potentialEnergy();
     void setPotentialEnergy(double potentialEnergy);
 };
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef IO_H
+#define IO_H
 #include <fstream>
 class System;
 using std::ofstream;
@@ -16,3 +17,4 @@ public:
     void close();
 
 };
+#endif

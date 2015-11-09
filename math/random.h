@@ -12,7 +12,8 @@
      ** (exclusive of end-point values).
 */
 
-#pragma once
+#ifndef RANDOM_H
+#define RANDOM_H
 
 #define IA 16807
 #define IM 2147483647
@@ -33,3 +34,5 @@ public:
     static double nextGaussian(double mean, double standardDeviation);
     static void setSeed(long seed);
 };
+
+#endif

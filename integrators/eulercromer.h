@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EULERCROMER_H
+#define EULERCROMER_H
 #include "integrators/integrator.h"
 
 class System;
@@ -9,3 +10,5 @@ public:
     ~EulerCromer() {}
     virtual void integrate(System* system, double timestep);
 };
+
+#endif

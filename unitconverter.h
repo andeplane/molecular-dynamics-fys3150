@@ -1,4 +1,6 @@
-#pragma once
+#ifndef UNITCONVERTER_H
+#define UNITCONVERTER_H
+
 #include <string>
 #include <vector>
 #include "math/vec3.h"
@@ -78,3 +80,4 @@ public:
 
     static void initializeMDUnits();
 };
+#endif

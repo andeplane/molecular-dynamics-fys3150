@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LENNARDJONES_H
+#define LENNARDJONES_H
 #include "potential.h"
 
 class LennardJones : public Potential
@@ -11,3 +12,4 @@ public:
     ~LennardJones() {}
     virtual void calculateForces(System *system);
 };
+#endif

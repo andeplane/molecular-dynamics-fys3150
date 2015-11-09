@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SYSTEM_H
+#define SYSTEM_H
 #include "atom.h"
 #include "math/vec3.h"
 #include <vector>
@@ -40,3 +41,4 @@ public:
     void setSteps(int steps) { m_steps = steps; }
     double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
 };
+#endif
