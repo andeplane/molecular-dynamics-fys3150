@@ -62,6 +62,7 @@ void System::calculateForces() {
 }
 
 void System::step(double dt) {
+    m_cellList.build(this);
     m_integrator->integrate(this, dt);
     m_steps++;
     m_currentTime += dt;

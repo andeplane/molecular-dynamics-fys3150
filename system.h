@@ -3,6 +3,7 @@
 #include "atom.h"
 #include "math/vec3.h"
 #include <vector>
+#include "celllist.h"
 
 class Potential; class Integrator;
 using std::vector;
@@ -14,6 +15,7 @@ private:
     vector<Atom*> m_atoms;
     Potential *m_potential = nullptr;
     Integrator *m_integrator = nullptr;
+    CellList m_cellList;
     double m_currentTime = 0;
     int m_steps = 0;
 
