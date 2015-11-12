@@ -5,19 +5,22 @@ class System;
 class StatisticsSampler
 {
 private:
-    vec3  m_momentum;
-    float m_kineticEnergy;
-    float m_potentialEnergy;
-    float m_temperature;
-    float m_pressure;
-    float m_density;
+    double m_kineticEnergy = 0;
+    double m_potentialEnergy = 0;
+    double m_temperature = 0;
+    double m_density = 0;
 public:
     StatisticsSampler();
-    void sample(System *system);
-    float sampleKineticEnergy(System *system);
-    float samplePotentialEnergy(System *system);
-    float sampleTemperature(System *system);
-    float sampleDensity(System *system);
-    vec3 sampleMomentum(System *system);
+    void saveToFile(System &system);
+    void sample(System &system);
+    void sampleKineticEnergy(System &system);
+    void samplePotentialEnergy(System &system);
+    void sampleTemperature(System &system);
+    void sampleDensity(System &system);
+    double kineticEnergy() { return m_kineticEnergy; }
+    double potentialEnergy() { return m_potentialEnergy; }
+    double totalEnergy() { return m_kineticEnergy+m_potentialEnergy; }
+    double temperature() { return m_temperature; }
+    double density() { return m_density; }
 };
 #endif

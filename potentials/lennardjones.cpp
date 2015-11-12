@@ -10,4 +10,5 @@ LennardJones::LennardJones(double sigma, double epsilon) :
 void LennardJones::calculateForces(System *system)
 {
     m_potentialEnergy = 0; // Remember to compute this in the loop
+
 }
