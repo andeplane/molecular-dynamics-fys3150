@@ -1,10 +1,13 @@
 #ifndef STATISTICSSAMPLER_H
 #define STATISTICSSAMPLER_H
+#include <fstream>
 
-class System;
+class System; // Promise the compiler that this is a class even though we haven't included system.h here
+
 class StatisticsSampler
 {
 private:
+    std::ofstream m_file;
     double m_kineticEnergy = 0;
     double m_potentialEnergy = 0;
     double m_temperature = 0;

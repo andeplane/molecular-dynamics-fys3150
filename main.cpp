@@ -7,6 +7,7 @@
 #include "io.h"
 #include "unitconverter.h"
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ int main(int numberOfArguments, char **argumentList)
     // If a third argument is provided, it is the lattice constant determining the density (measured in angstroms)
     if(numberOfArguments > 3) latticeConstant = UnitConverter::lengthFromAngstroms(atof(argumentList[3]));
 
-    double dt = UnitConverter::timeFromSI(1e-15); // Measured in seconds
+    double dt = UnitConverter::timeFromSI(1e-15); // Measured in seconds.
 
     cout << "One unit of length is " << UnitConverter::lengthToSI(1.0) << " meters" << endl;
     cout << "One unit of velocity is " << UnitConverter::velocityToSI(1.0) << " meters/second" << endl;
@@ -39,18 +40,27 @@ int main(int numberOfArguments, char **argumentList)
     system.removeTotalMomentum();
 
     StatisticsSampler statisticsSampler;
-    IO movie; // To write the state to file
-    movie.open("movie.xyz");
+    IO movie("movie.xyz"); // To write the state to file
 
-    cout << "Timestep Time Temperature KineticEnergy PotentialEnergy TotalEnergy" << endl;
+    cout << setw(20) << "Timestep" <<
+            setw(20) << "Time" <<
+            setw(20) << "Temperature" <<
+            setw(20) << "KineticEnergy" <<
+            setw(20) << "PotentialEnergy" <<
+            setw(20) << "TotalEnergy" << endl;
     for(int timestep=0; timestep<1000; timestep++) {
         system.step(dt);
         statisticsSampler.sample(system);
-        if( !(timestep % 100) ) {
+        if( timestep % 100 == 0 ) {
             // Print the timestep every 100 timesteps
-            cout << system.steps() << "      " << system.time() << "      " << statisticsSampler.temperature() << "      " << statisticsSampler.kineticEnergy() << "      " << statisticsSampler.potentialEnergy() << "      " << statisticsSampler.totalEnergy() << endl;
+            cout << setw(20) << system.steps() <<
+                    setw(20) << system.time() <<
+                    setw(20) << statisticsSampler.temperature() <<
+                    setw(20) << statisticsSampler.kineticEnergy() <<
+                    setw(20) << statisticsSampler.potentialEnergy() <<
+                    setw(20) << statisticsSampler.totalEnergy() << endl;
         }
-        movie.saveState(&system);
+        movie.saveState(system);
     }
 
     movie.close();

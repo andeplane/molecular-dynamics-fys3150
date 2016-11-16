@@ -9,10 +9,10 @@ class IO
 private:
     ofstream file;
 public:
-    IO();
+    IO(const char *filename);
     ~IO();
 
-    void saveState(System *system);
+    void saveState(System &system);
     void open(const char *filename);
     void close();
 

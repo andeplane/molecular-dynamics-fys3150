@@ -27,6 +27,7 @@ public:
 
     // Setters and getters
     std::vector<Atom *> &atoms() { return m_atoms; } // Returns a reference to the std::vector of atom pointers
+    double volume() { return m_systemSize[0]*m_systemSize[1]*m_systemSize[2]; }
     vec3 systemSize() { return m_systemSize; }
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     LennardJones &potential() { return m_potential; }
