@@ -1,38 +1,68 @@
-/*
- This is based on the ran1-generator from lib.cpp (see http://www.uio.no/studier/emner/matnat/fys/FYS3150/h14/index.html )
-     ** The function
-     **           ran1()
-     ** is an "Minimal" random number generator of Park and Miller
-     ** (see Numerical recipe page 280) with Bays-Durham shuffle and
-     ** added safeguards. Call with idum a negative integer to initialize;
-     ** thereafter, do not alter idum between sucessive deviates in a
-     ** sequence. RNMX should approximate the largest floating point value
-     ** that is less than 1.
-     ** The function returns a uniform deviate between 0.0 and 1.0
-     ** (exclusive of end-point values).
-*/
 
 #ifndef RANDOM_H
 #define RANDOM_H
+#include <random>
+#include <ctime>
 
-#define IA 16807
-#define IM 2147483647
-#define AM (1.0/IM)
-#define IQ 127773
-#define IR 2836
-#define NTAB 32
-#define NDIV (1+(IM-1)/NTAB)
-#define EPS 1.2e-7
-#define RNMX (1.0-EPS)
+#if defined(__clang__)
+// thread_local is not supported in clang so this is not thread safe. Please use GCC
+static std::mt19937 generator;
+#else
+// this generator is now thread safe so we can use it with OpenMP.
+static thread_local std::mt19937 generator;
+#endif
 
-class Random {
+class Random
+{
 public:
-    static long iy;
-    static long iv[NTAB];
-    static long seed;
-    static double nextDouble();
-    static double nextGaussian(double mean, double standardDeviation);
-    static void setSeed(long seed);
+    static void seed(uint64_t seed = std::mt19937_64::default_seed) {
+        generator.seed(seed);
+    }
+    static void randomSeed() {
+        generator.seed(std::time(0));
+    }
+
+    static float nextFloat(const float & min, const float & max) {
+        // Random float between min and max
+        std::uniform_real_distribution<float> distribution(min,max);
+        return distribution(generator);
+    }
+    static float nextFloat() {
+        // Random float between 0 and 1
+        std::uniform_real_distribution<float> distribution(0,1);
+        return distribution(generator);
+    }
+    static double nextDouble(const double & min, const double & max) {
+        // Random double between min and max
+        std::uniform_real_distribution<double> distribution(min,max);
+        return distribution(generator);
+    }
+    static double nextDouble() {
+        // Random double between 0 and 1
+        std::uniform_real_distribution<double> distribution(0,1);
+        return distribution(generator);
+    }
+    static double nextGaussian(const double & mean, const double & sigma) {
+        // Normally distributed random number.
+        std::normal_distribution<double> distribution(mean, sigma);
+        return distribution(generator);
+    }
+    static int nextInt(const int & min, const int & max) {
+        // Random int between min and max
+        std::uniform_int_distribution<int> distribution(min,max);
+        return distribution(generator);
+    }
+    static long nextLong(const long & min, const long & max) {
+        // Random long between min and max
+        std::uniform_int_distribution<long> distribution(min,max);
+        return distribution(generator);
+    }
+    static bool nextBool() {
+        // Random bool
+        std::uniform_int_distribution<int> distribution(0,1);
+        return distribution(generator);
+    }
+
 };
 
-#endif
+#endif // RANDOM_H

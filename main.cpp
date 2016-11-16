@@ -1,7 +1,6 @@
 #include "math/random.h"
-#include "potentials/lennardjones.h"
-#include "integrators/eulercromer.h"
-#include "integrators/velocityverlet.h"
+#include "lennardjones.h"
+#include "velocityverlet.h"
 #include "system.h"
 #include "statisticssampler.h"
 #include "atom.h"
@@ -22,7 +21,7 @@ int main(int numberOfArguments, char **argumentList)
     // If a second argument is provided, it is the initial temperature (measured in kelvin)
     if(numberOfArguments > 2) initialTemperature = UnitConverter::temperatureFromSI(atof(argumentList[2]));
     // If a third argument is provided, it is the lattice constant determining the density (measured in angstroms)
-    if(numberOfArguments > 3) initialTemperature = UnitConverter::lengthFromAngstroms(atof(argumentList[3]));
+    if(numberOfArguments > 3) latticeConstant = UnitConverter::lengthFromAngstroms(atof(argumentList[3]));
 
     double dt = UnitConverter::timeFromSI(1e-15); // Measured in seconds
 
@@ -34,8 +33,9 @@ int main(int numberOfArguments, char **argumentList)
 
     System system;
     system.createFCCLattice(numberOfUnitCells, latticeConstant, initialTemperature);
-    system.setPotential(new LennardJones(1.0, 1.0)); // You must insert correct parameters here
-    system.setIntegrator(new EulerCromer());
+    system.potential().setEpsilon(1.0);
+    system.potential().setSigma(1.0);
+
     system.removeTotalMomentum();
 
     StatisticsSampler statisticsSampler;

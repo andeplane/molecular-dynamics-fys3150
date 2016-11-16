@@ -1,6 +1,6 @@
 #include "system.h"
 #include "statisticssampler.h"
-#include "potentials/potential.h"
+#include "lennardjones.h"
 
 StatisticsSampler::StatisticsSampler()
 {
@@ -32,7 +32,7 @@ void StatisticsSampler::sampleKineticEnergy(System &system)
 
 void StatisticsSampler::samplePotentialEnergy(System &system)
 {
-
+    m_potentialEnergy = system.potential().potentialEnergy();
 }
 
 void StatisticsSampler::sampleTemperature(System &system)

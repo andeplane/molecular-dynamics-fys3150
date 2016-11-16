@@ -10,7 +10,7 @@ Atom::Atom(double mass) :
 
 void Atom::resetForce()
 {
-    force.setToZero();
+    force.zeros();
 }
 
 void Atom::resetVelocityMaxwellian(double temperature)
