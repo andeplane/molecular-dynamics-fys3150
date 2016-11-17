@@ -31,9 +31,9 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, double lattice
 
     for(int i=0; i<100; i++) {
         Atom *atom = new Atom(UnitConverter::massFromSI(6.63352088e-26));
-        double x = Random::nextDouble()*10; // random number in the interval [0,10]
-        double y = Random::nextDouble()*10;
-        double z = Random::nextDouble()*10;
+        double x = Random::nextDouble(0, 10); // random number in the interval [0,10]
+        double y = Random::nextDouble(0, 10);
+        double z = Random::nextDouble(0, 10);
         atom->position.set(x,y,z);
         atom->resetVelocityMaxwellian(temperature);
         m_atoms.push_back(atom);
