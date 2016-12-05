@@ -43,8 +43,12 @@ int main(int args, char *argv[])
     bool loadState = false;
     bool thermostatEnabled = false;
     float temperature = 700;
-    vector<double> temperatures = {100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 800, 900, 1000};
+    vector<double> temperatures = {100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 555, 560, 565, 570, 575, 580, 585, 590, 595, 600, 605, 610, 615, 620, 625, 630, 635, 640, 650, 660, 670, 680, 690, 700, 800, 900, 1000};
     if(world_size > 1) {
+        if(world_rank >= temperatures.size()) {
+            cout << "Error, too many MPI processes." << endl;
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
         temperature = temperatures[world_rank];
     }
 
