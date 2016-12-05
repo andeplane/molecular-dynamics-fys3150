@@ -1,6 +1,7 @@
 #include <mpi.h>
 
 #include <iostream>
+#include <cmath>
 #include "math/random.h"
 
 #include "potentials/lennardjones.h"
@@ -36,7 +37,7 @@ int main(int args, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
 
-    int numTimeSteps = 5000000;
+    int numTimeSteps = 1e6;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
     int numUnitCells = 20;
     float latticeConstant = 5.26;
@@ -81,6 +82,7 @@ int main(int args, char *argv[])
 //    movie->open("movie.xyz");
 
     CPElapsedTimer::timeEvolution().start();
+
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
     for(int timestep=0; timestep<numTimeSteps; timestep++) {
         bool shouldSample = !(timestep % 100) || thermostatEnabled;
@@ -100,7 +102,10 @@ int main(int args, char *argv[])
         }
 
         if( !(timestep % 100)) {
-            cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().size() << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().size() << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().size() <<  endl;
+            double totalTime = CPElapsedTimer::getInstance().totalTime();
+            double timePerTimestep = totalTime / (timestep+1);
+            double estimatedTimeLeft = round((numTimeSteps - timestep) * timePerTimestep);
+            cout << "Step " << timestep << " Epot/n = " << statisticsSampler.potentialEnergy()/system.atoms().size() << "   Ekin/n = " << statisticsSampler.kineticEnergy()/system.atoms().size() << "   Etot/n = " << statisticsSampler.totalEnergy()/system.atoms().size() << " Time left: " << estimatedTimeLeft << " seconds." << endl;
         }
         // movie->saveState(&system);
     }
