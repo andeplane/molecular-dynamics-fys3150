@@ -1,13 +1,11 @@
 TEMPLATE = app
-#CONFIG += console
-#CONFIG -= app_bundle
+CONFIG += console
+CONFIG -= app_bundle
 CONFIG += c++11
-#CONFIG -= qt
-INCLUDEPATH +=
-# QT += quick widgets
-#CONFIG += c++11
-#QMAKE_CXX = g++-4.9
-#CXX = g++-4.9
+CONFIG -= qt
+INCLUDEPATH += /usr/local/Cellar/open-mpi/2.0.1/include
+LIBS += -L/usr/local/opt/libevent/lib -L/usr/local/Cellar/open-mpi/2.0.1/lib -lmpi
+
 SOURCES += main.cpp \
     atom.cpp \
     system.cpp \

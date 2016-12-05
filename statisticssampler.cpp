@@ -43,6 +43,7 @@ void StatisticsSampler::saveToFile(System &system)
             std::cout << "Error, could not open " <<  m_filename << std::endl;
             exit(1);
         }
+        cout << "Opened file " << m_filename << endl;
         m_file << setw(20) << "Timestep" <<
                     setw(20) << "Time" <<
                     setw(20) << "Temperature" <<
@@ -52,7 +53,8 @@ void StatisticsSampler::saveToFile(System &system)
                     setw(20) << "Pressure" <<
                     setw(20) << "MSD" << endl;
     }
-    m_file << setw(20) << system.steps() <<
+
+    m_file << system.steps() <<
         setw(20) << system.currentTime() <<
         setw(20) << temperature() <<
         setw(20) << kineticEnergy() <<
@@ -60,7 +62,6 @@ void StatisticsSampler::saveToFile(System &system)
         setw(20) << totalEnergy() <<
         setw(20) << pressure() <<
         setw(20) << msd() << endl;
-    // Print out values here
 }
 
 void StatisticsSampler::sample(System *system)
@@ -72,6 +73,7 @@ void StatisticsSampler::sample(System *system)
     sampleTemperature(system);
     sampleDensity(system);
     samplePressure(system);
+    sampleMSD(system);
     saveToFile(*system);
     CPElapsedTimer::sampling().stop();
 }
@@ -124,6 +126,7 @@ void StatisticsSampler::sampleMSD(System *system)
     for(Atom &atom : system->atoms()) {
         m_msd += (atom.position - atom.initialPosition).lengthSquared();
     }
+    m_msd /= system->atoms().size();
 }
 
 vec3 StatisticsSampler::sampleMomentum(System *system)

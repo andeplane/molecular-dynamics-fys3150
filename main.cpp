@@ -1,3 +1,5 @@
+#include <mpi.h>
+
 #include <iostream>
 #include "math/random.h"
 
@@ -24,14 +26,28 @@ void printUnits() {
 
 int main(int args, char *argv[])
 {
-    int numTimeSteps = 1000;
+    MPI_Init(NULL, NULL);
+    // Get the number of processes
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    // Get the rank of the process
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+
+    int numTimeSteps = 500000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 20;
+    int numUnitCells = 10;
     float latticeConstant = 5.26;
-    // float latticeConstant = 5.885;
     bool loadState = false;
     bool thermostatEnabled = false;
-    float temperature = 300;
+    float temperature = 700;
+    vector<double> temperatures = {100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 560, 570, 580, 590, 600, 610, 620, 630, 640, 650, 660, 670, 680, 690, 700, 800, 900, 1000};
+    if(world_size > 1) {
+        temperature = temperatures[world_rank];
+    }
+
     if(args>6) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);
@@ -46,6 +62,9 @@ int main(int args, char *argv[])
 
     System system;
     StatisticsSampler statisticsSampler;
+    char statisticsFilename[10000];
+    sprintf(statisticsFilename, "statistics_%d.txt", int(temperature));
+    statisticsSampler.setFilename(string(statisticsFilename));
     BerendsenThermostat thermostat(UnitConverter::temperatureFromSI(temperature), 0.01);
 
     system.createFCCLattice(numUnitCells, UnitConverter::lengthFromAngstroms(latticeConstant), UnitConverter::temperatureFromSI(temperature));
@@ -54,8 +73,8 @@ int main(int args, char *argv[])
     system.initialize(rCut);
     system.removeMomentum();
 
-    IO *movie = new IO(); // To write the state to file
-    movie->open("movie.xyz");
+//    IO *movie = new IO(); // To write the state to file
+//    movie->open("movie.xyz");
 
     CPElapsedTimer::timeEvolution().start();
     cout << "Will run " << numTimeSteps << " timesteps." << endl;
@@ -108,7 +127,8 @@ int main(int args, char *argv[])
     cout << endl << numTimeSteps / CPElapsedTimer::totalTime() << " timesteps / second. " << endl;
     cout << system.atoms().size()*numTimeSteps / (1000*CPElapsedTimer::totalTime()) << "k atom-timesteps / second. " << endl;
 
-    movie->close();
+    // movie->close();
+    MPI_Finalize();
 
     return 0;
 }
