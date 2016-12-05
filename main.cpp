@@ -39,7 +39,7 @@ int main(int args, char *argv[])
 
     int numTimeSteps = 1e6;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 20;
+    int numUnitCells = 14;
     float latticeConstant = 5.26;
     bool loadState = false;
     bool thermostatEnabled = false;
