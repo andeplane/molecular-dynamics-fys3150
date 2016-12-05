@@ -1,4 +1,5 @@
 #include "statisticssampler.h"
+#include "unitconverter.h"
 #include "potentials/potential.h"
 #include "cpelapsedtimer.h"
 #include "potentials/lennardjones.h"
@@ -55,12 +56,12 @@ void StatisticsSampler::saveToFile(System &system)
     }
 
     m_file << system.steps() <<
-        setw(20) << system.currentTime() <<
-        setw(20) << temperature() <<
-        setw(20) << kineticEnergy() <<
-        setw(20) << potentialEnergy() <<
-        setw(20) << totalEnergy() <<
-        setw(20) << pressure() <<
+        setw(20) << UnitConverter::timeToSI(system.currentTime())*1e12 << // ps
+        setw(20) << UnitConverter::temperatureToSI(temperature()) <<
+        setw(20) << UnitConverter::energyToEv(kineticEnergy()) <<
+        setw(20) << UnitConverter::energyToEv(potentialEnergy()) <<
+        setw(20) << UnitConverter::energyToEv(totalEnergy()) <<
+        setw(20) << UnitConverter::pressureToSI(pressure()) <<
         setw(20) << msd() << endl;
 }
 
