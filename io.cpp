@@ -35,9 +35,8 @@ void IO::saveState(System *system)
     CPElapsedTimer::disk().start();
     file << system->atoms().size() << endl;
     file << "The is an optional comment line that can be empty." << endl;
-    for(int n=0; n<system->atoms().size(); n++) {
-        Atom &atom = system->atoms()[n];
-        file << "Ar " << UnitConverter::lengthToAngstroms(atom.position.x()) << " " << UnitConverter::lengthToAngstroms(atom.position.y()) << " " << UnitConverter::lengthToAngstroms(atom.position.z()) << endl;
+    for(Atom &atom : system->atoms()) {
+        file << "H " << UnitConverter::lengthToAngstroms(atom.position.x()) << " " << UnitConverter::lengthToAngstroms(atom.position.y()) << " " << UnitConverter::lengthToAngstroms(atom.position.z()) << endl;
     }
     CPElapsedTimer::disk().stop();
 }

@@ -32,12 +32,16 @@ void System::initialize(float cutoffRadius) {
 
 void System::applyPeriodicBoundaryConditions() {
     CPElapsedTimer::periodicBoundaryConditions().start();
-    #pragma ivdep
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
+    for(Atom &atom : m_atoms) {
         for(int a=0; a<3; a++) {
-            if(atom.position[a] < 0) atom.position[a] += m_systemSize[a];
-            if(atom.position[a] >= m_systemSize[a]) atom.position[a] -= m_systemSize[a];
+            if(atom.position[a] < 0) {
+                atom.position[a] += m_systemSize[a];
+                atom.initialPosition[a] += m_systemSize[a];
+            }
+            if(atom.position[a] >= m_systemSize[a]) {
+                atom.position[a] -= m_systemSize[a];
+                atom.initialPosition[a] -= m_systemSize[a];
+            }
         }
     }
     CPElapsedTimer::periodicBoundaryConditions().stop();
@@ -50,15 +54,13 @@ void System::removeMomentum() {
     vec3 momentum = sampler.sampleMomentum(this);
 
     momentum /= m_atoms.size();
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
+    for(Atom &atom : m_atoms) {
         atom.velocity -= momentum/atom.mass();
     }
 }
 
 void System::resetForcesOnAllAtoms() {
-    for(int i=0; i<m_atoms.size(); i++) {
-        Atom &atom = m_atoms[i];
+    for(Atom &atom : m_atoms) {
         atom.resetForce();
     }
 }
@@ -82,6 +84,7 @@ void System::createFCCLattice(int numberOfUnitCellsEachDimension, float latticeC
                     float y = (j+yCell[l])*latticeConstant;
                     float z = (k+zCell[l])*latticeConstant;
                     atom.position.set(x,y,z);
+                    atom.initialPosition.set(x,y,z);
                     atom.resetVelocityMaxwellian(temperature);
                     // m_atoms.push_back(atom);
                 }

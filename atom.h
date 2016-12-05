@@ -19,6 +19,7 @@ public:
     // vector<Atom*> m_extraNeighbors;
 
     vec3 position;
+    vec3 initialPosition;
     vec3 velocity;
     vec3 force;
 

@@ -32,7 +32,7 @@ int main(int args, char *argv[])
     bool loadState = false;
     bool thermostatEnabled = false;
     float temperature = 300;
-    if(args>1) {
+    if(args>6) {
         dt = UnitConverter::timeFromSI(atof(argv[1])*1e-15);
         numTimeSteps = atoi(argv[2]);
         numUnitCells = atoi(argv[3]);
@@ -41,7 +41,7 @@ int main(int args, char *argv[])
         thermostatEnabled = atoi(argv[6]);
         temperature = atof(argv[7]);
     }
-
+    cout << "Starting MD simulation" << endl;
     float rCut = UnitConverter::lengthFromAngstroms(2.5*3.405);
 
     System system;

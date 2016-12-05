@@ -18,7 +18,7 @@ private:
 
     CellList m_cellList;
     NeighborList m_neighborList;
-    float m_currentTime;
+    double m_currentTime;
     int m_steps;
     bool m_initialized;
 public:
@@ -37,8 +37,8 @@ public:
     void setSystemSize(vec3 systemSize) { m_systemSize = systemSize; }
     Potential *potential() { return m_potential; }
     void setPotential(Potential *potential) { m_potential = potential; }
-    float currentTime() { return m_currentTime; }
-    void setCurrentTime(float currentTime) { m_currentTime = currentTime; }
+    double currentTime() { return m_currentTime; }
+    void setCurrentTime(double currentTime) { m_currentTime = currentTime; }
     Integrator *integrator() { return m_integrator; }
     void setIntegrator(Integrator *integrator) { m_integrator = integrator; }
     int steps() { return m_steps; }
