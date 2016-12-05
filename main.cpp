@@ -36,9 +36,9 @@ int main(int args, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
 
-    int numTimeSteps = 500000;
+    int numTimeSteps = 5000000;
     double dt = UnitConverter::timeFromSI(1e-14); // You should try different values for dt as well.
-    int numUnitCells = 10;
+    int numUnitCells = 20;
     float latticeConstant = 5.26;
     bool loadState = false;
     bool thermostatEnabled = false;
