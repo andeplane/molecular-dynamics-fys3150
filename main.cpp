@@ -44,7 +44,8 @@ int main(int args, char *argv[])
     bool loadState = false;
     bool thermostatEnabled = false;
     float temperature = 700;
-    vector<double> temperatures = {100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 555, 560, 565, 570, 575, 580, 585, 590, 595, 600, 605, 610, 615, 620, 625, 630, 635, 640, 650, 660, 670, 680, 690, 700, 800, 900, 1000};
+    // vector<double> temperatures = {100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 555, 560, 565, 570, 575, 580, 585, 590, 595, 600, 605, 610, 615, 620, 625, 630, 635, 640, 650, 660, 670, 680, 690, 700, 800, 900, 1000};
+    vector<double> temperatures = {450, 452, 454, 456, 458, 460, 462, 464, 466, 468, 470, 472, 474, 476, 478, 480, 482, 484, 486, 488, 490, 492, 494, 496, 498, 500, 502, 504, 506, 508, 510, 512};
     if(world_size > 1) {
         if(world_rank >= temperatures.size()) {
             cout << "Error, too many MPI processes." << endl;
